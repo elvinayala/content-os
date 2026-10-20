@@ -4,14 +4,15 @@ import Anthropic from "@anthropic-ai/sdk";
 import { eq } from "drizzle-orm";
 
 import { CLOSERS_FATHOM, clienteDeReunion, transcripcionCorta, type ReunionConTranscripcion, type ReunionFathom } from "@/lib/fathom";
+import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
 
-import type { Marca } from "./reglas";
-import { asegurarEtapa, clienteActual, crearActividad, crearEmbudo, embudoPorNombre, ingestarLead, leadPorContacto, registrarWebhook } from "./repo";
+import { slugDeMarca, type Marca } from "./reglas";
+import { asegurarEtapa, cerrarTrato, clienteActual, crearActividad, crearEmbudo, embudoPorNombre, ingestarLead, leadPorContacto, registrarWebhook } from "./repo";
 import { listarRubros } from "./rubros";
 import { rubroDeCatalogo } from "./rubros-reglas";
-import { DIAS_PRIMER_CONTACTO, EMBUDO_SEGUIMIENTO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, OBJECIONES, SERVICIOS, sumarDias, vaASeguimiento, type LecturaLlamada } from "./seguimiento-reglas";
+import { DIAS_PRIMER_CONTACTO, recomendar, EMBUDO_SEGUIMIENTO, ETAPA_PERDIDO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, OBJECIONES, SERVICIOS, sumarDias, vaASeguimiento, type LecturaLlamada } from "./seguimiento-reglas";
 
 // Fathom → SEGUIMIENTO (Elvin, 20/oct/2026): "Luego de que cierra la llamada, que Fathom tiene ya la
 // información, pasar el contacto a Pulse, que se pase automático." Cuando un closer (Roger, Laura)
@@ -42,7 +43,15 @@ Responde SOLO con JSON, sin texto antes ni después:
   "temperatura": "caliente" (quiere y puede; falta un detalle: la fecha de pago, hablarlo con el socio esta semana) | "tibio" (le interesa pero hay una objeción real: dinero, tiempo, consultarlo) | "frio" (no ve el valor, desconfía, no tiene presupuesto en meses),
   "feedback": 2 o 3 oraciones para Lis, que le dará seguimiento: qué necesita el negocio, qué se le ofreció y a qué precio, y por qué no cerró. Español de Puerto Rico, tuteo,
   "proximo_paso": lo que quedó acordado (p. ej. "Llamarlo el viernes; cobra el día 1") o null,
-  "presion": true si el prospecto se sintió presionado o desconfió (dijo que parece fraude, que lo apuraron, que va muy rápido)
+  "presion": true si el prospecto se sintió presionado o desconfió (dijo que parece fraude, que lo apuraron, que va muy rápido),
+  "razon": la razón ESPECÍFICA por la que no cerró, en una oración con lo que dijo el prospecto (p. ej. "Su esposa maneja las finanzas y no quiere invertir hasta que abra la clínica en noviembre"), no la categoría,
+  "facturacion_mensual": cuánto dijo que factura su negocio al mes en USD (número; si dio un rango, el menor; si dijo al año, divídelo entre 12) o null,
+  "profesion": "salud" si es profesional de la salud (médico, dentista, quiropráctico, psicólogo, terapeuta, enfermera, farmacéutico, veterinario) | "legal" si es abogado o notario | null,
+  "descartado": true SOLO si dijo claramente que no va (no le interesa, que no lo llamen más, ya contrató a otro); false si es "ahora no", "lo voy a pensar" o una objeción que se puede trabajar,
+  "capacidad_operativa": "alta" (negocio establecido con equipo, clientes y flujo de dinero para invertir $3,000+), "media", "baja" (emprendedor empezando, solo, sin flujo para invertir) o null si no se sabe,
+  "quiere_escalar": true si quiere crecer, contratar o abrir más (no solo sobrevivir),
+  "precio_ofrecido": el precio principal que le ofreció el closer en USD (número) o null,
+  "oferta_incorrecta": si el closer le ofreció algo que no le corresponde (p. ej. un servicio que no resuelve lo que necesita), en una oración; null si la oferta fue correcta
 }
 No inventes: lo que no se dice en la llamada va en null.`;
 
@@ -138,6 +147,7 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
   const url = r.share_url || r.url || null;
   // Las notas que Lis traía del Excel se quedan en el panel aunque llegue una llamada nueva.
   const notasLis = (ya?.datos as { seguimiento?: { notasLis?: string } } | null)?.seguimiento?.notasLis;
+  const rec = recomendar({ ...lectura, industria: lectura.industria ?? ((ya?.datos as { nicho?: string } | null)?.nicho ?? null) });
   const seguimiento = {
     ...(notasLis ? { notasLis } : {}),
     fuente: "fathom",
@@ -151,10 +161,22 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
     feedback: lectura.feedback,
     proximoPaso: lectura.proximoPaso,
     presion: lectura.presion,
+    razon: lectura.razon,
+    facturacionMensual: lectura.facturacionMensual,
+    profesion: lectura.profesion,
+    descartado: lectura.descartado,
+    capacidad: lectura.capacidad,
+    precioOfrecido: lectura.precioOfrecido,
+    ...rec,
+    altaIntencion: rec.prioridad != null,
   };
   const datosNicho = lectura.industria && !(ya?.datos as { nicho?: string } | null)?.nicho ? { nicho: lectura.industria } : {};
   const nota = [
     `📞 Llamada con ${closer} (Fathom): no cerró → SEGUIMIENTO · ${etapa}`,
+    rec.prioridad === "super" ? `🔥 SÚPER PRIORITARIO: ${rec.prioridadPor}` : rec.prioridad ? `⭐ Alta intención: ${rec.prioridadPor}` : null,
+    lectura.razon ? `Por qué no cerró: ${lectura.razon}` : null,
+    rec.productoTexto ? `Qué ofrecerle: ${rec.productoTexto}. ${rec.trato}` : null,
+    rec.ofertaIncorrecta ? `⚠️ ${rec.ofertaIncorrecta}` : null,
     lectura.feedback,
     lectura.objecion ? `Objeción: ${lectura.objecion}${lectura.presion ? " · ⚠️ se sintió presionado" : ""}` : null,
     lectura.proximoPaso ? `Próximo paso: ${lectura.proximoPaso}` : null,
@@ -175,6 +197,24 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
     nota,
     datos: { ...datosNicho, seguimiento },
   });
+  // Súper prioritario: Elvin también lo quiere ver (20/oct). Aviso a él (Telegram/Slack del CEO), no al equipo.
+  if (rec.prioridad === "super") {
+    const base = process.env.CONTENT_OS_URL ?? "https://content-os-chi-seven.vercel.app";
+    await notificarCEO(
+      [
+        `🔥 Lead SÚPER PRIORITARIO (${marca === "level_up" ? "Level Up" : "AI Borinquen"}): ${ya?.nombre ?? lectura.nombre ?? "—"}${lectura.negocio ? ` · ${lectura.negocio}` : ""}`,
+        `${rec.prioridadPor} · llamada con ${closer} · no cerró → ${etapa}`,
+        lectura.razon ? `Por qué: ${lectura.razon}` : null,
+        rec.ofertaIncorrecta ? `⚠️ ${rec.ofertaIncorrecta}` : null,
+        `${base}/pulse/leads/${slugDeMarca(marca)}/${id}`,
+      ].filter(Boolean).join("\n"),
+    ).catch(() => {});
+  }
+  // "Definitivamente no" → se queda en Seguimiento perdido (moverTrato ya lo cerró si existía; el nuevo se cierra aquí).
+  if (etapa === ETAPA_PERDIDO) {
+    if (nuevo) await cerrarTrato(id, "perdido", lectura.razon ?? lectura.objecion ?? "Dijo que no", lis);
+    return `${nuevo ? "nuevo" : "movido"} ${id} → ${etapa}`;
+  }
   // Tipo "whatsapp", no "llamada": las actividades "llamada" son las citas de los closers en la Arena.
   if (lis) {
     const dias = lectura.temperatura && etapa !== "Por revisar" ? DIAS_PRIMER_CONTACTO[lectura.temperatura] : 1;

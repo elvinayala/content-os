@@ -35,6 +35,7 @@ export interface TarjetaUI {
   ultimoMensaje: string | null;
   creadoEl: string;
   nicho: string | null;
+  prioridad?: "super" | "alta" | null;
 }
 
 const usd = (n: number) => (n ? `$${n.toLocaleString("en-US")}` : "$0");
@@ -749,6 +750,15 @@ function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaU
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <p className="min-w-0 flex-1 truncate text-[13px] leading-tight font-semibold">{titulo}</p>
+              {t.prioridad === "super" ? (
+                <span className="shrink-0 rounded-full bg-red-600 px-1.5 py-px text-[10px] font-bold text-white" title="Súper prioritario: factura $20K+ al mes">
+                  🔥 Súper
+                </span>
+              ) : t.prioridad === "alta" ? (
+                <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-px text-[10px] font-bold text-amber-800" title="Alta intención: califica para DFY (profesional o $10K+ al mes)">
+                  ⭐ Alta
+                </span>
+              ) : null}
               {t.noLeidos > 0 && (
                 <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-[#25d366] px-1.5 py-px text-[10px] font-bold text-white" title={`${t.noLeidos} mensaje(s) sin leer`}>
                   <MessageCircle className="size-2.5" />

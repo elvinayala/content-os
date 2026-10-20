@@ -324,6 +324,15 @@ export function duenoPorReparto(reparto: Reparto, turno: number, habilitados: Re
   return personas[((turno % personas.length) + personas.length) % personas.length];
 }
 
+// Columnas que CIERRAN el lead (embudo SEGUIMIENTO, Elvin 20/oct): arrastrar ahí lo marca ganado/perdido y el
+// tablero las muestra con sus leads cerrados; sacarlo de ahí lo reabre.
+export function estadoDeEtapa(nombre: string | null | undefined): "ganado" | "perdido" | null {
+  const k = clave(nombre ?? "");
+  if (k === "seguimiento ganado") return "ganado";
+  if (k === "seguimiento perdido") return "perdido";
+  return null;
+}
+
 /** Los leads de estos orígenes no se reparten: el manual lo asigna quien lo crea y los grupos no son leads. */
 export function seReparte(origen: string | null | undefined): boolean {
   return origen !== "manual" && origen !== "grupo";

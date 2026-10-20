@@ -96,9 +96,9 @@ export async function crearLeadAction(v: { marca: Marca; embudoId: string; etapa
 export async function moverLeadAction(tratoId: string, etapaId: string, antesId: string | null, despuesId: string | null): Promise<Res> {
   const p = await puedeTrato(tratoId);
   if (!p) return { ok: false, error: "Sin acceso" };
-  await moverTrato(tratoId, etapaId, antesId, despuesId, p.u.id);
+  const r = await moverTrato(tratoId, etapaId, antesId, despuesId, p.u.id);
   refrescar(p.t.marca, tratoId);
-  return { ok: true };
+  return r;
 }
 
 export async function cerrarLeadAction(tratoId: string, estado: "ganado" | "perdido" | "abierto", motivo?: string | null): Promise<Res> {

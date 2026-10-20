@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { destinoExcel, etapaDeLectura, fechaExcel, leerLecturaLlamada, marcaExcel, objecionDe, serviciosDe, telefonoExcel, temperaturaDe, vaASeguimiento } from "../lib/leads/seguimiento-reglas.ts";
+import { estadoDeEtapa } from "../lib/leads/reglas.ts";
+import { recomendar, altaIntencion, montoDe, destinoExcel, etapaDeLectura, fechaExcel, leerLecturaLlamada, marcaExcel, objecionDe, serviciosDe, telefonoExcel, temperaturaDe, vaASeguimiento } from "../lib/leads/seguimiento-reglas.ts";
 
 test("fechas del Excel de Lis", () => {
   assert.equal(fechaExcel("20/octubre/2026"), "2026-10-20");
@@ -62,4 +63,51 @@ test("lectura de la llamada: compró no entra; dudoso a Por revisar", () => {
   assert.equal(leerLecturaLlamada("no hay json"), null);
   assert.equal(leerLecturaLlamada('{"email":"eli arroba x punto com"}').email, null);
   assert.equal(leerLecturaLlamada('{"email":"null"}').email, null);
+});
+
+test("alta intención: salud, abogados o $10K+/mes; descartado va a Seguimiento perdido", () => {
+  assert.equal(montoDe("$15K"), 15000);
+  assert.equal(montoDe("entre 12 y 20 mil"), 12000);
+  assert.equal(montoDe("40,000"), 40000);
+  assert.equal(montoDe(8000), 8000);
+  assert.equal(montoDe("no dijo"), null);
+  assert.deepEqual(altaIntencion({ facturacionMensual: 15000, profesion: null }), { alta: true, por: "factura ~$15K/mes" });
+  assert.deepEqual(altaIntencion({ facturacionMensual: null, profesion: "salud" }), { alta: true, por: "profesional de la salud" });
+  assert.deepEqual(altaIntencion({ facturacionMensual: 20000, profesion: null, industria: "Abogados" }), { alta: true, por: "abogado · factura ~$20K/mes" });
+  assert.deepEqual(altaIntencion({ facturacionMensual: 4000, profesion: null, industria: "Estética" }), { alta: false, por: null });
+  const l = leerLecturaLlamada('{"compro":"no","temperatura":"frio","descartado":true,"razon":"Ya contrató otra agencia","facturacion_mensual":"$12K","profesion":"salud"}');
+  assert.equal(l.razon, "Ya contrató otra agencia");
+  assert.equal(l.facturacionMensual, 12000);
+  assert.equal(l.profesion, "salud");
+  assert.equal(etapaDeLectura(l), "Seguimiento perdido");
+  assert.equal(etapaDeLectura({ ...l, descartado: false }), "Frío");
+});
+
+test("columnas que cierran el lead", () => {
+  assert.equal(estadoDeEtapa("Seguimiento perdido"), "perdido");
+  assert.equal(estadoDeEtapa("SEGUIMIENTO GANADO"), "ganado");
+  assert.equal(estadoDeEtapa("Seguimiento"), null);
+  assert.equal(estadoDeEtapa("Closed lost"), null);
+});
+
+test("qué ofrecerle: DFY a quien tiene capacidad, Bori al pequeño, sobreventa y súper prioritario", () => {
+  const base = { facturacionMensual: null, profesion: null, capacidad: null, quiereEscalar: false, servicios: [], precioOfrecido: null };
+  const grande = recomendar({ ...base, facturacionMensual: 45000, servicios: ["DFY"] });
+  assert.equal(grande.prioridad, "super");
+  assert.equal(grande.producto, "DFY");
+  assert.equal(grande.ofertaIncorrecta, null);
+  const medio = recomendar({ ...base, facturacionMensual: 12000, servicios: ["Bori"] });
+  assert.equal(medio.prioridad, "alta");
+  assert.equal(medio.ofertaIncorrecta, "Se quedó corto: se le ofreció solo Bori y califica para DFY");
+  const chiquito = recomendar({ ...base, facturacionMensual: 4000, capacidad: "baja", servicios: ["DFY"], precioOfrecido: 3500 });
+  assert.equal(chiquito.producto, "Bori");
+  assert.equal(chiquito.prioridad, null);
+  assert.match(chiquito.ofertaIncorrecta, /^Sobreventa: se le ofreció DFY \(\$3,500\)/);
+  const doctora = recomendar({ ...base, profesion: "salud", quiereEscalar: true });
+  assert.equal(doctora.producto, "DFY");
+  assert.equal(doctora.prioridad, "alta");
+  const psicologaSinPacientes = recomendar({ ...base, profesion: "salud", capacidad: "baja", facturacionMensual: 1000 });
+  assert.equal(psicologaSinPacientes.producto, "Bori");
+  assert.equal(recomendar(base).producto, null);
+  assert.equal(recomendar({ ...base, ofertaIncorrectaIA: "Le ofrecieron voz y necesita anuncios" }).ofertaIncorrecta, "Le ofrecieron voz y necesita anuncios");
 });

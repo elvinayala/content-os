@@ -7,7 +7,7 @@ import { desempenoFichas } from "@/lib/desempeno/schema";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { clave, duenoPorReparto, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, renombrePorAgenda, seReparte, SEMILLA, tipoAdjunto, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
+import { clave, duenoPorReparto, estadoDeEtapa, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, renombrePorAgenda, seReparte, SEMILLA, tipoAdjunto, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsNumerosEquipo, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -34,6 +34,7 @@ export interface TratoTarjeta {
   ultimoMensaje: string | null;
   creadoEl: string;
   nicho: string | null;
+  prioridad: "super" | "alta" | null;
 }
 
 // ---------- Acceso ------------------------------------------------------------------------------
@@ -177,6 +178,7 @@ const camposTarjeta = {
   ultimoMensaje: leadsTratos.ultimoMensaje,
   creadoEl: leadsTratos.createdAt,
   nicho: sql<string | null>`${leadsTratos.datos} ->> 'nicho'`,
+  prioridad: sql<"super" | "alta" | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'prioridad'`,
 };
 
 function aTarjeta(r: Record<string, unknown>): TratoTarjeta {
@@ -229,7 +231,9 @@ function condRubro(rubro?: string | null) {
 
 export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null; rubro?: string | null } = {}): Promise<TratoTarjeta[]> {
   const d = await db();
-  const conds = [eq(leadsTratos.embudoId, embudoId), eq(leadsTratos.estado, "abierto")];
+  // Las columnas que cierran (Seguimiento ganado/perdido) muestran también sus leads cerrados.
+  const cierre = (await etapasDe(embudoId)).filter((e) => estadoDeEtapa(e.nombre)).map((e) => e.id);
+  const conds = [eq(leadsTratos.embudoId, embudoId), cierre.length ? or(eq(leadsTratos.estado, "abierto"), inArray(leadsTratos.etapaId, cierre))! : eq(leadsTratos.estado, "abierto")];
   if (f.duenoId === "__sin") conds.push(isNull(leadsTratos.duenoId));
   else if (f.duenoId) conds.push(eq(leadsTratos.duenoId, f.duenoId));
   const cf = condFecha(f.fecha);
@@ -476,11 +480,17 @@ export async function actualizarTrato(id: string, cambios: Partial<Pick<Trato, "
 }
 
 /** Mover a otra etapa (y posición). Cambiar de embudo si la etapa es de otro. */
-export async function moverTrato(id: string, etapaId: string, antesId: string | null, despuesId: string | null, autorId?: string | null) {
+export async function moverTrato(id: string, etapaId: string, antesId: string | null, despuesId: string | null, autorId?: string | null): Promise<{ ok: boolean; error?: string }> {
   const d = await db();
   const [t] = await d.select().from(leadsTratos).where(eq(leadsTratos.id, id)).limit(1);
   const [etapa] = await d.select().from(leadsEtapas).where(eq(leadsEtapas.id, etapaId)).limit(1);
-  if (!t || !etapa) return;
+  if (!t || !etapa) return { ok: false, error: "No encontré el lead o la etapa" };
+  // Columna que cierra → ganado/perdido; salir de ella (o de un lead cerrado) → se reabre.
+  const cierra = estadoDeEtapa(etapa.nombre);
+  if (!cierra && t.estado !== "abierto") {
+    const r = await cerrarTrato(id, "abierto", null, autorId);
+    if (!r.ok) return r;
+  }
   const ord = async (x: string | null) => (x ? ((await d.select({ o: leadsTratos.orden }).from(leadsTratos).where(eq(leadsTratos.id, x)).limit(1))[0]?.o ?? null) : null);
   const orden = antesId || despuesId ? ordenEntre(await ord(antesId), await ord(despuesId)) : ordenEntre(null, await primerOrden(etapaId));
   const cambioEtapa = t.etapaId !== etapaId;
@@ -489,6 +499,11 @@ export async function moverTrato(id: string, etapaId: string, antesId: string | 
     .set({ etapaId, embudoId: etapa.embudoId, orden, updatedAt: new Date(), ...(cambioEtapa ? { etapaDesde: new Date() } : {}) })
     .where(eq(leadsTratos.id, id));
   if (cambioEtapa) await historial(id, "sistema", `Etapa → ${etapa.nombre}`, autorId);
+  if (cierra && t.estado !== cierra) {
+    const razon = (t.datos as { seguimiento?: { razon?: string; objecion?: string } } | null)?.seguimiento;
+    await cerrarTrato(id, cierra, cierra === "perdido" ? (t.motivoPerdida ?? razon?.razon ?? razon?.objecion ?? "Seguimiento perdido") : null, autorId);
+  }
+  return { ok: true };
 }
 
 const esDuplicado = (e: unknown) => /leads_tratos_tel_abierto|duplicate key/i.test(String((e as { message?: string })?.message ?? e));
@@ -507,6 +522,14 @@ export async function cerrarTrato(id: string, estado: "ganado" | "perdido" | "ab
   }
   const txt = estado === "ganado" ? "🏆 Ganado" : estado === "perdido" ? `Perdido${motivo ? `: ${motivo}` : ""}` : "Reabierto";
   await historial(id, "sistema", txt, autorId);
+  if (estado !== "abierto") {
+    const [t] = await d.select({ embudoId: leadsTratos.embudoId, etapaId: leadsTratos.etapaId }).from(leadsTratos).where(eq(leadsTratos.id, id)).limit(1);
+    const destino = t ? (await etapasDe(t.embudoId)).find((e) => estadoDeEtapa(e.nombre) === estado) : null;
+    if (destino && destino.id !== t!.etapaId) {
+      await d.update(leadsTratos).set({ etapaId: destino.id, orden: ordenEntre(null, await primerOrden(destino.id)), etapaDesde: new Date() }).where(eq(leadsTratos.id, id));
+      await historial(id, "sistema", `Etapa → ${destino.nombre}`, autorId);
+    }
+  }
   return { ok: true };
 }
 

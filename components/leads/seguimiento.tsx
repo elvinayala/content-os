@@ -15,6 +15,14 @@ interface DatosSeguimiento {
   proximoPaso?: string | null;
   presion?: boolean;
   notasLis?: string | null;
+  razon?: string | null;
+  facturacionMensual?: number | null;
+  descartado?: boolean;
+  prioridad?: "super" | "alta" | null;
+  prioridadPor?: string | null;
+  productoTexto?: string | null;
+  trato?: string | null;
+  ofertaIncorrecta?: string | null;
 }
 
 const TEMP: Record<string, { txt: string; cls: string }> = {
@@ -35,6 +43,8 @@ export function SeguimientoLead({ datos }: { datos: unknown }) {
   const temp = s.temperatura ? TEMP[s.temperatura] : null;
   const llamada = [fechaCorta(s.fecha), s.closer && `con ${s.closer}`, s.setter && `setter ${s.setter}`].filter(Boolean).join(" · ");
   const filas: [string, string | null | undefined][] = [
+    ["Por qué no cerró", s.razon ? `${s.razon}${s.descartado ? " (dijo que definitivamente no)" : ""}` : null],
+    ["Factura al mes", s.facturacionMensual ? `~$${s.facturacionMensual.toLocaleString("en-US")}` : null],
     ["Servicio", s.servicios?.length ? s.servicios.join(" + ") : null],
     ["Objeción", s.objecion ? `${s.objecion}${s.presion ? " · se sintió presionado" : ""}` : null],
     ["Feedback", s.feedback],
@@ -47,6 +57,18 @@ export function SeguimientoLead({ datos }: { datos: unknown }) {
         <h3 className="font-bold uppercase tracking-wider text-muted-foreground">Seguimiento</h3>
         {temp && <span className={`rounded-full px-2 py-0.5 font-semibold ${temp.cls}`}>{temp.txt}</span>}
       </div>
+      {s.prioridad === "super" ? (
+        <p className="rounded-md bg-red-600 px-2 py-1 font-bold text-white">🔥 SÚPER PRIORITARIO{s.prioridadPor ? `: ${s.prioridadPor}` : ""}</p>
+      ) : s.prioridad === "alta" ? (
+        <p className="rounded-md bg-amber-50 px-2 py-1 font-semibold text-amber-800">⭐ Alta intención{s.prioridadPor ? `: ${s.prioridadPor}` : ""}</p>
+      ) : null}
+      {s.productoTexto && (
+        <div className="rounded-md bg-emerald-50 px-2 py-1.5 text-emerald-900">
+          <p className="font-semibold">Qué ofrecerle: {s.productoTexto}</p>
+          {s.trato && <p className="mt-0.5">{s.trato}</p>}
+        </div>
+      )}
+      {s.ofertaIncorrecta && <p className="rounded-md bg-orange-50 px-2 py-1 text-orange-800">⚠️ {s.ofertaIncorrecta}</p>}
       {llamada && <p className="text-muted-foreground">Llamada {llamada}</p>}
       <dl className="grid gap-1.5">
         {filas

@@ -92,6 +92,14 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   (`components/leads/seguimiento.tsx`). Arena: un lead en SEGUIMIENTO cuenta como "se presentó"
   (`resultadoCita(…, embudo)`). Excel de Lis (jun–oct, 470 filas) importado el 20/oct: CERRÓ no entra, sin estado
   de antes de septiembre → perdido en "Mensaje final", el resto en su temperatura; industria y objeción por Haiku.
+  **Columnas que cierran** (`estadoDeEtapa`): "Seguimiento ganado/perdido" marcan el lead ganado/perdido al
+  arrastrarlo ahí, el tablero las muestra con sus leads cerrados y sacarlo de ahí lo reabre; cerrar como perdido desde
+  la ficha lo manda a esa columna. Fathom: "definitivamente no" → Seguimiento perdido. **Qué ofrecerle**
+  (`recomendar`): DFY ($3,000–$4,000+) a quien factura $10K+/mes, o profesional/dueño con capacidad que quiere
+  escalar; Bori Pro $99 / Agencia $249 al emprendedor sin capacidad; marca sobreventa (DFY a quien no califica) o
+  "se quedó corto" (solo Bori a quien sí), y el trato que debe dar Lis (descuento, financiamiento, plan de pago).
+  Prioridad: ⭐ alta (califica DFY: salud/abogado o $10K+) · 🔥 súper ($20K+/mes) → aviso a Elvin por
+  `notificarCEO` con el link de la ficha. También guarda la razón específica de por qué no cerró.
   Código: `lib/leads/seguimiento{,-reglas}.ts`, tests `tests/leads-seguimiento.test.mjs`.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).

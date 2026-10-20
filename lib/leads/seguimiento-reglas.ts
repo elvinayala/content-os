@@ -5,8 +5,16 @@
 
 export const EMBUDO_SEGUIMIENTO = "SEGUIMIENTO";
 
-// Columnas del embudo, en orden. Ganado/Perdido son el estado del lead, no columnas.
-export const ETAPAS_SEGUIMIENTO = ["Por revisar", "Caliente", "Tibio", "Frío", "Nueva cita", "Descansando (15-30 días)", "Mensaje final"] as const;
+// Columnas del embudo, en orden. Las dos últimas cierran el lead (ganado/perdido, `estadoDeEtapa` en reglas.ts) y
+// el tablero las muestra con sus leads cerrados: "ya, definitivamente no voy" se queda en Seguimiento perdido.
+export const ETAPA_GANADO = "Seguimiento ganado";
+export const ETAPA_PERDIDO = "Seguimiento perdido";
+export const ETAPAS_SEGUIMIENTO = ["Por revisar", "Caliente", "Tibio", "Frío", "Nueva cita", "Descansando (15-30 días)", "Mensaje final", ETAPA_GANADO, ETAPA_PERDIDO] as const;
+
+// Leads que nos gustan (Elvin, 20/oct): profesionales (salud, abogados) o negocios que facturan $10K+ al mes.
+export const FACTURACION_ALTA = 10_000;
+export const PROFESIONES = ["salud", "legal"] as const;
+export type Profesion = (typeof PROFESIONES)[number];
 
 export type Temperatura = "caliente" | "tibio" | "frio";
 
@@ -136,6 +144,114 @@ export interface LecturaLlamada {
   feedback: string | null;
   proximoPaso: string | null;
   presion: boolean;
+  /** Por qué no cerró, en una oración concreta (no la categoría: "su socio no quiere invertir hasta enero"). */
+  razon: string | null;
+  /** USD al mes que dijo facturar (lo más reciente que dijo). */
+  facturacionMensual: number | null;
+  profesion: Profesion | null;
+  /** Dijo que definitivamente no (no le interesa, no lo llamen) → Seguimiento perdido. */
+  descartado: boolean;
+  capacidad: Capacidad | null;
+  quiereEscalar: boolean;
+  precioOfrecido: number | null;
+  ofertaIncorrectaIA: string | null;
+}
+
+/** "$15K", "15,000", "entre 12 y 20 mil" (toma el primero), 15000 → número; lo que no se entienda → null. */
+export function montoDe(v: unknown): number | null {
+  if (typeof v === "number") return Number.isFinite(v) && v > 0 ? Math.round(v) : null;
+  const s = sinTildes(String(v ?? "")).replace(/,/g, "");
+  const m = s.match(/(\d+(?:\.\d+)?)\s*(k|mil|m\b|millon)?/);
+  if (!m) return null;
+  // "entre 12 y 20 mil": la unidad va al final del rango.
+  const unidad = m[2] ?? s.slice(m.index! + m[0].length).match(/^[\s\dy-]*(k|mil)\b/)?.[1];
+  const n = Number(m[1]) * (unidad === "k" || unidad === "mil" ? 1_000 : unidad === "m" || unidad === "millon" ? 1_000_000 : 1);
+  return n > 0 ? Math.round(n) : null;
+}
+
+// ─── Qué ofrecerle (Elvin, 20/oct) ───────────────────────────────────────────────────────────────
+// DFY ($3,000–$4,000 para arriba) es para dueños con capacidad operativa: facturan $10K+/mes, o profesionales y
+// dueños con capacidad que quieren escalar. El emprendedor o negocio pequeño sin esa capacidad va a Bori
+// (Pro $99 / Agencia $249). Ofrecerle DFY a quien no califica = sobreventa; ofrecerle solo Bori a quien sí = se quedó corto.
+// $20K+/mes (o proyectos de $50K–$100K/mes) = SÚPER PRIORITARIO: Lis lo ve primero y Elvin recibe aviso.
+export const FACTURACION_SUPER = 20_000;
+export const DFY_DESDE = 3_000;
+export type Capacidad = "alta" | "media" | "baja";
+export type Prioridad = "super" | "alta";
+
+export interface Perfil {
+  facturacionMensual: number | null;
+  profesion: Profesion | null;
+  industria?: string | null;
+  capacidad: Capacidad | null;
+  quiereEscalar: boolean;
+  servicios: string[];
+  precioOfrecido: number | null;
+  /** Lo que Claude vio mal en la oferta (otro tipo de error, p. ej. le ofrecieron voz y necesitaba marketing). */
+  ofertaIncorrectaIA?: string | null;
+}
+
+export interface Recomendacion {
+  prioridad: Prioridad | null;
+  prioridadPor: string | null;
+  producto: "DFY" | "Bori" | null;
+  productoTexto: string | null;
+  /** Cómo le da seguimiento Lis. */
+  trato: string | null;
+  ofertaIncorrecta: string | null;
+}
+
+const miles = (n: number) => `$${Math.round(n / 1000)}K`;
+
+export function productoIndicado(p: Perfil): "DFY" | "Bori" | null {
+  const f = p.facturacionMensual;
+  if (f != null && f >= FACTURACION_ALTA) return "DFY";
+  if (p.capacidad === "baja") return "Bori";
+  if (f != null && p.capacidad !== "alta" && !(p.profesion && p.quiereEscalar)) return "Bori";
+  if (p.profesion || p.capacidad === "alta") return "DFY";
+  if (f == null && p.capacidad == null) return null; // no se habló de números ni de operación
+  return p.quiereEscalar ? "DFY" : "Bori";
+}
+
+export function recomendar(p: Perfil): Recomendacion {
+  const producto = productoIndicado(p);
+  const f = p.facturacionMensual ?? 0;
+  const alta = altaIntencion(p);
+  const prioridad: Prioridad | null = f >= FACTURACION_SUPER ? "super" : alta.alta && producto === "DFY" ? "alta" : null;
+  const prioridadPor = prioridad === "super" ? `factura ~${miles(f)}/mes` : prioridad ? alta.por : null;
+  const ofreceDFY = p.servicios.includes("DFY") || (p.precioOfrecido ?? 0) >= DFY_DESDE;
+  const soloBori = p.servicios.includes("Bori") && !ofreceDFY;
+  const ofertaIncorrecta =
+    producto === "Bori" && ofreceDFY
+      ? `Sobreventa: se le ofreció DFY${p.precioOfrecido ? ` ($${p.precioOfrecido.toLocaleString("en-US")})` : ""} y no tiene la capacidad todavía${p.facturacionMensual ? ` (factura ~${miles(p.facturacionMensual)}/mes)` : ""}; lo indicado era Bori`
+      : producto === "DFY" && soloBori
+        ? "Se quedó corto: se le ofreció solo Bori y califica para DFY"
+        : (p.ofertaIncorrectaIA ?? null);
+  const trato =
+    prioridad === "super"
+      ? "SÚPER PRIORITARIO: trato a la medida. Avísale a Elvin antes de escribirle; DFY completo (marketing + IA) desde $4,000, con plan de pago si hace falta."
+      : producto === "DFY"
+        ? "Ofrécele DFY ($3,000–$4,000) con un trato especial: descuento por decidir esta semana, financiamiento o plan de pago (inicial + cuotas)."
+        : producto === "Bori"
+          ? "Todavía no califica para DFY: ofrécele Bori Pro ($99/mes) o Agencia ($249/mes) y retómalo para DFY cuando facture $10K+ al mes."
+          : null;
+  return {
+    prioridad,
+    prioridadPor,
+    producto,
+    productoTexto: producto === "DFY" ? "DFY · Done For You ($3,000–$4,000+)" : producto === "Bori" ? "Bori Pro $99/mes o Agencia $249/mes" : null,
+    trato,
+    ofertaIncorrecta,
+  };
+}
+
+/** ¿Es un lead que nos gusta? Y por qué, para la ficha. */
+export function altaIntencion(l: { facturacionMensual: number | null; profesion: Profesion | null; industria?: string | null }): { alta: boolean; por: string | null } {
+  const por: string[] = [];
+  if (l.profesion === "salud" || /^doctores$/i.test(l.industria ?? "")) por.push("profesional de la salud");
+  else if (l.profesion === "legal" || /^abogados$/i.test(l.industria ?? "")) por.push("abogado");
+  if ((l.facturacionMensual ?? 0) >= FACTURACION_ALTA) por.push(`factura ~$${Math.round(l.facturacionMensual! / 1000)}K/mes`);
+  return { alta: por.length > 0, por: por.length ? por.join(" · ") : null };
 }
 
 const str = (v: unknown, max = 600): string | null => {
@@ -172,11 +288,20 @@ export function leerLecturaLlamada(salida: string): LecturaLlamada | null {
     feedback: str(j.feedback, 900),
     proximoPaso: str(j.proximo_paso, 300),
     presion: j.presion === true,
+    razon: str(j.razon, 300),
+    facturacionMensual: montoDe(j.facturacion_mensual),
+    profesion: j.profesion === "salud" || j.profesion === "legal" ? j.profesion : null,
+    descartado: j.descartado === true,
+    capacidad: j.capacidad_operativa === "alta" || j.capacidad_operativa === "media" || j.capacidad_operativa === "baja" ? j.capacidad_operativa : null,
+    quiereEscalar: j.quiere_escalar === true,
+    precioOfrecido: montoDe(j.precio_ofrecido),
+    ofertaIncorrectaIA: str(j.oferta_incorrecta, 300),
   };
 }
 
 /** Columna donde entra una llamada que no cerró. Sin temperatura clara → Por revisar (Lis decide). */
 export function etapaDeLectura(l: LecturaLlamada): string {
+  if (l.descartado && l.compro !== "no_claro") return ETAPA_PERDIDO;
   if (l.compro === "no_claro" || !l.temperatura) return "Por revisar";
   return ETAPA_DE_TEMPERATURA[l.temperatura];
 }
