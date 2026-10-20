@@ -87,7 +87,12 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   Sonnet (`LEADS_SEGUIMIENTO_MODEL`) lee resumen + transcripción → si no compró, mueve el lead que ya existía (por
   email del invitado o teléfono, en cualquier marca; si ya está ganado o es cliente, nada) o lo crea, en la columna
   de su temperatura, con `datos.seguimiento` (closer, servicio, objeción, feedback, próximo paso, presión, link) +
-  nota en el historial + actividad "whatsapp" para Lis (caliente 1 día, tibio 3, frío 7). Registro en
+  nota en el historial + actividad "whatsapp" **"1ª llamada: indagar la objeción real"** para Lis al otro día hábil
+  (L-V, 10 AM) y la cita del closer ya pasada queda hecha (no sale "Vencido"). **Su nota manda** (`notaAction` →
+  `trasNotaDeSeguimiento`): una nota en un lead con ese contacto pendiente lo cierra y agenda el próximo — "no
+  responde/no contestó/buzón" → "Volver a llamar" al otro día (hasta 3 veces); si habló, "Seguimiento <temp>"
+  (caliente 1 día, tibio 3, frío 7). La tarjeta dice "Llamada hoy · Laura" en vez de "Llegó…"; filtros por closer
+  (primer nombre) y por servicio (`?closer=`, `?servicio=`). Registro en
   `leads_webhook_log` (fuente fathom, evento seguimiento). La ficha muestra el bloque "Seguimiento"
   (`components/leads/seguimiento.tsx`). Arena: un lead en SEGUIMIENTO cuenta como "se presentó"
   (`resultadoCita(…, embudo)`). Excel de Lis (jun–oct, 470 filas) importado el 20/oct: CERRÓ no entra, sin estado
