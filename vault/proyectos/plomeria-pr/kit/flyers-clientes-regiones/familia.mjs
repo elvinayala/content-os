@@ -21,13 +21,16 @@ const MENU = JSON.parse(fs.readFileSync(path.join(DATA, "menu.json"), "utf8"));
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const NOMBRE = { T1: "San Juan", T2: "Bayamón", T3: "Caguas", T4: "Ponce", T5: "Arecibo", T6: "Mayagüez", T7: "Aguadilla", T8: "Fajardo" };
 const SLUG = { T1: "metro", T2: "bayamon", T3: "caguas", T4: "ponce", T5: "arecibo", T6: "mayaguez", T7: "aguadilla", T8: "fajardo" };
-const $ = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.precio) throw new Error(`Sin precio fijo: ${id}`); return s.precio; };
+const $ = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.precio) throw new Error(`Sin precio fijo: ${id}`); return s.precio + (process.env.PRECIO_FINAL === "1" ? MENU.cargo_coordinacion : 0); };
 // Trabajos grandes (nivel G): el menú trae un rango; el flyer dice "desde" el mínimo (el agente da el mismo rango).
-const desde = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.rango) throw new Error(`Sin rango: ${id}`); return s.rango[0]; };
+// PRECIO_FINAL=1 (20/oct/2026, Aure/Elvin: al cliente solo el monto final, sin desglose): cada precio ya trae la
+// coordinación y los textos de "mano de obra + $19" se quitan. El archivo sale con "-final".
+const FINAL = process.env.PRECIO_FINAL === "1";
 const FEE = MENU.cargo_coordinacion;
+const desde = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.rango) throw new Error(`Sin rango: ${id}`); return s.rango[0] + (FINAL ? FEE : 0); };
 // Oficios nuevos (27/sep/2026, menús aprobados por Elvin): aire acondicionado, handyman y electricidad.
 const OFI = JSON.parse(fs.readFileSync(path.join(DATA, "menus-oficios.json"), "utf8")).oficios;
-const o$ = (id) => { for (const o of Object.values(OFI)) { const x = o.servicios.find((y) => y.id === id); if (x) return x.precio ?? x.rango?.[0]; } throw new Error(`Sin precio: ${id}`); };
+const o$ = (id) => { for (const o of Object.values(OFI)) { const x = o.servicios.find((y) => y.id === id); if (x) return (x.precio ?? x.rango?.[0]) + (FINAL ? FEE : 0); } throw new Error(`Sin precio: ${id}`); };
 const PIE = { aire: "Técnicos licenciados · mano de obra, equipo y materiales aparte", hm: "Handyman registrados en DACO · mano de obra, materiales aparte", el: "Peritos electricistas licenciados · mano de obra, materiales aparte" };
 // LLAMADA=1 (26/sep/2026): versión para los anuncios de llamada, con el número de Resuelto (voz + SMS en Zernio).
 // PIEZAS=menu,destape,cisterna limita qué piezas salen.
@@ -195,7 +198,18 @@ ${LOGO}
 
 // Regla de Elvin (23/sep/2026): ningún flyer lleva teléfono ni "WhatsApp".
 const TELEFONO_PR = /\b(787|939)[-. ]?\d{3}[-. ]?\d{4}\b/;
+// Con PRECIO_FINAL, fuera todo desglose: el precio del flyer ya es el total del servicio.
+const aFinal = (h) => !FINAL ? h : h
+  .replace(/Precios de mano de obra \+ \$\d+ de coordinación( por visita)?\./g, "Precios finales del servicio.")
+  .replace(/Mano de obra \+ \$\d+ de coordinación\./g, "Precio final del servicio.")
+  .replace(/ ?· \+ \$\d+ de coordinación/g, "")
+  .replace(/ ?\+ \$\d+ de coordinación/g, "")
+  .replace(/Precio de mano de obra · /g, "Precio final · ")
+  .replace(/Mano de obra · /g, "")
+  .replace(/ · mano de obra,/g, " ·");
 function sinTelefono(n, h) {
+  h = aFinal(h);
+  if (FINAL && /coordinaci|mano de obra/i.test(h)) throw new Error(`${n}: con PRECIO_FINAL todavía desglosa (coordinación / mano de obra)`);
   if (/whatsapp/i.test(h)) throw new Error(`${n}: dice "WhatsApp"`);
   if (TELEFONO_PR.test(h) && !(LLAMADA && h.match(new RegExp(TELEFONO_PR, "g")).every((x) => x === NUMERO))) throw new Error(`${n}: trae un teléfono`);
   return h;
@@ -204,7 +218,7 @@ function sinTelefono(n, h) {
 fs.mkdirSync(path.join(AQUI, "src"), { recursive: true });
 const correr = promisify(execFile);
 const trabajos = areas.flatMap((a) => Object.keys(PIEZAS).filter((p) => !process.env.PIEZAS || process.env.PIEZAS.split(",").includes(p)).flatMap((pieza) => ["feed", "story"].map((formato) => {
-  const n = `cliente-${a.slug}-${pieza}${LLAMADA ? "-llamada" : ""}-${formato}`, f = path.join(AQUI, "src", n + ".html"), png = path.join(AQUI, n + ".png");
+  const n = `cliente-${a.slug}-${pieza}${LLAMADA ? "-llamada" : ""}${FINAL ? "-final" : ""}-${formato}`, f = path.join(AQUI, "src", n + ".html"), png = path.join(AQUI, n + ".png");
   fs.writeFileSync(f, sinTelefono(n, html(a, pieza, formato)));
   return () => correr(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", `--user-data-dir=${path.join(AQUI, "src", ".chrome-" + n)}`, `--window-size=1080,${formato === "story" ? 1920 : 1350}`, "--force-device-scale-factor=1", "--virtual-time-budget=10000", `--screenshot=${png}`, "file://" + f], { timeout: 40000 })
     .catch((e) => { if (!fs.existsSync(png)) throw e; })
