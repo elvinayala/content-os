@@ -123,5 +123,11 @@
    "adset": "120255490707510029"
   }
  },
- "estado": "BORRADOR: las 2 campañas EN PAUSA y sin fecha de fin (Elvin, 19/oct: 'no lances campañas, deja todo en borrador'). Se prenden con --prender reclutamiento|clientes cuando Elvin dé el OK."
+ "estado": "BORRADOR: las 2 campañas EN PAUSA y sin fecha de fin (Elvin, 19/oct: 'no lances campañas, deja todo en borrador'). Se prenden con --prender reclutamiento|clientes cuando Elvin dé el OK.",
+ "prendidas": {
+  "reclutamiento": {
+   "en": "2026-10-20T15:21:40.868Z",
+   "fin": "2026-10-24T15:21:32.682Z"
+  }
+ }
 }
