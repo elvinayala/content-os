@@ -1,6 +1,6 @@
 ---
 name: closers-lu-calendly
-description: Closers de Level Up y la integración Calendly→Pipedrive CLOSERS (pipeline 15); Laura sin asiento vía alias; Nahuel pide los cambios del CRM
+description: Closers de Level Up y Calendly→CLOSERS; calendario compartido Level Up Media = Valentina García desde 16/oct (antes Laura); nunca mezclar las dos Valentinas; Nahuel pide los cambios del CRM
 metadata:
   node_type: memory
   type: project
@@ -13,6 +13,8 @@ Calendly (org Level Up) → `/api/calendly` → Pipedrive LU pipeline **CLOSERS 
 **Laura** (medio tiempo, 22/sep/2026) SIN asiento en Pipedrive ni Calendly por decisión de Elvin: toma el
 calendario "Level Up Media"; `CALENDLY_CLOSER_ALIAS` pone Closer (Calendly) = Laura, el deal queda de Level Up
 Media, filtro guardado "CLOSERS · Laura" (id 106037). Si Laura consigue email/asiento: invitarla y mapear.
+
+**20/oct/2026 (Elvin): Valentina García (valentina.garcia@levelupmediapr.net, closer nueva) ≠ Valentina Contreras (ya no está; las "Valentina" del Excel de Lis) ≠ Valentina Rodríguez (setter, "agendó valentinar").** Nunca mezclar sus leads ni seguimientos. Laura tiene calendario propio; el compartido "Level Up Media" (alias) es de Valentina García; la cuenta compartida de Fathom la usan las dos → el closer sale de la cita de Calendly. Ver [[leads-seguimiento-lis]].
 
 **Nahuel Tissera** (director comercial / jefe de ventas) es quien pide cambios del CRM por Slack.
 

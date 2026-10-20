@@ -75,7 +75,7 @@
 - [n8n de Level Up](n8n-level-up.md) — back office en Contabo/Easypanel; Nico lo tomó; puente Pulse→NocoDB en real
 - [Lola — creadora de contenido con IA](lola-creadora-ia.md) — flyers con fal.mjs (guía de Elvin), videos, bot en Railway
 - [Los agentes se hablan](agentes-se-hablan.md) — buzón /api/agentes + agentes.mjs; ⟳ SEGUIR para terminar lo delegado
-- [Closers LU + Calendly](closers-lu-calendly.md) — Calendly→CLOSERS; Laura por alias; Nahuel pide cambios del CRM
+- [Closers LU + Calendly](closers-lu-calendly.md) — Calendly→CLOSERS; calendario Level Up Media = Valentina García (16/oct); nunca mezclar Valentina García / Contreras / Rodríguez; Nahuel pide cambios del CRM
 - [Director Creativo en Slack](director-creativo-slack.md) — "Leo" revisa flyers/guiones en #office-5-revision-creativa
 - [Plan listo → alerta a Elvin](plan-listo-alerta.md) — 19/oct: "PLAN LISTO | Negocio" en #office-5-revision-estrategica = Telegram con datos de Pulse; equipo avisado el 19/oct
 - [ISLA Run Series](isla-run-series.md) — Cabo Rojo 5K 13/dic; excepción al plan de guerra; repo /Users/elvinayala/isla-run
