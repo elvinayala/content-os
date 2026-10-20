@@ -156,12 +156,30 @@ export function sumarDias(fecha: string, dias: number): string {
 
 /** Closer de una llamada de Fathom, por primer nombre como en el Excel de Lis ("Roger", "Laura"). Laura graba con la
  *  cuenta de Level Up (levelupmediapr@gmail.com), cuyo nombre no es el de ella. */
+// Nombre del closer en SEGUIMIENTO: el primer nombre, salvo los que se repiten en el equipo (Elvin, 20/oct: no mezclar a
+// Valentina Contreras, que ya no está, con Valentina García, la closer nueva): ahí va nombre + apellido.
+const NOMBRES_REPETIDOS = new Set(["valentina"]);
+const APELLIDO_CON_TILDE: Record<string, string> = { garcia: "García" };
+const cap = (x: string) => x[0].toUpperCase() + x.slice(1).toLowerCase();
+
+export function nombreCloser(nombre: string | null | undefined): string | null {
+  const p = (nombre ?? "").trim().split(/\s+/).filter(Boolean);
+  if (!p.length) return null;
+  const primero = cap(p[0]);
+  if (!NOMBRES_REPETIDOS.has(sinTildes(primero).toLowerCase()) || !p[1]) return primero;
+  return `${primero} ${APELLIDO_CON_TILDE[sinTildes(p[1]).toLowerCase()] ?? cap(p[1])}`;
+}
+
+/** Closer de una grabación de Fathom. La cuenta compartida de LU (levelupmediapr@gmail.com) la usan Laura y Valentina
+ *  García: si el título no dice quién, devuelve null y manda la cita de Calendly del lead. */
 export function closerDeFathom(nombre: string | null | undefined, email: string | null | undefined, titulo = ""): string | null {
   const e = (email ?? "").trim().toLowerCase();
-  if (e === "levelupmediapr@gmail.com" || /laura\s+bernal/i.test(`${nombre ?? ""} ${titulo}`)) return "Laura";
-  const primero = (nombre ?? "").trim().split(/\s+/)[0];
-  if (!primero || /^level$/i.test(primero)) return /roger/i.test(titulo) ? "Roger" : null;
-  return primero[0].toUpperCase() + primero.slice(1).toLowerCase();
+  const texto = `${nombre ?? ""} ${titulo}`;
+  if (/laura\s+bernal/i.test(texto)) return "Laura";
+  if (e === "valentina.garcia@levelupmediapr.net" || /valentina\s+garc/i.test(sinTildes(texto))) return "Valentina García";
+  if (/roger/i.test(texto)) return "Roger";
+  if (e === "levelupmediapr@gmail.com" || /^level\b/i.test((nombre ?? "").trim())) return null;
+  return nombreCloser(nombre);
 }
 
 // ─── Lo que Claude saca de la llamada de Fathom ──────────────────────────────────────────────────

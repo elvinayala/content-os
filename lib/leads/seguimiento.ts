@@ -12,7 +12,7 @@ import { slugDeMarca, type Marca } from "./reglas";
 import { actividadesAbiertas, asegurarEtapa, cerrarCitasPasadas, cerrarTrato, clienteActual, completarActividad, contarActividades, crearActividad, crearEmbudo, embudoPorNombre, ingestarLead, leadPorContacto, obtenerTrato, registrarWebhook } from "./repo";
 import { listarRubros } from "./rubros";
 import { rubroDeCatalogo } from "./rubros-reglas";
-import { closerDeFathom, esContactoPendiente, PRIMER_CONTACTO, recomendar, siguienteTrasNota, sumarDiasHabiles, temperaturaDe, VOLVER_A_LLAMAR, EMBUDO_SEGUIMIENTO, ETAPA_PERDIDO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, OBJECIONES, SERVICIOS, vaASeguimiento, type LecturaLlamada } from "./seguimiento-reglas";
+import { closerDeFathom, esContactoPendiente, nombreCloser, PRIMER_CONTACTO, recomendar, siguienteTrasNota, sumarDiasHabiles, temperaturaDe, VOLVER_A_LLAMAR, EMBUDO_SEGUIMIENTO, ETAPA_PERDIDO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, OBJECIONES, SERVICIOS, vaASeguimiento, type LecturaLlamada } from "./seguimiento-reglas";
 
 // Fathom → SEGUIMIENTO (Elvin, 20/oct/2026): "Luego de que cierra la llamada, que Fathom tiene ya la
 // información, pasar el contacto a Pulse, que se pase automático." Cuando un closer (Roger, Laura)
@@ -144,7 +144,12 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
   const etapa = etapaDeLectura(lectura);
   await etapaSeguimiento(marca, etapa);
   const lis = await idLis();
-  const closer = closerDeFathom(r.recorded_by?.name, r.recorded_by?.email, `${r.meeting_title ?? ""} ${r.title ?? ""}`) ?? r.recorded_by?.name?.trim() ?? "el closer";
+  // Cuenta compartida de LU (Laura y Valentina García): si la grabación no dice quién, manda el closer de la cita de Calendly.
+  const closer =
+    closerDeFathom(r.recorded_by?.name, r.recorded_by?.email, `${r.meeting_title ?? ""} ${r.title ?? ""}`) ??
+    nombreCloser((ya?.datos as { closer?: string } | null)?.closer) ??
+    r.recorded_by?.name?.trim() ??
+    "el closer";
   const url = r.share_url || r.url || null;
   // Las notas que Lis traía del Excel se quedan en el panel aunque llegue una llamada nueva.
   const notasLis = (ya?.datos as { seguimiento?: { notasLis?: string } } | null)?.seguimiento?.notasLis;

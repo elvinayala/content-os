@@ -46,9 +46,10 @@
   **Closer (Calendly)** (nombre del host aunque no sea usuario de Pipedrive: Juan David,
   Roger…) y **Agendó (utm_source)** (setter/canal). Ignora tipos de evento que matcheen
   `CALENDLY_IGNORAR_REGEX` (default `onboarding`). Nota breve de 3-4 líneas.
-  **Laura** (closer medio tiempo, sin asiento) toma el calendario Level Up Media:
-  `CALENDLY_CLOSER_ALIAS` (default `levelupmediapr@gmail.com=Laura`) pone Closer = Laura;
-  el deal queda de Level Up Media. Filtro guardado "CLOSERS · Laura" (id 106037).
+  Calendario compartido **Level Up Media** (levelupmediapr@gmail.com): lo tomaba Laura; desde el 16/oct Laura tiene
+  calendario propio y el compartido es de **Valentina García** (closer nueva): `CALENDLY_CLOSER_ALIAS` (default
+  `levelupmediapr@gmail.com=Valentina García`). El dueño del lead se busca por nombre completo cuando el primer nombre
+  se repite (`usuarioPorNombre`: hay dos Valentinas activas). Filtro guardado "CLOSERS · Laura" (id 106037).
   Idempotente por URI del evento. Firma HMAC con `CALENDLY_WEBHOOK_SIGNING_KEY`.
   Registro/listado: `CALENDLY_TOKEN=… node scripts/calendly-webhook.mjs crear|listar|info`.
   ⚠️ Prod es `https://content-os-chi-seven.vercel.app` (content-os.vercel.app es de otro).

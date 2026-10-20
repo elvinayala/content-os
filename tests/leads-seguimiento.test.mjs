@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { estadoDeEtapa } from "../lib/leads/reglas.ts";
-import { noRespondio, siguienteTrasNota, sumarDiasHabiles, closerDeFathom, recomendar, altaIntencion, montoDe, destinoExcel, etapaDeLectura, fechaExcel, leerLecturaLlamada, marcaExcel, objecionDe, serviciosDe, telefonoExcel, temperaturaDe, vaASeguimiento } from "../lib/leads/seguimiento-reglas.ts";
+import { nombreCloser, noRespondio, siguienteTrasNota, sumarDiasHabiles, closerDeFathom, recomendar, altaIntencion, montoDe, destinoExcel, etapaDeLectura, fechaExcel, leerLecturaLlamada, marcaExcel, objecionDe, serviciosDe, telefonoExcel, temperaturaDe, vaASeguimiento } from "../lib/leads/seguimiento-reglas.ts";
 
 test("fechas del Excel de Lis", () => {
   assert.equal(fechaExcel("20/octubre/2026"), "2026-10-20");
@@ -114,9 +114,15 @@ test("qué ofrecerle: DFY a quien tiene capacidad, Bori al pequeño, sobreventa 
   assert.equal(recomendar({ ...base, ofertaIncorrectaIA: "Le ofrecieron voz y necesita anuncios" }).ofertaIncorrecta, "Le ofrecieron voz y necesita anuncios");
 });
 
-test("closer de Fathom por primer nombre (Laura graba con el gmail de LU)", () => {
+test("closer de Fathom: primer nombre, salvo las Valentinas; la cuenta compartida de LU no dice quién", () => {
   assert.equal(closerDeFathom("Roger Arteaga", "roger.arteaga@levelupmediapr.net"), "Roger");
-  assert.equal(closerDeFathom("Level Up Media", "levelupmediapr@gmail.com"), "Laura");
+  assert.equal(closerDeFathom("Level Up Media", "levelupmediapr@gmail.com"), null);
+  assert.equal(closerDeFathom("Level Up Media", "levelupmediapr@gmail.com", "Edgar and Laura Bernal"), "Laura");
+  assert.equal(closerDeFathom("Valentina garcia", "valentina.garcia@levelupmediapr.net"), "Valentina García");
+  assert.equal(nombreCloser("Valentina Garcia Alvarez"), "Valentina García");
+  assert.equal(nombreCloser("valentina contreras"), "Valentina Contreras");
+  assert.equal(nombreCloser("Laura Bernal"), "Laura");
+  assert.equal(nombreCloser("Paola ordoñez"), "Paola");
   assert.equal(closerDeFathom("Level Up Media", "otra@x.com", "Llamada Roger x Ana"), "Roger");
   assert.equal(closerDeFathom(null, null), null);
 });

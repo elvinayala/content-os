@@ -94,7 +94,10 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   (caliente 1 día, tibio 3, frío 7). La tarjeta dice "Llamada hoy · Laura" en vez de "Llegó…"; filtros por closer
   (primer nombre) y por servicio (`?closer=`, `?servicio=`). Un lead abierto de SEGUIMIENTO no sale a otro embudo
   salvo por su dueña, `LEADS_SEGUIMIENTO_PUEDEN` (Nahuel) o admin/editor (`bloqueoSeguimiento` en actions.ts; Laura
-  sacó a Edgar el 20/oct). Registro en
+  sacó a Edgar el 20/oct). **Nombre del closer** (`nombreCloser`): primer nombre, salvo las Valentinas — "Valentina
+  Contreras" (ya no está; las 102 del Excel) y "Valentina García" (nueva, 20/oct) — nunca mezclarlas. La cuenta
+  compartida de Fathom (levelupmediapr@gmail.com) la usan Laura y Valentina García: si el título no dice quién, el
+  closer sale de la cita de Calendly del lead. Registro en
   `leads_webhook_log` (fuente fathom, evento seguimiento). La ficha muestra el bloque "Seguimiento"
   (`components/leads/seguimiento.tsx`). Arena: un lead en SEGUIMIENTO cuenta como "se presentó"
   (`resultadoCita(…, embudo)`). Excel de Lis (jun–oct, 470 filas) importado el 20/oct: CERRÓ no entra, sin estado

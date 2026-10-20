@@ -182,7 +182,7 @@ const camposTarjeta = {
   nicho: sql<string | null>`${leadsTratos.datos} ->> 'nicho'`,
   prioridad: sql<"super" | "alta" | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'prioridad'`,
   llamadaEl: sql<string | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'fecha'`,
-  closerLlamada: sql<string | null>`split_part(trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer'), ' ', 1)`,
+  closerLlamada: sql<string | null>`trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer')`,
 };
 
 function aTarjeta(r: Record<string, unknown>): TratoTarjeta {
@@ -233,10 +233,10 @@ function condRubro(rubro?: string | null) {
   return sql`${leadsTratos.datos}->>'nicho' = ${rubro}`;
 }
 
-/** Closers que aparecen en el embudo (datos.seguimiento.closer, por primer nombre): el filtro de Lis (20/oct). */
+/** Closers que aparecen en el embudo (datos.seguimiento.closer, nombre canónico de `nombreCloser`): el filtro de Lis (20/oct). */
 export async function closersDelEmbudo(embudoId: string): Promise<string[]> {
   const d = await db();
-  const r = await d.execute(sql`select distinct initcap(lower(split_part(trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer'), ' ', 1))) c
+  const r = await d.execute(sql`select distinct trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer') c
     from ${leadsTratos} where ${leadsTratos.embudoId} = ${embudoId} and coalesce(${leadsTratos.datos} -> 'seguimiento' ->> 'closer', '') <> '' order by 1`);
   return ((Array.isArray(r) ? r : ((r as { rows?: unknown[] }).rows ?? [])) as { c: string }[]).map((x) => x.c).filter(Boolean);
 }
@@ -253,7 +253,7 @@ export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | n
   const cr = condRubro(f.rubro);
   if (cr) conds.push(cr);
   // Embudo SEGUIMIENTO: por closer (primer nombre) y por servicio ofrecido en la llamada.
-  if (f.closer) conds.push(sql`lower(split_part(trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer'), ' ', 1)) = ${f.closer.toLowerCase()}`);
+  if (f.closer) conds.push(sql`lower(trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer')) = ${f.closer.toLowerCase()}`);
   if (f.servicio) conds.push(sql`coalesce(${leadsTratos.datos} -> 'seguimiento' -> 'servicios', '[]'::jsonb) @> ${JSON.stringify([f.servicio])}::jsonb`);
   if (f.q?.trim()) {
     const q = `%${f.q.trim()}%`;
@@ -695,6 +695,21 @@ export async function embudoPorNombre(marca: Marca, nombre: string): Promise<Emb
  * Crea el lead o actualiza el que ya está abierto (mismo teléfono o email en la misma marca).
  * `etapa` por nombre dentro del embudo; si el lead ya existe en otro embudo, se mueve.
  */
+/** Usuario activo por nombre. Con el primer nombre basta si es único; si se repite (Valentina García, Valentina
+ *  Rodríguez…) tiene que coincidir el nombre completo — nunca el primero que salga. */
+export async function usuarioPorNombre(nombre: string): Promise<string | null> {
+  const norm = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+  const buscado = norm(nombre);
+  const primero = buscado.split(" ")[0];
+  if (!primero) return null;
+  const d = await db();
+  const candidatos = (await d.select({ id: pulseUsers.id, nombre: pulseUsers.nombre }).from(pulseUsers).where(eq(pulseUsers.activo, true))).filter(
+    (u) => norm(u.nombre).split(" ")[0] === primero,
+  );
+  if (candidatos.length === 1) return candidatos[0].id;
+  return candidatos.find((u) => norm(u.nombre).startsWith(buscado))?.id ?? null;
+}
+
 export async function ingestarLead(v: {
   marca: Marca;
   embudo: string;
@@ -724,9 +739,7 @@ export async function ingestarLead(v: {
   const d = await db();
   let duenoId: string | null = v.duenoId ?? null;
   if (!duenoId && v.duenoNombre) {
-    const primero = v.duenoNombre.trim().split(/\s+/)[0];
-    const u = primero ? await d.query.pulseUsers.findFirst({ where: and(eq(pulseUsers.activo, true), ilike(pulseUsers.nombre, `${primero}%`)) }) : null;
-    duenoId = u?.id ?? null;
+    duenoId = await usuarioPorNombre(v.duenoNombre);
   }
   const telefono = normalizarTelefono(v.telefono);
   const email = v.email?.trim().toLowerCase() || null;

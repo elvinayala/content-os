@@ -202,10 +202,11 @@ async function usuarios() {
 // Closer real cuando no coincide con el dueño del calendario (sin asiento en
 // Pipedrive/Calendly): el deal queda del usuario del calendario, pero el campo
 // "Closer (Calendly)" y la nota dicen quién es. Laura (medio tiempo, 22/sep/2026)
-// toma las llamadas del calendario Level Up Media.
-//   CALENDLY_CLOSER_ALIAS="levelupmediapr@gmail.com=Laura"
+// tomaba las llamadas del calendario Level Up Media; desde el 16/oct/2026 Laura tiene su propio calendario y el de
+// Level Up Media (el "random" de los setters) es de Valentina García, la closer nueva.
+//   CALENDLY_CLOSER_ALIAS="levelupmediapr@gmail.com=Valentina García"
 function closerAlias(email: string): string | undefined {
-  const pares = process.env.CALENDLY_CLOSER_ALIAS ?? "levelupmediapr@gmail.com=Laura";
+  const pares = process.env.CALENDLY_CLOSER_ALIAS ?? "levelupmediapr@gmail.com=Valentina García";
   for (const par of pares.split(",")) {
     const [e, nombre] = par.split("=").map((s) => s?.trim());
     if (e?.toLowerCase() === email && nombre) return nombre;

@@ -175,11 +175,12 @@ export function transcripcionCorta(r: ReunionConTranscripcion, max = 15000): str
 // "Necesito que recoja las llamadas de Roger y Laura y las envíe al canal. Las llamadas de cierre."
 // Del webhook de EQUIPO, al canal va lo que grabaron los closers. Laura graba con la cuenta de Level
 // Up Media. Juan David y el resto NO. Override: FATHOM_CLOSERS_EMAILS (coma).
-export const CLOSERS_FATHOM = ["roger.arteaga@levelupmediapr.net", "levelupmediapr@gmail.com"];
+// Valentina García (closer nueva, 20/oct) graba con su cuenta o con la compartida de LU.
+export const CLOSERS_FATHOM = ["roger.arteaga@levelupmediapr.net", "levelupmediapr@gmail.com", "valentina.garcia@levelupmediapr.net"];
 
 // Elvin (24/sep): "todo lo que diga Roger o Laura Bernal" → también cuenta por nombre: quién grabó,
 // el título o los participantes (p. ej. la reunión "Laura Bernal" que grabó otra cuenta).
-const RE_CLOSERS = /\b(roger|laura\s+bernal)\b/i;
+const RE_CLOSERS = /\b(roger|laura\s+bernal|valentina\s+garc[ií]a)\b/i;
 
 export function esDeCloser(r: ReunionFathom, emails: string[] = CLOSERS_FATHOM): boolean {
   const grabo = (r.recorded_by?.email || "").trim().toLowerCase();
