@@ -127,6 +127,16 @@ export function sumarDias(fecha: string, dias: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Closer de una llamada de Fathom, por primer nombre como en el Excel de Lis ("Roger", "Laura"). Laura graba con la
+ *  cuenta de Level Up (levelupmediapr@gmail.com), cuyo nombre no es el de ella. */
+export function closerDeFathom(nombre: string | null | undefined, email: string | null | undefined, titulo = ""): string | null {
+  const e = (email ?? "").trim().toLowerCase();
+  if (e === "levelupmediapr@gmail.com" || /laura\s+bernal/i.test(`${nombre ?? ""} ${titulo}`)) return "Laura";
+  const primero = (nombre ?? "").trim().split(/\s+/)[0];
+  if (!primero || /^level$/i.test(primero)) return /roger/i.test(titulo) ? "Roger" : null;
+  return primero[0].toUpperCase() + primero.slice(1).toLowerCase();
+}
+
 // ─── Lo que Claude saca de la llamada de Fathom ──────────────────────────────────────────────────
 
 export interface LecturaLlamada {

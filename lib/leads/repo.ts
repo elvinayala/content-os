@@ -229,7 +229,15 @@ function condRubro(rubro?: string | null) {
   return sql`${leadsTratos.datos}->>'nicho' = ${rubro}`;
 }
 
-export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null; rubro?: string | null } = {}): Promise<TratoTarjeta[]> {
+/** Closers que aparecen en el embudo (datos.seguimiento.closer, por primer nombre): el filtro de Lis (20/oct). */
+export async function closersDelEmbudo(embudoId: string): Promise<string[]> {
+  const d = await db();
+  const r = await d.execute(sql`select distinct initcap(lower(split_part(trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer'), ' ', 1))) c
+    from ${leadsTratos} where ${leadsTratos.embudoId} = ${embudoId} and coalesce(${leadsTratos.datos} -> 'seguimiento' ->> 'closer', '') <> '' order by 1`);
+  return ((Array.isArray(r) ? r : ((r as { rows?: unknown[] }).rows ?? [])) as { c: string }[]).map((x) => x.c).filter(Boolean);
+}
+
+export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null; rubro?: string | null; closer?: string | null; servicio?: string | null } = {}): Promise<TratoTarjeta[]> {
   const d = await db();
   // Las columnas que cierran (Seguimiento ganado/perdido) muestran también sus leads cerrados.
   const cierre = (await etapasDe(embudoId)).filter((e) => estadoDeEtapa(e.nombre)).map((e) => e.id);
@@ -240,6 +248,9 @@ export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | n
   if (cf) conds.push(cf);
   const cr = condRubro(f.rubro);
   if (cr) conds.push(cr);
+  // Embudo SEGUIMIENTO: por closer (primer nombre) y por servicio ofrecido en la llamada.
+  if (f.closer) conds.push(sql`lower(split_part(trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer'), ' ', 1)) = ${f.closer.toLowerCase()}`);
+  if (f.servicio) conds.push(sql`coalesce(${leadsTratos.datos} -> 'seguimiento' -> 'servicios', '[]'::jsonb) @> ${JSON.stringify([f.servicio])}::jsonb`);
   if (f.q?.trim()) {
     const q = `%${f.q.trim()}%`;
     const dig = f.q.replace(/\D/g, "");

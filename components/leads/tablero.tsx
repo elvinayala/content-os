@@ -61,6 +61,10 @@ export function BarraLeads({
   equipoReparto = [],
   rubros = [],
   rubro = null,
+  closers = [],
+  closer = null,
+  servicios = [],
+  servicio = null,
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -79,6 +83,10 @@ export function BarraLeads({
   equipoReparto?: UsuarioUI[];
   rubros?: string[];
   rubro?: string | null;
+  closers?: string[];
+  closer?: string | null;
+  servicios?: string[];
+  servicio?: string | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -213,6 +221,35 @@ export function BarraLeads({
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+          )}
+          {/* Embudo SEGUIMIENTO (Lis, 20/oct): filtrar por closer y por servicio ofrecido */}
+          {(
+            [
+              ["closer", closers, closer, "Todos los closers"],
+              ["servicio", servicios, servicio, "Todos los servicios"],
+            ] as const
+          ).map(([k, lista, actual, todos]) =>
+            lista.length > 0 ? (
+              <DropdownMenu key={k}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 max-w-44 gap-1">
+                    <span className="truncate">{actual ?? todos}</span>
+                    <ChevronDown className="size-4 shrink-0 opacity-60" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="pulse max-h-80 w-56 overflow-y-auto" align="end">
+                  <DropdownMenuItem onSelect={() => ir({ [k]: null })} className={cn(!actual && "font-semibold")}>
+                    {todos}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {lista.map((x) => (
+                    <DropdownMenuItem key={x} onSelect={() => ir({ [k]: x })} className={cn(actual === x && "font-semibold")}>
+                      {x}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null,
           )}
           {vista !== "actividades" && rubros.length > 0 && (
             <DropdownMenu>

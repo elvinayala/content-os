@@ -6,10 +6,11 @@ import { usuarioActual } from "@/lib/pulse/auth";
 
 import { manejaEquipo } from "./equipo-datos";
 import { modoExportar } from "./exportar";
-import { accesoLeads, asegurarSemilla, equipoReparto, etapasDe, listarEmbudos, marcasConAcceso, usuariosActivos } from "./repo";
+import { accesoLeads, asegurarSemilla, closersDelEmbudo, equipoReparto, etapasDe, listarEmbudos, marcasConAcceso, usuariosActivos } from "./repo";
 import { FILTROS_FECHA, MARCAS, slugDeMarca, type FiltroFecha } from "./reglas";
 import { listarRubros } from "./rubros";
 import { SIN_RUBRO } from "./rubros-reglas";
+import { EMBUDO_SEGUIMIENTO, SERVICIOS } from "./seguimiento-reglas";
 
 /** Todo lo que necesita cualquier pantalla de Leads de una marca: acceso, embudos, etapas, gente. */
 export async function contextoLeads(marcaSlug: string, sp: Record<string, string | string[] | undefined>) {
@@ -30,6 +31,12 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
   const rubros = await listarRubros();
   const rubro = typeof sp.rubro === "string" && (sp.rubro === SIN_RUBRO || rubros.includes(sp.rubro)) ? sp.rubro : null;
   const fecha = typeof sp.fecha === "string" && FILTROS_FECHA.some((f) => f.id === sp.fecha) ? (sp.fecha as FiltroFecha) : null;
+  // Filtros de Lis (20/oct) solo en el embudo SEGUIMIENTO: closer y servicio ofrecido.
+  const esSeguimiento = !!embudo && embudo.nombre.trim().toLowerCase() === EMBUDO_SEGUIMIENTO.toLowerCase();
+  const closers = esSeguimiento ? await closersDelEmbudo(embudo.id).catch(() => []) : [];
+  const closer = typeof sp.closer === "string" && closers.some((c) => c.toLowerCase() === sp.closer!.toString().toLowerCase()) ? sp.closer : null;
+  const servicios: string[] = esSeguimiento ? [...SERVICIOS] : [];
+  const servicio = typeof sp.servicio === "string" && servicios.includes(sp.servicio) ? sp.servicio : null;
   return {
     u,
     m,
@@ -45,6 +52,10 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
     fecha,
     rubros,
     rubro,
+    closers,
+    closer,
+    servicios,
+    servicio,
     puedeEditar: u.rol === "admin" || u.rol === "editor",
     exportar: modoExportar(u, process.env.LEADS_EXPORTAR || undefined), // "directo" (Elvin) | "con_ok" (Nahuel, Aure) | null
     manejaEquipo: await manejaEquipo(u, m.marca).catch(() => false), // director de ventas, editoras, Elvin
