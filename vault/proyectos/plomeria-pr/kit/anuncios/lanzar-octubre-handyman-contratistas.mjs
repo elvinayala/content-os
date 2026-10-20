@@ -2,9 +2,10 @@
 // a los plomeros solo $10-12, lo demás a contratistas y handyman" + "$100 diarios por 3 días" en las zonas de las firmas nuevas.
 // Y luego: "no lances campañas, solamente deja todo en borrador". Por eso TODO nace EN PAUSA y sin fecha de fin.
 //
-//   R · Reclutamiento (categoría EMPLEO, Messenger + IG DM, el agente califica y agenda con Yaileen) — $45/día:
-//       Plomeros que faltan $11 (Metro Oeste $4 · Sur $4 · Este $3) · Handyman $17 · Contratistas $17
-//   C · Clientes en las zonas de las firmas nuevas — $100/día: San Juan (Metro Norte) $60 · Mayagüez/Cabo Rojo (Oeste) $40.
+//   R · Reclutamiento (categoría EMPLEO, Messenger + IG DM, el agente califica y agenda con Yaileen) — $40/día (Elvin, 19/oct):
+//       Plomeros que faltan $10 (Metro Oeste $4 · Sur $3 · Este $3) · Handyman $15 · Contratistas $15
+//   C · Clientes en las zonas de las firmas nuevas — $100/día (19/oct: Elvin lo cambió por +$15 a plomería donde hay plomeros;
+//       esta campaña queda guardada EN PAUSA para cuando firme un licenciado del Metro o del Oeste): San Juan (Metro Norte) $60 · Mayagüez/Cabo Rojo (Oeste) $40.
 //       Flyers con PRECIO FINAL (destape $168…), como lo cotiza el agente desde el 19/oct. El Oeste nace con su conjunto
 //       apagado: se prende cuando firme un plomero licenciado de allá (Porrata o Peña).
 //
@@ -60,15 +61,15 @@ const CAMPANAS = {
 const CONJUNTOS = {
   "plo-metro-oeste": { campana: "reclutamiento", nombre: "Plomeros · Metro Oeste (Bayamón)", diario: 400, pueblos: ["Bayamón", "Toa Baja", "Toa Alta", "Cataño", "Dorado"],
     titulo: "Buscamos plomero en Bayamón", mensaje: PLOMERO("Bayamón, Toa Baja, Toa Alta, Cataño o Dorado"), anuncios: { flyer: FR("plomero-bayamon-feed.png"), historia: FR("plomero-bayamon-story.png") } },
-  "plo-sur": { campana: "reclutamiento", nombre: "Plomeros · Sur (Ponce y Guayama)", diario: 400, pueblos: ["Ponce", "Juana Díaz", "Peñuelas", "Guayanilla", "Yauco", "Santa Isabel", "Coamo", "Salinas", "Guayama"],
+  "plo-sur": { campana: "reclutamiento", nombre: "Plomeros · Sur (Ponce y Guayama)", diario: 300, pueblos: ["Ponce", "Juana Díaz", "Peñuelas", "Guayanilla", "Yauco", "Santa Isabel", "Coamo", "Salinas", "Guayama"],
     titulo: "Buscamos plomero en Ponce", mensaje: PLOMERO("Ponce, Juana Díaz, Yauco, Santa Isabel o Guayama"), anuncios: { flyer: FR("plomero-ponce-feed.png"), historia: FR("plomero-ponce-story.png") } },
   "plo-este": { campana: "reclutamiento", nombre: "Plomeros · Este (Fajardo y Humacao)", diario: 300, pueblos: ["Fajardo", "Luquillo", "Río Grande", "Ceiba", "Naguabo", "Humacao", "Las Piedras"],
     titulo: "Buscamos plomero en Fajardo", mensaje: PLOMERO("Fajardo, Río Grande, Humacao o Las Piedras"), anuncios: { flyer: FR("plomero-fajardo-feed.png"), historia: FR("plomero-fajardo-story.png") } },
-  handyman: { campana: "reclutamiento", nombre: "Handyman · zonas con clientes", diario: 1700,
+  handyman: { campana: "reclutamiento", nombre: "Handyman · zonas con clientes", diario: 1500,
     pueblos: ["San Juan", "Guaynabo", "Carolina", "Trujillo Alto", "Bayamón", "Toa Baja", "Cataño", "Caguas", "Gurabo", "Juncos", "Cidra", "Cayey", "San Lorenzo", "Aguas Buenas", "Arecibo", "Hatillo", "Camuy", "Quebradillas", "Aguadilla", "Aguada", "Moca", "Isabela", "San Sebastián"],
     titulo: "Buscamos handyman", mensaje: RECLUTA("¿Eres handyman en Puerto Rico? Montar TV, armar muebles, cerraduras, puertas, cortinas, parchos de pared… En Resuelto nosotros ponemos los clientes y pagamos la publicidad; tú decides qué trabajos coges y cobras los viernes. Necesitas el registro de contratista de DACO (si no lo tienes, te explicamos cómo sacarlo). Buscamos 2 por área."),
     anuncios: { flyer: FO("oficio-handyman-feed.png"), historia: FO("oficio-handyman-story.png"), video: path.join(KIT, "videos/oficios/resuelto-oficio-handyman.mp4") } },
-  contratistas: { campana: "reclutamiento", nombre: "Contratistas de remodelación · Puerto Rico (Verified)", diario: 1700, pueblos: null,
+  contratistas: { campana: "reclutamiento", nombre: "Contratistas de remodelación · Puerto Rico (Verified)", diario: 1500, pueblos: null,
     titulo: "Nosotros vendemos el proyecto. Tú lo ejecutas.", mensaje: RECLUTA("¿Eres contratista de remodelación con registro en DACO? Baños, cocinas, pisos, puertas y ventanas, terrazas, piscinas… En Resuelto nosotros conseguimos el cliente, visitamos, cotizamos, cerramos y cobramos. A ti te llega el proyecto ya vendido, con alcance y precio cerrados, y te pagamos por etapas. Sin cuotas y sin comprar leads."),
     anuncios: { flyer: FK("k1-vendemos-el-proyecto.png"), "flyer-2": FK("k3-verified.png"), historia: FK("k4-story.png") } },
     // (sin el video de 15 s de contratistas: dice "Aplicar por WhatsApp" y menciona garantía)
