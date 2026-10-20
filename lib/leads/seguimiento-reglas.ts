@@ -221,8 +221,10 @@ export function recomendar(p: Perfil): Recomendacion {
   const prioridadPor = prioridad === "super" ? `factura ~${miles(f)}/mes` : prioridad ? alta.por : null;
   const ofreceDFY = p.servicios.includes("DFY") || (p.precioOfrecido ?? 0) >= DFY_DESDE;
   const soloBori = p.servicios.includes("Bori") && !ofreceDFY;
+  // Sobreventa solo con evidencia (factura < $10K o se ve sin capacidad), no por falta de datos.
+  const sinCapacidad = p.capacidad === "baja" || (p.facturacionMensual != null && p.facturacionMensual < FACTURACION_ALTA);
   const ofertaIncorrecta =
-    producto === "Bori" && ofreceDFY
+    producto === "Bori" && ofreceDFY && sinCapacidad
       ? `Sobreventa: se le ofreció DFY${p.precioOfrecido ? ` ($${p.precioOfrecido.toLocaleString("en-US")})` : ""} y no tiene la capacidad todavía${p.facturacionMensual ? ` (factura ~${miles(p.facturacionMensual)}/mes)` : ""}; lo indicado era Bori`
       : producto === "DFY" && soloBori
         ? "Se quedó corto: se le ofreció solo Bori y califica para DFY"

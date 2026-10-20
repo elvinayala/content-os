@@ -103,6 +103,8 @@ test("qué ofrecerle: DFY a quien tiene capacidad, Bori al pequeño, sobreventa 
   assert.equal(chiquito.producto, "Bori");
   assert.equal(chiquito.prioridad, null);
   assert.match(chiquito.ofertaIncorrecta, /^Sobreventa: se le ofreció DFY \(\$3,500\)/);
+  // Sin datos de facturación ni capacidad clara: no se acusa sobreventa.
+  assert.equal(recomendar({ ...base, capacidad: "media", servicios: ["DFY"], precioOfrecido: 3500 }).ofertaIncorrecta, null);
   const doctora = recomendar({ ...base, profesion: "salud", quiereEscalar: true });
   assert.equal(doctora.producto, "DFY");
   assert.equal(doctora.prioridad, "alta");
