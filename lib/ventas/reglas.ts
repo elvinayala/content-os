@@ -238,8 +238,10 @@ export type ResultadoCita = "presento" | "no_show" | "cancelada" | "sin_marcar";
 const normEtapa = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
 
 /** Cómo terminó una cita que ya pasó, según la etapa donde el closer dejó el lead. */
-export function resultadoCita(etapa: string, estado?: string | null): ResultadoCita {
+export function resultadoCita(etapa: string, estado?: string | null, embudo?: string | null): ResultadoCita {
   const e = normEtapa(etapa);
+  // En el embudo SEGUIMIENTO solo entra quien fue a la llamada y no compró (Fathom o Lis): se presentó.
+  if (embudo && normEtapa(embudo) === "seguimiento") return "presento";
   if (/cancel/.test(e)) return "cancelada";
   if (/no ?show|no se present/.test(e)) return "no_show";
   if (estado === "ganado") return "presento";

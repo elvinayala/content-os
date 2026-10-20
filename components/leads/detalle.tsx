@@ -10,6 +10,7 @@ import { actividadAction, actualizarLeadAction, cerrarLeadAction, completarActiv
 import { ICONO_ACTIVIDAD } from "@/components/leads/actividades";
 import { PerdidoDialog, type UsuarioUI } from "@/components/leads/dialogos";
 import { RubroLead } from "@/components/leads/rubro";
+import { SeguimientoLead } from "@/components/leads/seguimiento";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -202,6 +203,7 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
               ))}
             </select>
           </label>
+          <SeguimientoLead datos={t.datos.seguimiento} />
           {Object.keys(t.datos).length > 0 && (
             <details className="text-xs">
               <summary className="cursor-pointer text-muted-foreground">Más datos</summary>

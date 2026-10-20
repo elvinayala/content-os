@@ -8,7 +8,7 @@ import { crearAjuste, leerFicha } from "../desempeno/fichas";
 import { desempenoVentasAlias, desempenoVentasBonos, desempenoVentasDiario, desempenoVentasGoals } from "../desempeno/schema";
 import type { UsuarioRitmo } from "../desempeno/sesion";
 import { marcasConAcceso } from "../leads/repo";
-import { leadsActividades, leadsEtapas, leadsTratos } from "../leads/schema";
+import { leadsActividades, leadsEmbudos, leadsEtapas, leadsTratos } from "../leads/schema";
 import { db } from "../pulse/db";
 import { pestanasDelMes } from "../resumen-dia";
 import { ventasRegistradas } from "./registro";
@@ -188,10 +188,11 @@ export async function citasDelMes(empresa: Empresa, mes: string): Promise<Record
   try {
     const d = await db();
     const filas = await d
-      .select({ trato: leadsActividades.tratoId, closer: leadsActividades.asignadoId, cuando: leadsActividades.venceAt, etapa: leadsEtapas.nombre, estado: leadsTratos.estado })
+      .select({ trato: leadsActividades.tratoId, closer: leadsActividades.asignadoId, cuando: leadsActividades.venceAt, etapa: leadsEtapas.nombre, estado: leadsTratos.estado, embudo: leadsEmbudos.nombre })
       .from(leadsActividades)
       .innerJoin(leadsTratos, eq(leadsTratos.id, leadsActividades.tratoId))
       .innerJoin(leadsEtapas, eq(leadsEtapas.id, leadsTratos.etapaId))
+      .innerJoin(leadsEmbudos, eq(leadsEmbudos.id, leadsTratos.embudoId))
       .where(and(eq(leadsTratos.marca, empresa), eq(leadsActividades.tipo, "llamada"), gte(leadsActividades.venceAt, desde), lt(leadsActividades.venceAt, hasta)))
       .orderBy(desc(leadsActividades.venceAt));
     const vistos = new Set<string>();
@@ -200,7 +201,7 @@ export async function citasDelMes(empresa: Empresa, mes: string): Promise<Record
       if (!f.closer || vistos.has(f.trato)) continue;
       vistos.add(f.trato);
       const lista = porCloser.get(f.closer) ?? [];
-      lista.push(resultadoCita(f.etapa, f.estado));
+      lista.push(resultadoCita(f.etapa, f.estado, f.embudo));
       porCloser.set(f.closer, lista);
     }
     for (const [closer, rs] of porCloser) out[closer] = contarCitas(rs);

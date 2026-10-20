@@ -63,7 +63,7 @@ máximo 1 de cada 4 piezas sobre atención. Fuente: `vault/estilo/ai-borinquen.m
 | `creadores.md` | `scripts/creadores.mjs` | pipeline de micro-influencers |
 | `ritmo.md` | `app/ritmo/`, `lib/desempeno/`, `lib/ventas/` | Ritmo completo: ponche y su seguridad, KPIs por puesto, RR.HH./Personas, solicitudes y tiempo libre, 2FA, Carreras, Equipo digital, Noticias, Bienestar, Empresa, Arena de ventas, calendario de ausencias, cambios con aprobación, ranking y reportes, Google Calendar, PWA/push, canal ético |
 | `app-clientes-lu.md` | `lib/clientes-app/` | app de clientes de LU (app.levelupmediapr.net) |
-| `leads.md` | `app/pulse/(app)/leads/`, `lib/leads/` | Leads: embudos, WhatsApp/Timelines, grupos, exportar, equipo de ventas, reparto, adjuntos, vigía |
+| `leads.md` | `app/pulse/(app)/leads/`, `lib/leads/` | Leads: embudos, WhatsApp/Timelines, grupos, exportar, equipo de ventas, reparto, adjuntos, vigía, embudo SEGUIMIENTO de Lis (Fathom → Pulse) |
 | `formularios.md` | `app/f/`, `lib/formularios/` | formularios propios, onboarding y encuesta de LU, agenda de closers en 2 pasos |
 | `pulse.md` | `app/pulse/`, `lib/pulse/`, `drizzle/` | Pulse: modelo tipo Monday, auth y seguridad, migración, puente n8n, cuentas Meta del onboarding, automatizaciones, Mi día, ⌘K, Preguntar, tesorería, acuerdo firmado, SOPs, papelera y respaldos, accesos y 2FA |
 | `email-activecampaign.md` | `lib/activecampaign.ts` | ActiveCampaign por marca, cables, newsletter |

@@ -235,3 +235,10 @@ test("cierres: resumen por industria y género", () => {
   assert.deepEqual(r.porIndustria[0], { industria: "Solar", n: 2 });
   assert.deepEqual(r.porGenero, { hombre: 1, mujer: 2 });
 });
+
+test("show-up: el lead que pasó al embudo SEGUIMIENTO se presentó, sin importar la columna", () => {
+  assert.equal(resultadoCita("Caliente", "abierto", "SEGUIMIENTO"), "presento");
+  assert.equal(resultadoCita("Por revisar", "abierto", "Seguimiento"), "presento");
+  assert.equal(resultadoCita("Llamada agendada", "abierto", "CLOSERS"), "sin_marcar");
+  assert.equal(resultadoCita("Por contactar", "abierto", "Bori · Seguimiento"), "sin_marcar");
+});

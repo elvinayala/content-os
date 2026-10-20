@@ -614,6 +614,16 @@ async function buscarAbierto(marca: Marca, telefono: string | null, email: strin
   return t ?? null;
 }
 
+/** El lead (abierto, o en el estado pedido) con ese teléfono o alguno de esos emails, en cualquier marca (el más reciente). */
+export async function leadPorContacto(telefono: string | null, emails: string[], estado: "abierto" | "ganado" = "abierto"): Promise<Trato | null> {
+  const tel = normalizarTelefono(telefono);
+  const conds = [...(tel ? [eq(leadsTratos.telefono, tel)] : []), ...(emails.length ? [inArray(leadsTratos.email, emails.map((e) => e.trim().toLowerCase()))] : [])];
+  if (!conds.length) return null;
+  const d = await db();
+  const [t] = await d.select().from(leadsTratos).where(and(eq(leadsTratos.estado, estado), or(...conds))).orderBy(desc(leadsTratos.updatedAt)).limit(1);
+  return t ?? null;
+}
+
 export async function embudoPorNombre(marca: Marca, nombre: string): Promise<Embudo | null> {
   await asegurarSemilla(marca);
   const lista = await listarEmbudos(marca);
@@ -643,14 +653,16 @@ export async function ingestarLead(v: {
   forzarDueno?: boolean;
   /** true = el nombre que trae manda sobre el de un lead de WhatsApp (Calendly: la persona escribe su nombre). */
   nombreManda?: boolean;
+  /** Dueño por id (gana sobre `duenoNombre`). */
+  duenoId?: string | null;
 }): Promise<{ id: string; nuevo: boolean }> {
   const emb = await embudoPorNombre(v.marca, v.embudo);
   if (!emb) throw new Error("sin-embudos");
   const etapas = await etapasDe(emb.id);
   const etapa = (v.etapa && etapas.find((e) => clave(e.nombre) === clave(v.etapa!))) || etapas[0];
   const d = await db();
-  let duenoId: string | null = null;
-  if (v.duenoNombre) {
+  let duenoId: string | null = v.duenoId ?? null;
+  if (!duenoId && v.duenoNombre) {
     const primero = v.duenoNombre.trim().split(/\s+/)[0];
     const u = primero ? await d.query.pulseUsers.findFirst({ where: and(eq(pulseUsers.activo, true), ilike(pulseUsers.nombre, `${primero}%`)) }) : null;
     duenoId = u?.id ?? null;

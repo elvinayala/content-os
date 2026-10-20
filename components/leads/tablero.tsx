@@ -693,6 +693,8 @@ const ORIGEN: Record<string, { texto: string; color: string }> = {
   quiz: { texto: "Quiz", color: "#a855f7" },
   formulario: { texto: "Formulario", color: "#0ea5e9" },
   manual: { texto: "Manual", color: "#94a3b8" },
+  fathom: { texto: "Fathom", color: "#7c3aed" },
+  "excel-lis": { texto: "Excel de Lis", color: "#16a34a" },
 };
 
 const COLORES_AVATAR = ["#08a742", "#0ea5e9", "#6366f1", "#a855f7", "#ec4899", "#f59e0b", "#f97316", "#14b8a6", "#64748b"];

@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { after, NextRequest, NextResponse } from "next/server";
 
 import { CLOSERS_FATHOM, esDeCloser, esOnboarding, esPrivadaDeElvin, PRIVADOS_FATHOM, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
+import { seguimientoDesdeFathom } from "@/lib/leads/seguimiento";
 import { onboardingDesdeFathom } from "@/lib/max/onboarding";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
@@ -131,6 +132,10 @@ export async function POST(req: NextRequest) {
   // Onboarding de un cliente (Elvin, 24/sep): Max arranca al instante, sin esperar a Slack.
   if (tomada[0].intentos === 1 && onboarding) {
     after(() => onboardingDesdeFathom(r).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
+  }
+  // Llamada de cierre que no compró → embudo SEGUIMIENTO de Lis en Leads (Elvin, 20/oct). Una sola vez por llamada.
+  if (tomada[0].intentos === 1 && deCloser && !onboarding) {
+    after(() => seguimientoDesdeFathom(r).catch((e) => console.error("[fathom → seguimiento]", e instanceof Error ? e.message : e)));
   }
   // Los onboardings del equipo son solo para Max. Al canal de resúmenes: SOLO las llamadas de cierre de
   // Roger y Laura (Elvin, 24/sep). Las de Elvin nunca (ver privacidad arriba).

@@ -79,6 +79,20 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   `ok exp <código>` / `no exp <código>` en ese Telegram (el puente llama `POST /api/leads/exportaciones/decidir`, CRON_SECRET)
   o `nico ok exp <código>` en Slack. `/solicitudes` de Nico también las lista.
 - **Nombre de la cita manda** (14/oct, Ruth del Valle salía como "Experience Innovation Claro Dealer"): al agendar en Calendly, un lead de WhatsApp toma el nombre que la persona escribió y el del perfil pasa a negocio si estaba vacío (`renombrePorAgenda`, `nombreManda` en `ingestarLead`; tests `tests/leads-renombre.test.mjs`).
+- **Embudo SEGUIMIENTO de Lis** (20/oct, Elvin): los que fueron a llamada con un closer y NO compraron, uno por
+  marca (el "Seguimiento" vacío de LU se renombró; el de AIB se creó). Columnas: Por revisar · Caliente · Tibio ·
+  Frío · Nueva cita · Descansando (15-30 días) · Mensaje final (ganado/perdido siguen siendo el estado). Dueña: Lis
+  (`LEADS_SEGUIMIENTO_EMAIL`); los closers no escriben antes que ella. **Fathom → SEGUIMIENTO automático**: en
+  `/api/fathom`, cada llamada de cierre (Roger/Laura, primer intento) corre `seguimientoDesdeFathom` en `after()`:
+  Sonnet (`LEADS_SEGUIMIENTO_MODEL`) lee resumen + transcripción → si no compró, mueve el lead que ya existía (por
+  email del invitado o teléfono, en cualquier marca; si ya está ganado o es cliente, nada) o lo crea, en la columna
+  de su temperatura, con `datos.seguimiento` (closer, servicio, objeción, feedback, próximo paso, presión, link) +
+  nota en el historial + actividad "whatsapp" para Lis (caliente 1 día, tibio 3, frío 7). Registro en
+  `leads_webhook_log` (fuente fathom, evento seguimiento). La ficha muestra el bloque "Seguimiento"
+  (`components/leads/seguimiento.tsx`). Arena: un lead en SEGUIMIENTO cuenta como "se presentó"
+  (`resultadoCita(…, embudo)`). Excel de Lis (jun–oct, 470 filas) importado el 20/oct: CERRÓ no entra, sin estado
+  de antes de septiembre → perdido en "Mensaje final", el resto en su temperatura; industria y objeción por Haiku.
+  Código: `lib/leads/seguimiento{,-reglas}.ts`, tests `tests/leads-seguimiento.test.mjs`.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
