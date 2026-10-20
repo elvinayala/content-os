@@ -21,7 +21,8 @@ import {
 } from "@/lib/leads/repo";
 import { slugDeMarca, type Marca } from "@/lib/leads/reglas";
 import { trasNotaDeSeguimiento } from "@/lib/leads/seguimiento";
-import { leadsActividades, leadsEmbudos, leadsTratos } from "@/lib/leads/schema";
+import { leadsActividades, leadsEmbudos, leadsEtapas, leadsTratos } from "@/lib/leads/schema";
+import { EMBUDO_SEGUIMIENTO } from "@/lib/leads/seguimiento-reglas";
 import { enviarWhatsapp } from "@/lib/leads/timelines";
 import { eq, sql } from "drizzle-orm";
 
@@ -94,9 +95,24 @@ export async function crearLeadAction(v: { marca: Marca; embudoId: string; etapa
   return { ok: true, id: t.id };
 }
 
+// Elvin (20/oct): los closers no le escriben al lead antes que Lis. Un lead abierto de SEGUIMIENTO solo sale a otro
+// embudo por su dueña, los de LEADS_SEGUIMIENTO_PUEDEN (Nahuel) o admin/editor; las citas nuevas van a "Nueva cita".
+async function bloqueoSeguimiento(t: { embudoId: string; duenoId: string | null; estado: string }, etapaId: string, u: { id: string; email: string; rol: string }): Promise<string | null> {
+  if (t.estado !== "abierto" || u.id === t.duenoId || u.rol === "admin" || u.rol === "editor") return null;
+  const pueden = (process.env.LEADS_SEGUIMIENTO_PUEDEN || "nahueltissera46@gmail.com,nahuel.tissera@levelupmediapr.net").toLowerCase().split(",");
+  if (pueden.includes(u.email.toLowerCase())) return null;
+  const d = await db();
+  const [destino] = await d.select({ embudoId: leadsEtapas.embudoId }).from(leadsEtapas).where(eq(leadsEtapas.id, etapaId)).limit(1);
+  if (!destino || destino.embudoId === t.embudoId) return null;
+  const [origen] = await d.select({ nombre: leadsEmbudos.nombre }).from(leadsEmbudos).where(eq(leadsEmbudos.id, t.embudoId)).limit(1);
+  return origen?.nombre.trim().toUpperCase() === EMBUDO_SEGUIMIENTO ? "Este lead lo trabaja Lis en SEGUIMIENTO. Si volvió a agendar, pídele a Lis que lo pase a \"Nueva cita\"." : null;
+}
+
 export async function moverLeadAction(tratoId: string, etapaId: string, antesId: string | null, despuesId: string | null): Promise<Res> {
   const p = await puedeTrato(tratoId);
   if (!p) return { ok: false, error: "Sin acceso" };
+  const no = await bloqueoSeguimiento(p.t, etapaId, p.u);
+  if (no) return { ok: false, error: no };
   const r = await moverTrato(tratoId, etapaId, antesId, despuesId, p.u.id);
   refrescar(p.t.marca, tratoId);
   return r;
