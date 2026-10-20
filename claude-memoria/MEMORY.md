@@ -84,6 +84,7 @@
 - [WhatsApp del negocio sin avisos internos](whatsapp-negocio-no-avisos.md) — avisos internos solo por Telegram/Slack
 - [Ritmo — asistencia y desempeño](ritmo-desempeno.md) — ritmo.levelupmediapr.net: ponche, KPIs, RR.HH., 2FA, Carreras, Arena de ventas (planilla de chatters + rangos, 6/oct); pase /api/pase entre Leads/Ritmo/Pulse
 - [Leads — reemplazo de Pipedrive](leads-crm.md) — /pulse/leads con Timelines; historial de Pipedrive archivado, no cargado
+- [Leads — SEGUIMIENTO de Lis](leads-seguimiento-lis.md) — 20/oct: embudo por marca para los que fueron a llamada y no compraron; Fathom los pasa solo; closers no escriben antes que Lis
 - [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — llave de envío en la base; vigilar el 1er envío real
 - [Formularios propios (Typeform de la casa)](formularios-propios.md) — /f/<slug> en prod; falta que closers dejen Typeform y cancelar
 - [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic, top 25 por LTV; Carilin dirige; venues para el 3/oct
