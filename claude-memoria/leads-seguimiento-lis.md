@@ -13,6 +13,8 @@ Entra quien fue a llamada con un closer y no compró. Fathom lo hace automático
 Los closers no le escriben al lead antes que Lis: por eso la dueña pasa a ser ella.
 Leads quemados por presión descansan 15-30 días. Testimonios cada 15 días; un mensaje final cierra el proceso.
 
+Regla de oferta (Elvin, 20/oct): DFY ($3,000–$4,000+) solo para quien factura $10K+/mes o tiene capacidad y quiere escalar; al emprendedor pequeño, Bori Pro $99 / Agencia $249. A quien califica para DFY, Lis le ofrece trato especial: descuento, financiamiento o plan de pago. $20K+/mes = súper prioritario y aviso a Elvin. Medir la sobreventa de los closers.
+
 **Why:** Lis llevaba ~200 seguimientos al mes a mano, sin conexión con el CRM. Roger les escribía antes que ella.
 
 **How to apply:** cualquier cambio a SEGUIMIENTO, Fathom o el show-up de la Arena, leer `docs/contexto/leads.md` (sección SEGUIMIENTO). Ver [[leads-crm]].
