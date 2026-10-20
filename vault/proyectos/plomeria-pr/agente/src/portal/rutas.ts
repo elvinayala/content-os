@@ -461,16 +461,40 @@ portal.post("/portal/plomeros/:id/estado", requerir(), express.json(), (req, res
 portal.post("/portal/plomeros/:id/reenviar", requerir(), async (req, res) => { const p = plomeros().find((x) => x.id === req.params.id); if (!p) return res.json({ ok: false }); const ok = await avisarAlTelefono(p.whatsapp, bienvenida(p.nombre, linkPortal(p.id, config.urlPublica))).catch(() => false); res.json({ ok, motivo: ok ? undefined : "No se pudo entregar. Copia el link y mándaselo tú." }); });
 
 // ── Vacantes (candidatos a plomero; lo lleva Yaileen) ──
-const ESTADO_CAND: Record<string, string> = { nuevo: "Nuevo", verificando: "Verificando", entrevista: "Entrevista", prueba: "Prueba", activo: "Activo", descartado: "Descartado", "lista-espera": "Lista de espera" };
+// 20/oct/2026 (Aure): "una opción para editar las vacantes… moverlos agendado, no contesta, contactado". Cada fila trae su
+// selector; "Agendado" es el estado de entrevista de siempre (con fecha opcional, hora de PR). Queda quién lo movió.
+const ESTADO_CAND: Record<string, string> = { nuevo: "Nuevo", contactado: "Contactado", "no-contesta": "No contesta", entrevista: "Agendado", verificando: "Verificando", prueba: "Prueba", activo: "Activo", descartado: "Descartado", "lista-espera": "Lista de espera" };
+const isoLocalPR = (iso?: string) => (iso ? new Date(new Date(iso).getTime() - 4 * 3600_000).toISOString().slice(0, 16) : "");
 portal.get("/portal/vacantes", requerir(), (req, res) => {
   const yo = (req as any).yo; const q = norm(req.query.q); const est = String(req.query.estado ?? "");
   const cs = almacen.candidatos().filter((c) => (!est || c.estado === est) && (!q || norm([c.nombre, c.municipio, c.whatsapp, c.nivelLicencia, c.oficio].join(" ")).includes(q))).sort((a, b) => b.creado.localeCompare(a.creado));
   const cuenta = (k: string) => almacen.candidatos().filter((c) => c.estado === k).length;
   const filtros = Object.entries(ESTADO_CAND).map(([k, t]) => `<a class="tag ${est === k ? "info" : ""}" href="/portal/vacantes?estado=${k}">${t} · ${cuenta(k)}</a>`).join(" ");
-  const filas = cs.map((c) => `<tr class="click" onclick="location='/portal/clientes/${u(c.contactoId)}'"><td><b>${e(c.nombre)}</b><div class="muted">${e(c.whatsapp)}</div></td><td>${e(c.oficio ?? "plomero")} · ${e(c.nivelLicencia)}${c.numeroLicencia ? " #" + e(c.numeroLicencia) : ""}<div class="muted">${e(c.experiencia ?? "")}</div></td><td>${e(c.municipio)}<div class="muted">${e(territorioDe(c.municipio) ?? "fuera de zona")}</div></td><td>${e(c.disponibilidad)}</td><td><span class="tag">${e(ESTADO_CAND[c.estado] ?? c.estado)}</span>${c.entrevista ? `<div class="muted">entrevista ${f(c.entrevista)}</div>` : ""}</td><td>${fd(c.creado)}</td></tr>`).join("");
-  res.type("html").send(pagina("Vacantes", yo, "vacantes", `<h1>Vacantes · candidatos</h1><p class="sub">Plomeros y oficios que aplicaron. Reclutamiento lo lleva Yaileen; las entrevistas están en el calendario de GHL.</p>
+  const selector = (c: (typeof cs)[number]) => {
+    const ult = c.cambios?.at(-1);
+    return `<td onclick="event.stopPropagation()"><select onchange="moverCand('${e(c.id)}',this)">${Object.entries(ESTADO_CAND).map(([k, t]) => `<option value="${k}"${c.estado === k ? " selected" : ""}>${t}</option>`).join("")}</select>
+<div class="cita" style="margin-top:6px;${c.estado === "entrevista" ? "" : "display:none"}"><input type="datetime-local" value="${isoLocalPR(c.entrevista)}" onchange="moverCand('${e(c.id)}',this.closest('td').querySelector('select'))" style="font-size:12px"></div>
+${c.entrevista && c.estado === "entrevista" ? `<div class="muted">entrevista ${f(c.entrevista)}</div>` : ""}${ult ? `<div class="muted">movido por ${e(ult.por)} · ${fd(ult.en)}</div>` : ""}</td>`;
+  };
+  const filas = cs.map((c) => `<tr class="click" onclick="location='/portal/clientes/${u(c.contactoId)}'"><td><b>${e(c.nombre)}</b><div class="muted">${e(c.whatsapp)}</div></td><td>${e(c.oficio ?? "plomero")} · ${e(c.nivelLicencia)}${c.numeroLicencia ? " #" + e(c.numeroLicencia) : ""}<div class="muted">${e(c.experiencia ?? "")}</div></td><td>${e(c.municipio)}<div class="muted">${e(territorioDe(c.municipio) ?? "fuera de zona")}</div></td><td>${e(c.disponibilidad)}</td>${selector(c)}<td>${fd(c.creado)}</td></tr>`).join("");
+  res.type("html").send(pagina("Vacantes", yo, "vacantes", `<h1>Vacantes · candidatos</h1><p class="sub">Plomeros y oficios que aplicaron. Reclutamiento lo lleva Yaileen; las entrevistas están en el calendario de GHL. Cambia el estado de cada uno en su columna (se guarda solo).</p>
 <form class="card row"><input name="q" value="${e(req.query.q ?? "")}" placeholder="Nombre, pueblo, teléfono, licencia" style="flex:1"><button class="btn">Buscar</button><a class="btn l" href="/portal/vacantes">Todos</a></form><p style="margin:0 0 12px">${filtros}</p>
-<div class="card"><table><tr><th>Candidato</th><th>Oficio · licencia</th><th>Pueblo</th><th>Disponibilidad</th><th>Estado</th><th>Aplicó</th></tr>${filas || '<tr><td colspan="6" class="muted">No hay candidatos con ese filtro.</td></tr>'}</table></div>`));
+<div class="card"><table><tr><th>Candidato</th><th>Oficio · licencia</th><th>Pueblo</th><th>Disponibilidad</th><th>Estado</th><th>Aplicó</th></tr>${filas || '<tr><td colspan="6" class="muted">No hay candidatos con ese filtro.</td></tr>'}</table></div>
+<script>function moverCand(id,sel){const td=sel.closest('td');const cita=td.querySelector('.cita');cita.style.display=sel.value==='entrevista'?'':'none';const fecha=sel.value==='entrevista'?cita.querySelector('input').value:'';
+fetch('/portal/vacantes/'+encodeURIComponent(id)+'/estado',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({estado:sel.value,fecha})}).then(r=>r.json()).then(j=>{if(!j.ok)return alert(j.motivo||'No se pudo guardar');sel.style.outline='2px solid #1F9D6B';setTimeout(()=>sel.style.outline='',1200)}).catch(()=>alert('No se pudo guardar'))}</script>`));
+});
+portal.post("/portal/vacantes/:id/estado", requerir(), express.json(), (req, res) => {
+  const yo = (req as any).yo; const estado = String(req.body?.estado ?? ""); const fecha = String(req.body?.fecha ?? "");
+  if (!(estado in ESTADO_CAND)) return res.json({ ok: false, motivo: "Ese estado no existe." });
+  const c = almacen.candidatos().find((x) => x.id === req.params.id); if (!c) return res.json({ ok: false, motivo: "No encontré ese candidato." });
+  let entrevista = c.entrevista;
+  if (estado === "entrevista" && fecha) {
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(fecha) || isNaN(Date.parse(fecha + ":00-04:00"))) return res.json({ ok: false, motivo: "La fecha no es válida." });
+    entrevista = new Date(fecha + ":00-04:00").toISOString(); // hora de Puerto Rico (sin horario de verano)
+  }
+  const cambios = [...(c.cambios ?? []), { de: c.estado, a: estado, por: yo?.nombre ?? "equipo", en: new Date().toISOString() }].slice(-20);
+  almacen.guardarCandidato({ ...c, estado: estado as any, entrevista, ...(entrevista !== c.entrevista ? { recordado: undefined } : {}), cambios });
+  res.json({ ok: true });
 });
 
 // ── Contratistas (División Proyectos) ──

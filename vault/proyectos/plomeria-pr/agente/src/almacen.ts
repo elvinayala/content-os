@@ -135,7 +135,10 @@ export interface Candidato {
   ghlCitaId?: string;      // la cita en el calendario de entrevistas de GHL
   avisadoSeguimiento?: string; // cuándo se le avisó a la reclutadora que es un gran candidato sin cita
   recordado?: string;      // cuándo se le mandó el recordatorio de la entrevista
-  estado: "nuevo" | "verificando" | "entrevista" | "prueba" | "activo" | "descartado" | "lista-espera";
+  // "contactado" y "no-contesta" (20/oct/2026, Aure): el equipo mueve a mano el seguimiento desde Vacantes.
+  estado: "nuevo" | "contactado" | "no-contesta" | "verificando" | "entrevista" | "prueba" | "activo" | "descartado" | "lista-espera";
+  /** Quién lo movió a mano y cuándo (portal → Vacantes). */
+  cambios?: { de: string; a: string; por: string; en: string }[];
   creado: string;
 }
 
