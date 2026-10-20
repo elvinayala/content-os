@@ -13,7 +13,7 @@ import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, FILTROS_FECHA, horaLlegada, normalizarReparto, type FiltroFecha, type Marca } from "@/lib/leads/reglas";
+import { diaCorto, diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, FILTROS_FECHA, horaLlegada, normalizarReparto, type FiltroFecha, type Marca } from "@/lib/leads/reglas";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +36,8 @@ export interface TarjetaUI {
   creadoEl: string;
   nicho: string | null;
   prioridad?: "super" | "alta" | null;
+  llamadaEl?: string | null;
+  closerLlamada?: string | null;
 }
 
 const usd = (n: number) => (n ? `$${n.toLocaleString("en-US")}` : "$0");
@@ -806,7 +808,8 @@ function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaU
             {t.negocio || t.nicho ? <p className="mt-0.5 truncate text-xs text-muted-foreground">{t.negocio ?? t.nicho}</p> : null}
             <p className="mt-1 flex items-center gap-1 text-[10.5px] text-muted-foreground/80" title={new Date(t.creadoEl).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico" })}>
               {origen ? <span className="size-1.5 shrink-0 rounded-full" style={{ background: origen.color }} title={origen.texto} /> : null}
-              Llegó {horaLlegada(t.creadoEl, ahora)}
+              {/* SEGUIMIENTO: lo que importa es cuándo fue la llamada con el closer, no cuándo entró el lead (Lis, 20/oct) */}
+              {t.llamadaEl ? `Llamada ${diaCorto(t.llamadaEl, ahora)}${t.closerLlamada ? ` · ${t.closerLlamada}` : ""}` : `Llegó ${horaLlegada(t.creadoEl, ahora)}`}
             </p>
           </div>
         </div>

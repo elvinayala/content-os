@@ -9,10 +9,10 @@ import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
 
 import { slugDeMarca, type Marca } from "./reglas";
-import { asegurarEtapa, cerrarTrato, clienteActual, crearActividad, crearEmbudo, embudoPorNombre, ingestarLead, leadPorContacto, registrarWebhook } from "./repo";
+import { actividadesAbiertas, asegurarEtapa, cerrarCitasPasadas, cerrarTrato, clienteActual, completarActividad, contarActividades, crearActividad, crearEmbudo, embudoPorNombre, ingestarLead, leadPorContacto, obtenerTrato, registrarWebhook } from "./repo";
 import { listarRubros } from "./rubros";
 import { rubroDeCatalogo } from "./rubros-reglas";
-import { closerDeFathom, DIAS_PRIMER_CONTACTO, recomendar, EMBUDO_SEGUIMIENTO, ETAPA_PERDIDO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, OBJECIONES, SERVICIOS, sumarDias, vaASeguimiento, type LecturaLlamada } from "./seguimiento-reglas";
+import { closerDeFathom, esContactoPendiente, PRIMER_CONTACTO, recomendar, siguienteTrasNota, sumarDiasHabiles, temperaturaDe, VOLVER_A_LLAMAR, EMBUDO_SEGUIMIENTO, ETAPA_PERDIDO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, OBJECIONES, SERVICIOS, vaASeguimiento, type LecturaLlamada } from "./seguimiento-reglas";
 
 // Fathom → SEGUIMIENTO (Elvin, 20/oct/2026): "Luego de que cierra la llamada, que Fathom tiene ya la
 // información, pasar el contacto a Pulse, que se pase automático." Cuando un closer (Roger, Laura)
@@ -98,8 +98,9 @@ async function leerLlamada(r: ReunionConTranscripcion): Promise<LecturaLlamada |
   return l;
 }
 
-/** 10:00 AM hora de PR, `dias` después de hoy. */
-const diaALas10 = (dias: number) => new Date(`${sumarDias(new Date().toISOString().slice(0, 10), dias)}T10:00:00-04:00`);
+/** 10:00 AM hora de PR, `dias` hábiles después de hoy (sábado/domingo → lunes). */
+const hoyPR = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" });
+const diaALas10 = (dias: number) => new Date(`${sumarDiasHabiles(hoyPR(), dias)}T10:00:00-04:00`);
 
 /** Llamada de cierre de Fathom → lead en SEGUIMIENTO (si no compró). Devuelve qué pasó, para el registro. */
 export async function seguimientoDesdeFathom(r: ReunionFathom): Promise<string> {
@@ -215,10 +216,32 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
     if (nuevo) await cerrarTrato(id, "perdido", lectura.razon ?? lectura.objecion ?? "Dijo que no", lis);
     return `${nuevo ? "nuevo" : "movido"} ${id} → ${etapa}`;
   }
-  // Tipo "whatsapp", no "llamada": las actividades "llamada" son las citas de los closers en la Arena.
+  // La cita del closer ya ocurrió: deja de salir como "vencida" en la tarjeta.
+  await cerrarCitasPasadas(id);
+  // Lis (20/oct): al otro día de la demo lo llama para indagar la objeción real; con su nota se pone la próxima fecha
+  // (trasNotaDeSeguimiento). Tipo "whatsapp", no "llamada": las "llamada" son las citas de los closers en la Arena.
   if (lis) {
-    const dias = lectura.temperatura && etapa !== "Por revisar" ? DIAS_PRIMER_CONTACTO[lectura.temperatura] : 1;
-    await crearActividad(id, { tipo: "whatsapp", asunto: `Seguimiento ${etapa.toLowerCase()}${lectura.proximoPaso ? ` · ${lectura.proximoPaso}` : ""}`, venceAt: diaALas10(dias), asignadoId: lis }, lis);
+    await crearActividad(id, { tipo: "whatsapp", asunto: `${PRIMER_CONTACTO}${lectura.proximoPaso ? ` · ${lectura.proximoPaso}` : ""}`.slice(0, 200), venceAt: diaALas10(1), asignadoId: lis }, lis);
   }
   return `${nuevo ? "nuevo" : "movido"} ${id} → ${etapa}`;
+}
+
+/**
+ * Nota en un lead de SEGUIMIENTO con un primer contacto pendiente (la 1ª llamada o un "volver a llamar"): ese
+ * contacto queda hecho y se agenda el próximo según lo que dice la nota (Lis, 20/oct: "ya con mi nota, sea algo de
+ * la conversación o un no responde, le reajuste la fecha del próximo seguimiento").
+ */
+export async function trasNotaDeSeguimiento(tratoId: string, nota: string, autorId: string): Promise<string | null> {
+  const det = await obtenerTrato(tratoId);
+  if (!det) return null;
+  const embudo = det.embudos.find((e) => e.id === det.trato.embudoId);
+  if (!embudo || embudo.nombre.trim().toLowerCase() !== EMBUDO_SEGUIMIENTO.toLowerCase() || det.trato.estado !== "abierto") return null;
+  const pendiente = (await actividadesAbiertas(tratoId)).find((a) => esContactoPendiente(a.asunto));
+  if (!pendiente) return null;
+  await completarActividad(pendiente.id, true);
+  const temp = temperaturaDe((det.trato.datos as { seguimiento?: { temperatura?: string } } | null)?.seguimiento?.temperatura) ?? temperaturaDe(det.etapas.find((e) => e.id === det.trato.etapaId)?.nombre);
+  const sig = siguienteTrasNota({ nota, temperatura: temp, sinRespuestaPrevias: await contarActividades(tratoId, VOLVER_A_LLAMAR) });
+  const venceAt = diaALas10(sig.dias);
+  await crearActividad(tratoId, { tipo: "whatsapp", asunto: sig.asunto, venceAt, asignadoId: pendiente.asignadoId ?? autorId }, autorId);
+  return `${sig.asunto} · ${venceAt.toISOString().slice(0, 10)}`;
 }

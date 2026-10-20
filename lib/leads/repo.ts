@@ -35,6 +35,8 @@ export interface TratoTarjeta {
   creadoEl: string;
   nicho: string | null;
   prioridad: "super" | "alta" | null;
+  llamadaEl: string | null;
+  closerLlamada: string | null;
 }
 
 // ---------- Acceso ------------------------------------------------------------------------------
@@ -179,6 +181,8 @@ const camposTarjeta = {
   creadoEl: leadsTratos.createdAt,
   nicho: sql<string | null>`${leadsTratos.datos} ->> 'nicho'`,
   prioridad: sql<"super" | "alta" | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'prioridad'`,
+  llamadaEl: sql<string | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'fecha'`,
+  closerLlamada: sql<string | null>`split_part(trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer'), ' ', 1)`,
 };
 
 function aTarjeta(r: Record<string, unknown>): TratoTarjeta {
@@ -613,6 +617,29 @@ export async function completarActividad(actividadId: string, hecha: boolean) {
     await recalcularProxima(a.tratoId);
   }
   return a;
+}
+
+/** La cita del closer ya pasó (Fathom la grabó): sus "llamada" pendientes vencidas quedan hechas. */
+export async function cerrarCitasPasadas(tratoId: string) {
+  const d = await db();
+  const n = await d
+    .update(leadsActividades)
+    .set({ hecha: true, hechaAt: new Date() })
+    .where(and(eq(leadsActividades.tratoId, tratoId), eq(leadsActividades.tipo, "llamada"), eq(leadsActividades.hecha, false), lt(leadsActividades.venceAt, new Date())))
+    .returning({ id: leadsActividades.id });
+  if (n.length) await recalcularProxima(tratoId);
+}
+
+/** Actividades pendientes de un lead (para el primer contacto de SEGUIMIENTO). */
+export async function actividadesAbiertas(tratoId: string) {
+  const d = await db();
+  return d.select().from(leadsActividades).where(and(eq(leadsActividades.tratoId, tratoId), eq(leadsActividades.hecha, false))).orderBy(asc(leadsActividades.venceAt));
+}
+
+export async function contarActividades(tratoId: string, prefijo: string): Promise<number> {
+  const d = await db();
+  const [r] = await d.select({ n: sql<number>`count(*)::int` }).from(leadsActividades).where(and(eq(leadsActividades.tratoId, tratoId), ilike(leadsActividades.asunto, `${prefijo}%`), eq(leadsActividades.hecha, true)));
+  return r?.n ?? 0;
 }
 
 /** Seguimientos pendientes (vencidos + hoy + próximos 7 días) para la pantalla de Actividades. */

@@ -75,6 +75,15 @@ export function horaLlegada(fecha: Date | string, ahora = new Date()): string {
   return `${fechaCorta} ${hora}`;
 }
 
+/** "hoy" / "ayer" / "8 sep" para una fecha YYYY-MM-DD (la llamada del closer en la tarjeta de SEGUIMIENTO). */
+export function diaCorto(fecha: string, ahora = new Date()): string {
+  const dia = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" });
+  const f = fecha.slice(0, 10);
+  if (f === dia(ahora)) return "hoy";
+  if (f === dia(new Date(ahora.getTime() - 86_400_000))) return "ayer";
+  return new Date(`${f}T12:00:00Z`).toLocaleDateString("es-PR", { timeZone: "UTC", day: "numeric", month: "short" }).replace(".", "");
+}
+
 // Filtro "ver leads de hoy" (29/sep, Nahuel por el grupo de ventas: "¿cómo se filtra por hoy?").
 // Puerto Rico no tiene horario de verano (siempre UTC-4), así que el borde del día es fijo.
 export type FiltroFecha = "hoy" | "ayer" | "semana" | "mes";

@@ -117,6 +117,33 @@ export function destinoExcel(estado: unknown, fechaDemo: string | null, vigenteD
   return viejo ? { etapa: "Mensaje final", estado: "perdido" } : { etapa: "Por revisar", estado: "abierto" };
 }
 
+// Primer contacto de Lis (20/oct): al otro día de la demo lo llama para indagar la objeción real. Con su nota
+// (conversación o "no responde") el sistema le pone la fecha del próximo seguimiento.
+export const PRIMER_CONTACTO = "1ª llamada: indagar la objeción real";
+export const VOLVER_A_LLAMAR = "Volver a llamar (no respondió)";
+export const INTENTOS_SIN_RESPUESTA = 3;
+
+export const esContactoPendiente = (asunto: string) => asunto.startsWith(PRIMER_CONTACTO) || asunto.startsWith(VOLVER_A_LLAMAR);
+
+export function noRespondio(nota: string): boolean {
+  return /\bno (me )?(contest|respond|cog|atiend)|\bbuz[oó]n\b|sin respuesta|no hubo respuesta|no localiz|apagado|me colg[oó]|\bnc\b/i.test(sinTildes(nota));
+}
+
+/** Después de la nota de Lis: si no respondió, volver a llamar al otro día (hasta 3 veces); si habló, el próximo
+ *  seguimiento según la temperatura (caliente 1 día, tibio 3, frío 7). */
+export function siguienteTrasNota(v: { nota: string; temperatura: Temperatura | null; sinRespuestaPrevias: number }): { asunto: string; dias: number } {
+  if (noRespondio(v.nota) && v.sinRespuestaPrevias < INTENTOS_SIN_RESPUESTA) return { asunto: VOLVER_A_LLAMAR, dias: 1 };
+  const t = v.temperatura ?? "tibio";
+  return { asunto: `Seguimiento ${ETAPA_DE_TEMPERATURA[t].toLowerCase()}`, dias: DIAS_PRIMER_CONTACTO[t] };
+}
+
+/** Suma días y, si cae en sábado o domingo, lo pasa al lunes (Lis trabaja L-V). */
+export function sumarDiasHabiles(fecha: string, dias: number): string {
+  const f = sumarDias(fecha, dias);
+  const dow = new Date(`${f}T12:00:00Z`).getUTCDay();
+  return dow === 6 ? sumarDias(f, 2) : dow === 0 ? sumarDias(f, 1) : f;
+}
+
 export function diasEntre(a: string, b: string): number {
   return Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86_400_000);
 }

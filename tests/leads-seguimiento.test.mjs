@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { estadoDeEtapa } from "../lib/leads/reglas.ts";
-import { closerDeFathom, recomendar, altaIntencion, montoDe, destinoExcel, etapaDeLectura, fechaExcel, leerLecturaLlamada, marcaExcel, objecionDe, serviciosDe, telefonoExcel, temperaturaDe, vaASeguimiento } from "../lib/leads/seguimiento-reglas.ts";
+import { noRespondio, siguienteTrasNota, sumarDiasHabiles, closerDeFathom, recomendar, altaIntencion, montoDe, destinoExcel, etapaDeLectura, fechaExcel, leerLecturaLlamada, marcaExcel, objecionDe, serviciosDe, telefonoExcel, temperaturaDe, vaASeguimiento } from "../lib/leads/seguimiento-reglas.ts";
 
 test("fechas del Excel de Lis", () => {
   assert.equal(fechaExcel("20/octubre/2026"), "2026-10-20");
@@ -119,4 +119,17 @@ test("closer de Fathom por primer nombre (Laura graba con el gmail de LU)", () =
   assert.equal(closerDeFathom("Level Up Media", "levelupmediapr@gmail.com"), "Laura");
   assert.equal(closerDeFathom("Level Up Media", "otra@x.com", "Llamada Roger x Ana"), "Roger");
   assert.equal(closerDeFathom(null, null), null);
+});
+
+test("después de la nota de Lis: no responde = volver a llamar mañana (3 veces); habló = según temperatura", () => {
+  assert.equal(noRespondio("No contesta, le dejé mensaje"), true);
+  assert.equal(noRespondio("buzón de voz"), true);
+  assert.equal(noRespondio("me colgó"), true);
+  assert.equal(noRespondio("Hablamos, su objeción real es que la esposa no quiere"), false);
+  assert.deepEqual(siguienteTrasNota({ nota: "no responde", temperatura: "tibio", sinRespuestaPrevias: 0 }), { asunto: "Volver a llamar (no respondió)", dias: 1 });
+  assert.deepEqual(siguienteTrasNota({ nota: "no responde", temperatura: "tibio", sinRespuestaPrevias: 3 }), { asunto: "Seguimiento tibio", dias: 3 });
+  assert.deepEqual(siguienteTrasNota({ nota: "Hablamos, quiere empezar en noviembre", temperatura: "caliente", sinRespuestaPrevias: 0 }), { asunto: "Seguimiento caliente", dias: 1 });
+  assert.equal(sumarDiasHabiles("2026-10-20", 1), "2026-10-21"); // martes → miércoles
+  assert.equal(sumarDiasHabiles("2026-10-23", 1), "2026-10-26"); // viernes → lunes
+  assert.equal(sumarDiasHabiles("2026-10-22", 3), "2026-10-26"); // jueves + 3 = domingo → lunes
 });

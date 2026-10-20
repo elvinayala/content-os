@@ -20,6 +20,7 @@ import {
   registrarSaliente,
 } from "@/lib/leads/repo";
 import { slugDeMarca, type Marca } from "@/lib/leads/reglas";
+import { trasNotaDeSeguimiento } from "@/lib/leads/seguimiento";
 import { leadsActividades, leadsEmbudos, leadsTratos } from "@/lib/leads/schema";
 import { enviarWhatsapp } from "@/lib/leads/timelines";
 import { eq, sql } from "drizzle-orm";
@@ -169,6 +170,8 @@ export async function notaAction(tratoId: string, texto: string): Promise<Res> {
   if (!p) return { ok: false, error: "Sin acceso" };
   if (!texto.trim()) return { ok: false, error: "Nota vacía" };
   await agregarNota(tratoId, texto.trim(), p.u.id);
+  // SEGUIMIENTO: la nota de Lis cierra el primer contacto y agenda el próximo seguimiento.
+  await trasNotaDeSeguimiento(tratoId, texto.trim(), p.u.id).catch((e) => console.error("[seguimiento] tras nota", e instanceof Error ? e.message : e));
   refrescar(p.t.marca, tratoId);
   return { ok: true };
 }
