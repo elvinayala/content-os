@@ -1,6 +1,6 @@
 // Diagnóstico TEMPORAL de Nico (21/oct) para la solicitud #360 de Lis: ubicar leads que no
 // llegaron al embudo SEGUIMIENTO. Solo lectura. Borrar este archivo cuando se cierre el caso.
-import { desc, eq, ilike, or } from "drizzle-orm";
+import { desc, eq, ilike, or, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 import { leadsEmbudos, leadsEtapas, leadsTratos, leadsWebhookLog } from "@/lib/leads/schema";
@@ -20,6 +20,24 @@ export async function GET(req: NextRequest) {
       .orderBy(desc(leadsWebhookLog.createdAt))
       .limit(50);
     return NextResponse.json({ errores: log });
+  }
+
+  if (req.nextUrl.searchParams.get("huecos") === "1") {
+    // Llamadas que SÍ llegaron al webhook de Fathom (closers) pero cuyo recording_id nunca generó
+    // una fila en leads_webhook_log (fuente=fathom, evento=seguimiento): el after() nunca completó.
+    const r = await d.execute(sql`
+      select fl.recording_id, fl.titulo, fl.creado_el
+      from fathom_llamadas fl
+      where fl.estado = 'enviado'
+        and not exists (
+          select 1 from leads_webhook_log w
+          where w.fuente = 'fathom' and w.evento = 'seguimiento'
+            and (w.cuerpo->>'recording_id')::bigint = fl.recording_id
+        )
+      order by fl.creado_el desc
+      limit 100`);
+    const filas = Array.isArray(r) ? r : ((r as { rows?: unknown[] }).rows ?? []);
+    return NextResponse.json({ huecos: filas });
   }
 
   if (req.nextUrl.searchParams.get("fathom") === "1") {
