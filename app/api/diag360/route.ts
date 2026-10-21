@@ -22,6 +22,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ errores: log });
   }
 
+  if (req.nextUrl.searchParams.get("fathom") === "1") {
+    const log = await d
+      .select({ id: leadsWebhookLog.id, fuente: leadsWebhookLog.fuente, evento: leadsWebhookLog.evento, marca: leadsWebhookLog.marca, resultado: leadsWebhookLog.resultado, cuerpo: leadsWebhookLog.cuerpo, createdAt: leadsWebhookLog.createdAt })
+      .from(leadsWebhookLog)
+      .where(eq(leadsWebhookLog.fuente, "fathom"))
+      .orderBy(desc(leadsWebhookLog.createdAt))
+      .limit(60);
+    return NextResponse.json({ fathom: log });
+  }
+
   const q = (req.nextUrl.searchParams.get("q") || "").trim();
   if (q.length < 3) return NextResponse.json({ error: "pasa ?q=nombre o telefono, o ?errores=1" }, { status: 400 });
   const dig = q.replace(/\D/g, "");
