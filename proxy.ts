@@ -123,7 +123,7 @@ export default async function proxy(request: NextRequest) {
   // Fathom → Slack (resúmenes de llamadas, solicitud de Aure #29): valida la firma adentro.
   if (pathname === "/api/fathom") return NextResponse.next();
   // Diagnóstico temporal de Nico para la #360 (21/oct): valida su propio secreto adentro, se borra al cerrar el caso.
-  if (pathname === "/api/_diag-360") return NextResponse.next();
+  if (pathname === "/api/diag360") return NextResponse.next();
 
   // Jobs de Vercel Cron (los llama Vercel, sin cookie): se autentican por CRON_SECRET
   // dentro del propio endpoint.
