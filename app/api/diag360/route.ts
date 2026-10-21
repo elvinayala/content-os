@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       .from(leadsWebhookLog)
       .where(eq(leadsWebhookLog.fuente, "fathom"))
       .orderBy(desc(leadsWebhookLog.createdAt))
-      .limit(60);
+      .limit(250);
     return NextResponse.json({ fathom: log });
   }
 
