@@ -134,22 +134,24 @@ export async function POST(req: NextRequest) {
     after(() => onboardingDesdeFathom(r).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
   }
   // Llamada de cierre que no compró → embudo SEGUIMIENTO de Lis en Leads (Elvin, 20/oct). Una sola vez por llamada.
+  // SÍNCRONO (no after()): con after() se confirmó que Vercel puede congelar el proceso antes de que el
+  // callback async termine (recording 194388261, Adelaury Irizarry 20/oct, se quedó sin procesar sin
+  // ni siquiera un error en el registro). Esperar aquí cuesta unos segundos más de respuesta a Fathom,
+  // pero garantiza que se complete o quede el error en leads_webhook_log.
   if (tomada[0].intentos === 1 && deCloser && !onboarding) {
-    after(async () => {
-      let resultado = "";
-      try {
-        resultado = await seguimientoDesdeFathom(r);
-      } catch (e) {
-        resultado = `error: ${e instanceof Error ? e.message : String(e)}`;
-      }
-      if (resultado.startsWith("error")) {
-        console.error(`[fathom → seguimiento] ${id} FALLÓ: ${resultado}`);
-        const titulo = r.meeting_title || r.title || String(id);
-        await notificarCEO(`⚠️ Fathom → SEGUIMIENTO: la automatización falló para "${titulo}". El lead podría no haber llegado al embudo de Lis. Error: ${resultado}`).catch(() => {});
-      } else if (resultado) {
-        console.log(`[fathom → seguimiento] ${id}: ${resultado}`);
-      }
-    });
+    let resultado = "";
+    try {
+      resultado = await seguimientoDesdeFathom(r);
+    } catch (e) {
+      resultado = `error: ${e instanceof Error ? e.message : String(e)}`;
+    }
+    if (resultado.startsWith("error")) {
+      console.error(`[fathom → seguimiento] ${id} FALLÓ: ${resultado}`);
+      const tituloErr = r.meeting_title || r.title || String(id);
+      await notificarCEO(`⚠️ Fathom → SEGUIMIENTO: la automatización falló para "${tituloErr}". El lead podría no haber llegado al embudo de Lis. Error: ${resultado}`).catch(() => {});
+    } else if (resultado) {
+      console.log(`[fathom → seguimiento] ${id}: ${resultado}`);
+    }
   }
   // Los onboardings del equipo son solo para Max. Al canal de resúmenes: SOLO las llamadas de cierre de
   // Roger y Laura (Elvin, 24/sep). Las de Elvin nunca (ver privacidad arriba).
