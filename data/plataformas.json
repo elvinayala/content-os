@@ -241,7 +241,8 @@
         "README.md"
       ],
       "critico": false,
-      "notas": "Elvin pidió NO sobre-ingenierizar."
+      "notas": "Elvin pidió NO sobre-ingenierizar.",
+      "github": "elvinayala/victory-core-leads"
     },
     {
       "id": "ventaja",
@@ -257,7 +258,8 @@
         "CLAUDE.md"
       ],
       "critico": false,
-      "notas": "Congelado en el plan de guerra Q4 (no construir features nuevas sin pedido de Elvin)."
+      "notas": "Congelado en el plan de guerra Q4 (no construir features nuevas sin pedido de Elvin).",
+      "github": "elvinayala/ventaja"
     },
     {
       "id": "n8n",
@@ -350,7 +352,7 @@
       ],
       "critico": false,
       "notas": "Complementa la entrada 'voz'. Los agentes de CLIENTES en Retell son producción: sin OK no se edita su prompt.",
-      "github": null
+      "github": "elvinayala/ai-borinquen-voz"
     },
     {
       "id": "ai-borinquen-saas",
@@ -369,7 +371,7 @@
       ],
       "critico": false,
       "notas": "Next.js 16. Revisar si está activo antes de tocar.",
-      "github": null
+      "github": "elvinayala/ai-borinquen-saas"
     },
     {
       "id": "ai-borinquen-core",
@@ -433,7 +435,7 @@
       ],
       "critico": true,
       "notas": "MUEVE DINERO REAL (órdenes en cuentas de fondeo). PROHIBIDO sin OK explícito de Elvin: cambiar horarios, tamaños, SL/TP, cuentas o activar/desactivar la ejecución. Solo diagnóstico.",
-      "github": null
+      "github": "elvinayala/sistema-hora-fija"
     },
     {
       "id": "1000x",
@@ -514,7 +516,35 @@
         "docs/entrega/08-pruebas-aceptacion.md"
       ],
       "critico": false,
-      "notas": "Cliente de LU/AIB. SIN PHI (validador lib/dominio/sin-phi.ts). Bitácora inmutable (trigger). Ninguna alerta se cierra sola. Sin juicios de desempeño hasta línea base aprobada. Go-live 2/nov/2026. Nada se le escribe a la clienta sin OK de Elvin o Carilin."
+      "notas": "Cliente de LU/AIB. SIN PHI (validador lib/dominio/sin-phi.ts). Bitácora inmutable (trigger). Ninguna alerta se cierra sola. Sin juicios de desempeño hasta línea base aprobada. Go-live 2/nov/2026. Nada se le escribe a la clienta sin OK de Elvin o Carilin.",
+      "github": "elvinayala/ambc-operaciones"
+    },
+    {
+      "id": "mnq-copilot",
+      "nombre": "MNQ Copilot (trading)",
+      "repo": "/Users/elvinayala/mnq-copilot",
+      "github": "elvinayala/mnq-copilot",
+      "prod": null,
+      "deploy": "ver README del repo",
+      "notas": "Subido a GitHub el 21/oct/2026 (viaje de Elvin) para que Nico lo tenga en la nube."
+    },
+    {
+      "id": "ai-infra-hub",
+      "nombre": "AI Infra Hub",
+      "repo": "/Users/elvinayala/ai-infra-hub",
+      "github": "elvinayala/ai-infra-hub",
+      "prod": null,
+      "deploy": "ver README del repo",
+      "notas": "Subido a GitHub el 21/oct/2026 (viaje de Elvin) para que Nico lo tenga en la nube."
+    },
+    {
+      "id": "cloudflare-workers",
+      "nombre": "Cloudflare Workers",
+      "repo": "/Users/elvinayala/cloudflare-workers",
+      "github": "elvinayala/cloudflare-workers",
+      "prod": null,
+      "deploy": "ver README del repo",
+      "notas": "Subido a GitHub el 21/oct/2026 (viaje de Elvin) para que Nico lo tenga en la nube."
     }
   ],
   "casosAbiertos": {

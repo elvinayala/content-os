@@ -115,3 +115,4 @@
 - [Stack de plugins de Claude Code](stack-claude-code-plugins.md) — 17/oct: claude-mem (local, Haiku) + context-mode instalados; gstack instalado (cada comando 10–34K tokens al usarlo); Orca instalada
 - [Trabajo largo fuera de /tmp](trabajo-fuera-de-tmp.md) — 18/oct: un reinicio borró /private/tmp con las finales y worktrees; usar ~/bori-trabajo/
 - [Gabo — licitador (Digital Seed Ventures)](gabo-licitaciones.md) — 19/oct: contratos del gobierno vía LicitaPR a nombre de DIGITAL SEED VENTURES LLC (no EA Market); 1.ª DDEC-RFP-2026-003 cierra 5/nov; bloqueo = RUP
+- [Viaje de Elvin (21/oct)](viaje-elvin-oct-2026.md) — sin la Mac: pide por Nico/Remote Control; Bori en rama pendiente-flyers sin deploy; repos nuevos en GitHub pendientes de gh login
