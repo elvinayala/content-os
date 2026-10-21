@@ -136,13 +136,18 @@ export async function POST(req: NextRequest) {
   // Llamada de cierre que no compró → embudo SEGUIMIENTO de Lis en Leads (Elvin, 20/oct). Una sola vez por llamada.
   if (tomada[0].intentos === 1 && deCloser && !onboarding) {
     after(async () => {
+      let resultado = "";
       try {
-        const resultado = await seguimientoDesdeFathom(r);
-        if (resultado && resultado !== "compró: no va a seguimiento") console.log(`[fathom → seguimiento] ${id}: ${resultado}`);
+        resultado = await seguimientoDesdeFathom(r);
       } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        console.error(`[fathom → seguimiento] ${id} FALLÓ: ${msg}`);
-        await notificarCEO(`⚠️ Fathom → SEGUIMIENTO: la automatización falló para ${r.meeting_title || r.title || id}. Lead ${r.participant_email || "?"} podría no haber llegado a Lis. Error: ${msg}`).catch(() => {});
+        resultado = `error: ${e instanceof Error ? e.message : String(e)}`;
+      }
+      if (resultado.startsWith("error")) {
+        console.error(`[fathom → seguimiento] ${id} FALLÓ: ${resultado}`);
+        const titulo = r.meeting_title || r.title || String(id);
+        await notificarCEO(`⚠️ Fathom → SEGUIMIENTO: la automatización falló para "${titulo}". El lead podría no haber llegado al embudo de Lis. Error: ${resultado}`).catch(() => {});
+      } else if (resultado) {
+        console.log(`[fathom → seguimiento] ${id}: ${resultado}`);
       }
     });
   }
