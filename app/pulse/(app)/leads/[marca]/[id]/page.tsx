@@ -4,7 +4,7 @@ import { BuscarEnEmbudo } from "@/components/leads/buscar-en-embudo";
 import { DetalleLead } from "@/components/leads/detalle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { contextoLeads } from "@/lib/leads/pagina";
-import { etapasDe, obtenerTrato } from "@/lib/leads/repo";
+import { etapasDe, obtenerTrato, tratoEnOtraMarca } from "@/lib/leads/repo";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +23,8 @@ export default async function LeadDetalle({ params }: { params: Promise<{ marca:
   if (c.alcance === "mios" && d.trato.duenoId !== c.u.id) redirect(`/pulse/leads/${c.m.slug}`);
   // Etapas de todos los embudos (para "mover de embudo" sin otra consulta desde el cliente).
   const etapasDeOtros = Object.fromEntries(await Promise.all(d.embudos.map(async (e) => [e.id, (await etapasDe(e.id)).map((x) => ({ id: x.id, nombre: x.nombre }))] as const)));
+  // Verificar si existe duplo en la otra marca (para advertencia cross-brand).
+  const duploEnOtraMarca = await tratoEnOtraMarca(d.trato.telefono, d.trato.email, d.trato.marca);
   const iso = (v: Date | string | null) => (v ? new Date(v).toISOString() : "");
   return (
     <div className="pulse min-h-svh bg-muted/20">
@@ -40,6 +42,7 @@ export default async function LeadDetalle({ params }: { params: Promise<{ marca:
         etapasDeOtros={etapasDeOtros}
         rubros={c.rubros}
         puedeCrearRubro={c.puedeEditar}
+        duploEnOtraMarca={duploEnOtraMarca ? { marca: duploEnOtraMarca.marca, nombre: duploEnOtraMarca.nombre } : null}
         d={{
           trato: {
             id: d.trato.id,

@@ -53,7 +53,7 @@ function manana10(): string {
   return `${ymd}T10:00`;
 }
 
-export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEquipo = false, etapasDeOtros, rubros = [], puedeCrearRubro = false }: { d: DetalleUI; marcaSlug: string; usuarios: UsuarioUI[]; puedeBorrar: boolean; puedeMarcarEquipo?: boolean; etapasDeOtros: Record<string, { id: string; nombre: string }[]>; rubros?: string[]; puedeCrearRubro?: boolean }) {
+export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEquipo = false, etapasDeOtros, rubros = [], puedeCrearRubro = false, duploEnOtraMarca = null }: { d: DetalleUI; marcaSlug: string; usuarios: UsuarioUI[]; puedeBorrar: boolean; puedeMarcarEquipo?: boolean; etapasDeOtros: Record<string, { id: string; nombre: string }[]>; rubros?: string[]; puedeCrearRubro?: boolean; duploEnOtraMarca?: { marca: string; nombre: string } | null }) {
   const router = useRouter();
   const t = d.trato;
   const [pend, start] = useTransition();
@@ -129,6 +129,19 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
           </div>
         )}
       </div>
+
+      {/* Aviso de duplo en otra marca */}
+      {duploEnOtraMarca && (
+        <div className="mt-3 rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+          <div className="flex items-start gap-2">
+            <span className="text-lg">⚠️</span>
+            <div>
+              <p className="font-semibold">Este contacto también existe en {duploEnOtraMarca.marca}</p>
+              <p className="text-xs text-yellow-700">Lead: <strong>{duploEnOtraMarca.nombre}</strong> — cuidado con el nombre de la empresa al contactar.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Barra de etapas (clic para mover), la firma de Pipedrive */}
       <div className="mt-4 flex overflow-x-auto rounded-md">

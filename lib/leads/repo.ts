@@ -685,6 +685,18 @@ export async function leadPorContacto(telefono: string | null, emails: string[],
   return t ?? null;
 }
 
+/** Busca si este contacto existe como trato abierto en la OTRA marca (para advertir de duplicados cross-brand). */
+export async function tratoEnOtraMarca(telefono: string | null, email: string | null, marcaActual: Marca): Promise<Trato | null> {
+  const laOtraMarca: Marca = marcaActual === "level_up" ? "ai_borinquen" : "level_up";
+  const tel = normalizarTelefono(telefono);
+  const emails = email ? [email.trim().toLowerCase()] : [];
+  const conds = [...(tel ? [eq(leadsTratos.telefono, tel)] : []), ...(emails.length ? [inArray(leadsTratos.email, emails)] : [])];
+  if (!conds.length) return null;
+  const d = await db();
+  const [t] = await d.select().from(leadsTratos).where(and(eq(leadsTratos.marca, laOtraMarca), eq(leadsTratos.estado, "abierto"), or(...conds))).orderBy(desc(leadsTratos.updatedAt)).limit(1);
+  return t ?? null;
+}
+
 export async function embudoPorNombre(marca: Marca, nombre: string): Promise<Embudo | null> {
   await asegurarSemilla(marca);
   const lista = await listarEmbudos(marca);
