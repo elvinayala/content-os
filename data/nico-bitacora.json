@@ -602,6 +602,15 @@
       "verificado": "uv run pytest -q: 760 passed, 3 failed (los 3 son preexistentes del sandbox: falta cv2 y ffmpeg 5.1 sin framelog, documentado en CLAUDE.md, no relacionados a mi cambio). Código pusheado a GitHub (elvinayala/cortex, commit 961eb1a). NO DESPLEGADO A RAILWAY ni reprocesado el proyecto real: desde este entorno el puerto 22 (SSH a railway-cortex) da timeout y mi RAILWAY_API_TOKEN no tiene scope sobre el proyecto cortex (solo sobre mi propio servicio) — confirmado con railway logs/status dando Unauthorized. No pude leer los JSON de producción del proyecto \"Cristales y Gemas Nail and Distribution\" (orden.json/estructura.json/revisions.json) para confirmar al 100% que esta es la causa exacta de SU caso puntual, ni diagnostiqué el segundo síntoma (el editor manual no deja guardar) por la misma razón.",
       "commit": "961eb1a",
       "pendienteElvin": "Desplegar desde la Mac (o darme un Project Token de Railway con acceso al proyecto cortex, 94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b): primero confirmar cola vacía (ssh railway-cortex \"ls /data/projects/*/.lock 2>/dev/null | wc -l\" = 0), luego npx --yes @railway/cli up --detach -p 94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b -s cortex -e production, verificar /api/v1/health. Después, para el proyecto de María del Carmen: como no fue una toma muda (0 palabras) sino de pocas palabras, probablemente necesite que ella vuelva a generar el video desde cero con el mismo material (no una simple revisión) para que pase de nuevo por aplicar_estructura() ya arreglado. El segundo síntoma (editor manual sin guardar) sigue sin diagnosticar: hace falta leer revisions.json y el log de ese proyecto por SSH."
+    },
+    {
+      "fecha": "2026-10-21T22:36:09.595Z",
+      "plataforma": "Pulse (Leads)",
+      "que": "[Solicitud de Lis #370, aprobada por Elvin] Aviso visual de duplos cross-brand en fichas de leads: cuando un contacto (teléfono/email) existe como trato abierto en AMBAS marcas (Level Up Y AI Borinquen), mostrar un banner ⚠️ en la ficha para no confundir la empresa.",
+      "porque": "Lis quería una forma rápida de ver si un lead está en ambas marcas y no cometer el error de nombrar la otra empresa al contactar (conecta con #358).",
+      "verificado": "Commit a06b5a0 pusheado a GitHub. Deploy a Vercel completado (HTTP 200 en content-os-chi-seven.vercel.app/login). Función tratoEnOtraMarca() integrada en el flujo de ficha de lead con aviso amarillo en la página.",
+      "commit": "a06b5a0",
+      "pendienteElvin": null
     }
   ],
   "pendientesElvin": [
