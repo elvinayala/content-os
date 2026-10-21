@@ -1,12 +1,38 @@
 // Diagnóstico TEMPORAL de Nico (21/oct) para la solicitud #360 de Lis: ubicar leads que no
-// llegaron al embudo SEGUIMIENTO. Solo lectura. Borrar este archivo cuando se cierre el caso.
+// llegaron al embudo SEGUIMIENTO. Se borra cuando se cierre el caso.
 import { desc, eq, ilike, or, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+import { seguimientoDesdeFathom } from "@/lib/leads/seguimiento";
 import { leadsEmbudos, leadsEtapas, leadsTratos, leadsWebhookLog } from "@/lib/leads/schema";
 import { db } from "@/lib/pulse/db";
 
 const SECRETO = "nico-diag-360-21oct-xk92q";
+
+export async function POST(req: NextRequest) {
+  if (req.nextUrl.searchParams.get("s") !== SECRETO) return NextResponse.json({ error: "no" }, { status: 401 });
+  const recordingId = req.nextUrl.searchParams.get("recording_id");
+  if (!recordingId) return NextResponse.json({ error: "pasa ?recording_id=" }, { status: 400 });
+  const key = process.env.FATHOM_API_KEY;
+  if (!key) return NextResponse.json({ error: "falta FATHOM_API_KEY en el entorno" }, { status: 500 });
+
+  // Busca el item en /meetings (misma fuente que fathom.mjs reenviar) por recording_id.
+  let cursor = "";
+  let item: Record<string, unknown> | null = null;
+  const desde = new Date(Date.now() - 5 * 86400000).toISOString();
+  do {
+    const q = new URLSearchParams({ include_summary: "true", include_action_items: "true", created_after: desde });
+    if (cursor) q.set("cursor", cursor);
+    const res = await fetch(`https://api.fathom.ai/external/v1/meetings?${q}`, { headers: { "X-Api-Key": key } });
+    const j = (await res.json().catch(() => ({}))) as { items?: Record<string, unknown>[]; next_cursor?: string };
+    item = (j.items || []).find((m) => String(m.recording_id) === recordingId) || item;
+    cursor = item ? "" : j.next_cursor || "";
+  } while (cursor);
+  if (!item) return NextResponse.json({ error: "no encontré ese recording_id en los últimos 5 días" }, { status: 404 });
+
+  const resultado = await seguimientoDesdeFathom(item as never).catch((e) => `error: ${e instanceof Error ? e.message : String(e)}`);
+  return NextResponse.json({ recording_id: recordingId, resultado });
+}
 
 export async function GET(req: NextRequest) {
   if (req.nextUrl.searchParams.get("s") !== SECRETO) return NextResponse.json({ error: "no" }, { status: 401 });
