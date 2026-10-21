@@ -593,6 +593,15 @@
       "verificado": "npm run build OK (mismo patrón de tipos ya tolerado en todo el repo, 230 errores preexistentes sin cambio); probado local con servidor de prueba: HTML con k válido 200, k inválido 403, POST sin k 401, POST vacío 400. NO DESPLEGADO: mi token de Railway no tiene acceso al proyecto resuelto (railway link y railway list dan Unauthorized/Project not found; sí funciona para cortex con el mismo token, así que es un scope específico). Código pusheado a GitHub (cc86353).",
       "commit": "cc86353",
       "pendienteElvin": "Desplegar desde la Mac: cd vault/proyectos/plomeria-pr/agente && npx @railway/cli up --detach (o darme acceso al proyecto resuelto en Railway). Después, probar /calcular-precio en vivo (necesita ANTHROPIC_API_KEY, que ya está configurado para el chat del agente) y mandarle el link a Aure."
+    },
+    {
+      "fecha": "2026-10-21T19:30:00Z",
+      "plataforma": "Cortex (edit.heybori.ai)",
+      "que": "[Solicitud de María del Carmen #342, aprobada por Elvin] Diagnostiqué y arreglé el bug real: en ave/analyze/estructura.py, aplicar_estructura() exigía >=3 palabras transcritas para que una toma entrara al orden final, incluso si el LLM SÍ la había puesto conscientemente en su plan de orden (p. ej. un primer clip corto tipo \"Hola, bienvenidos\"); esas tomas se perdían en silencio, sin aviso. Ahora se respeta lo que el LLM decide incluir en orden con solo 1 palabra real (no muda); el umbral de 3 sigue aplicando solo para el RESCATE automático de lo que el LLM olvidó. Test nuevo: test_toma_con_pocas_palabras_que_el_llm_incluye_no_se_pierde. De paso encontré y resolví un rebase de una sesión anterior que había quedado atascado a mitad en el repo local (ave/negocios.py y ave/web/app.py con marcadores de conflicto sin resolver, rompían el import de todo el módulo) — lo reconcilié combinando ambas versiones del feature de negocios AI Borinquen.",
+      "porque": "María del Carmen reportó que Cortex omitió el primer clip del video de Cristales y Gemas y que el editor manual no la dejaba guardar el cambio. Elvin aprobó la #342 estando de viaje (\"haz lo que quieras pero hazlo\").",
+      "verificado": "uv run pytest -q: 760 passed, 3 failed (los 3 son preexistentes del sandbox: falta cv2 y ffmpeg 5.1 sin framelog, documentado en CLAUDE.md, no relacionados a mi cambio). Código pusheado a GitHub (elvinayala/cortex, commit 961eb1a). NO DESPLEGADO A RAILWAY ni reprocesado el proyecto real: desde este entorno el puerto 22 (SSH a railway-cortex) da timeout y mi RAILWAY_API_TOKEN no tiene scope sobre el proyecto cortex (solo sobre mi propio servicio) — confirmado con railway logs/status dando Unauthorized. No pude leer los JSON de producción del proyecto \"Cristales y Gemas Nail and Distribution\" (orden.json/estructura.json/revisions.json) para confirmar al 100% que esta es la causa exacta de SU caso puntual, ni diagnostiqué el segundo síntoma (el editor manual no deja guardar) por la misma razón.",
+      "commit": "961eb1a",
+      "pendienteElvin": "Desplegar desde la Mac (o darme un Project Token de Railway con acceso al proyecto cortex, 94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b): primero confirmar cola vacía (ssh railway-cortex \"ls /data/projects/*/.lock 2>/dev/null | wc -l\" = 0), luego npx --yes @railway/cli up --detach -p 94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b -s cortex -e production, verificar /api/v1/health. Después, para el proyecto de María del Carmen: como no fue una toma muda (0 palabras) sino de pocas palabras, probablemente necesite que ella vuelva a generar el video desde cero con el mismo material (no una simple revisión) para que pase de nuevo por aplicar_estructura() ya arreglado. El segundo síntoma (editor manual sin guardar) sigue sin diagnosticar: hace falta leer revisions.json y el log de ese proyecto por SSH."
     }
   ],
   "pendientesElvin": [
@@ -632,7 +641,13 @@
       "plataforma": "bori",
       "estado": "pendiente"
     },
-    "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
+    "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite).",
+    {
+      "que": "Cortex: mi RAILWAY_API_TOKEN no tiene acceso al proyecto cortex (Unauthorized en railway logs/status) y el SSH a railway-cortex da timeout desde este entorno (puerto 22 bloqueado de salida). Sin esto no puedo desplegar fixes de Cortex ni leer sus datos de producción.",
+      "desde": "2026-10-21",
+      "plataforma": "cortex",
+      "estado": "pendiente"
+    }
   ],
-  "actualizadoEl": "2026-10-14T21:20:00Z"
+  "actualizadoEl": "2026-10-21T19:30:00Z"
 }
