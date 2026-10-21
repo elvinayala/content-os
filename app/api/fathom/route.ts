@@ -135,7 +135,16 @@ export async function POST(req: NextRequest) {
   }
   // Llamada de cierre que no compró → embudo SEGUIMIENTO de Lis en Leads (Elvin, 20/oct). Una sola vez por llamada.
   if (tomada[0].intentos === 1 && deCloser && !onboarding) {
-    after(() => seguimientoDesdeFathom(r).catch((e) => console.error("[fathom → seguimiento]", e instanceof Error ? e.message : e)));
+    after(async () => {
+      try {
+        const resultado = await seguimientoDesdeFathom(r);
+        if (resultado && resultado !== "compró: no va a seguimiento") console.log(`[fathom → seguimiento] ${id}: ${resultado}`);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error(`[fathom → seguimiento] ${id} FALLÓ: ${msg}`);
+        await notificarCEO(`⚠️ Fathom → SEGUIMIENTO: la automatización falló para ${r.meeting_title || r.title || id}. Lead ${r.participant_email || "?"} podría no haber llegado a Lis. Error: ${msg}`).catch(() => {});
+      }
+    });
   }
   // Los onboardings del equipo son solo para Max. Al canal de resúmenes: SOLO las llamadas de cierre de
   // Roger y Laura (Elvin, 24/sep). Las de Elvin nunca (ver privacidad arriba).
