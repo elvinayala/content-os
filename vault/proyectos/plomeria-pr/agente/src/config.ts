@@ -56,6 +56,7 @@ export const config = {
     /** Calendario "Entrevista · Plomeros y contratistas (20 min)" y el usuario de GHL de la reclutadora (Yaileen). */
     calEntrevista: opt("GHL_CAL_ENTREVISTA", "CRKoqwOhXCD07QUjKWMH"),
     usuarioReclutamiento: opt("GHL_USUARIO_RECLUTAMIENTO", "h38dHpLts7bkmKkjuduq"),
+    calClientes: opt("GHL_CAL_CLIENTES"),
     token: opt("GHL_TOKEN"),
     locationId: opt("GHL_LOCATION_ID"),
     pipelineId: opt("GHL_PIPELINE_ID"),

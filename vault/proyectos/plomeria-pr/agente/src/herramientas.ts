@@ -243,6 +243,23 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       const ghlId = ctx.contacto.ghlContactId ?? (await upsertContacto({ nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, tags: ["cliente", "agendado", t.id, servicio.categoria], fuente: ctx.contacto.canal }));
       let oportunidadId: string | undefined;
       if (ghlId) oportunidadId = await crearOportunidad({ contactId: ghlId, nombre: input.nombre, valor: (manoObra ?? servicio.rango?.[0] ?? 0) + menu.cargo_coordinacion, trabajoId: id });
+      // Agendar en GHL (si está configurado). El cliente ve la cita en el calendario de GHL de Aure.
+      if (config.ghl.calClientes && ghlId) {
+        try {
+          const minutos = Number(input.minutos) || 60;
+          await guardarCita({
+            calendarId: config.ghl.calClientes,
+            contactId: ghlId,
+            inicio: input.inicio,
+            minutos,
+            titulo: `${servicio.nombre}${input.emergencia ? " (EMERGENCIA)" : ""}`,
+            asignadoA: config.ghl.usuarioReclutamiento,
+          });
+        } catch (e) {
+          console.error("[agendar_cita → GHL]", e instanceof Error ? e.message : e);
+          // No falla el flujo: el cliente se agendó internamente, GHL es un extra.
+        }
+      }
       const trabajo: Trabajo = { id, contactoId: ctx.contacto.id, nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, territorio: t.id, plomeroId: "", servicioId: servicio.id, servicio: servicio.nombre, nivel: servicio.nivel as any, manoObra, rango: servicio.rango, fee: menu.cargo_coordinacion, emergencia: !!input.emergencia, direccion: input.direccion, referencia: input.referencia || undefined, inicio: input.inicio, fin: input.fin, estado: "agendado", ghlOpportunityId: oportunidadId, fotos: [], creado: new Date().toISOString() , origen: input.origen === "setter" ? "setter" : input.origen === "web" ? "web" : "agente", humanoAntes: !!ctx.contacto.humanoDesde };
       almacen.guardarTrabajo(trabajo);
       almacen.guardarContacto({ ...ctx.contacto, nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, direccion: input.direccion, tipo: "cliente", ghlContactId: ghlId });
