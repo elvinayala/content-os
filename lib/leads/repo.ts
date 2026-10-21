@@ -241,7 +241,7 @@ export async function closersDelEmbudo(embudoId: string): Promise<string[]> {
   return ((Array.isArray(r) ? r : ((r as { rows?: unknown[] }).rows ?? [])) as { c: string }[]).map((x) => x.c).filter(Boolean);
 }
 
-export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null; rubro?: string | null; closer?: string | null; servicio?: string | null } = {}): Promise<TratoTarjeta[]> {
+export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null; creadoEn?: FiltroFecha | null; ultimaActividadEn?: FiltroFecha | null; rubro?: string | null; closer?: string | null; servicio?: string | null } = {}): Promise<TratoTarjeta[]> {
   const d = await db();
   // Las columnas que cierran (Seguimiento ganado/perdido) muestran también sus leads cerrados.
   const cierre = (await etapasDe(embudoId)).filter((e) => estadoDeEtapa(e.nombre)).map((e) => e.id);

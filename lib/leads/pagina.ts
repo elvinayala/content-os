@@ -31,6 +31,8 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
   const rubros = await listarRubros();
   const rubro = typeof sp.rubro === "string" && (sp.rubro === SIN_RUBRO || rubros.includes(sp.rubro)) ? sp.rubro : null;
   const fecha = typeof sp.fecha === "string" && FILTROS_FECHA.some((f) => f.id === sp.fecha) ? (sp.fecha as FiltroFecha) : null;
+  const creadoEn = typeof sp.creadoEn === "string" && FILTROS_FECHA.some((f) => f.id === sp.creadoEn) ? (sp.creadoEn as FiltroFecha) : null;
+  const ultimaActividadEn = typeof sp.ultimaActividadEn === "string" && FILTROS_FECHA.some((f) => f.id === sp.ultimaActividadEn) ? (sp.ultimaActividadEn as FiltroFecha) : null;
   // Filtros de Lis (20/oct) solo en el embudo SEGUIMIENTO: closer y servicio ofrecido.
   const esSeguimiento = !!embudo && embudo.nombre.trim().toLowerCase() === EMBUDO_SEGUIMIENTO.toLowerCase();
   const closers = esSeguimiento ? await closersDelEmbudo(embudo.id).catch(() => []) : [];
@@ -50,6 +52,8 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
     dueno,
     q,
     fecha,
+    creadoEn,
+    ultimaActividadEn,
     rubros,
     rubro,
     closers,
