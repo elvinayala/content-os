@@ -1,0 +1,132 @@
+{
+  "id": "imperium-01-fase2-garaje-9x16-v2",
+  "formato": "9:16",
+  "titulo": "Tu garaje puede verse así (fase 2, WhatsApp)",
+  "angulo": "Transformación de piso gastado + tú escoges el estilo + cotización gratis (guion de María del Carmen, 22/oct)",
+  "estilo": "impacto",
+  "escenas": [
+    {
+      "tipo": "retrato",
+      "dur": 130,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/imperium-epoxy/drive-1HnNQ7tUsjx_gFgoeC2Arxs9YzHV85fPz-IMG_2364.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvaW1wZXJpdW0tZXBveHkvZHJpdmUtMUhuTlE3dFVzanhfZ0Znb2VDMkFyeHM5WXpIVjg1ZlB6LUlNR18yMzY0LmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI2OTk1NzQsImV4cCI6MTgyNDIzNTU3NH0.wtMZ089VI-NQRPuDfuiap-T7JYbQ4KxAOcvAgeIntWlbNnKZreDpyYIllzl1UbrvKQEPcfDyux99CG1pNj2Iug",
+      "enfoque": "50% 65%",
+      "etiqueta": "Orlando, FL",
+      "titulo": "Tu garaje puede *verse así*…",
+      "puntos": [
+        "Y la cotización es gratis."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "alarma": true,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/imperium-epoxy/drive-14-cmKo6D90eBgxNieJZb2A0TEZFwPf65-IMG_2315.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvaW1wZXJpdW0tZXBveHkvZHJpdmUtMTQtY21LbzZEOTBlQmd4TmllSlpiMkEwVEVaRndQZjY1LUlNR18yMzE1LmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI2OTk1NzQsImV4cCI6MTgyNDIzNTU3NH0.ovO4t62PN6CdrZZ7NLiEFpegevLhdMEeU98Ly6fZBTz-Dl5Bs--BmWwVCF-BX-xhQPeUIE3n0SbihPfyRweZKg",
+      "enfoque": "60% 65%",
+      "lineas": [
+        "¿Tu piso se ve gastado,",
+        "manchado o *aburrido*?"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 170,
+      "modo": "marcar",
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/imperium-epoxy/drive-1HnNQ7tUsjx_gFgoeC2Arxs9YzHV85fPz-IMG_2364.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvaW1wZXJpdW0tZXBveHkvZHJpdmUtMUhuTlE3dFVzanhfZ0Znb2VDMkFyeHM5WXpIVjg1ZlB6LUlNR18yMzY0LmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI2OTk1NzQsImV4cCI6MTgyNDIzNTU3NH0.wtMZ089VI-NQRPuDfuiap-T7JYbQ4KxAOcvAgeIntWlbNnKZreDpyYIllzl1UbrvKQEPcfDyux99CG1pNj2Iug",
+      "enfoque": "30% 80%",
+      "titulo": "Tú escoges el estilo *que va con tu casa*",
+      "items": [
+        {
+          "texto": "Acabado espejo"
+        },
+        {
+          "texto": "Metálico"
+        },
+        {
+          "texto": "Con flakes"
+        },
+        {
+          "texto": "Colores sólidos"
+        }
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 130,
+      "lineas": [
+        "Se ve *increíble*,",
+        "aguanta el uso diario",
+        "y se limpia fácil."
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 150,
+      "modo": "marcar",
+      "titulo": "Para tu *casa*",
+      "items": [
+        {
+          "texto": "Garajes"
+        },
+        {
+          "texto": "Gimnasios en casa"
+        },
+        {
+          "texto": "Escaleras"
+        },
+        {
+          "texto": "Y más"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 100,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/imperium-epoxy/drive-10-f5fqJ4FNabpadUgQYzdGoSo_j07E8o-IMG_2916.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvaW1wZXJpdW0tZXBveHkvZHJpdmUtMTAtZjVmcUo0Rk5hYnBhZFVnUVl6ZEdvU29fajA3RThvLUlNR18yOTE2LmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI2OTk1NzMsImV4cCI6MTgyNDIzNTU3M30.euhUVr9CGcB8YYBJxwyz84sljjdbA388UIlJhBGF2UGJ3NbZXCM13pXOBohh11wax_VTEvQRx2PuxmmUBKJ1yQ",
+      "enfoque": "50% 60%",
+      "etiqueta": "Antes",
+      "titulo": "Trabajos reales hechos en *Orlando*",
+      "puntos": [
+        "Antes"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 110,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/imperium-epoxy/drive-1uXjcVORBh2vO3P2b47x0X_Dbo6vRqb54-IMG_2944.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvaW1wZXJpdW0tZXBveHkvZHJpdmUtMXVYamNWT1JCaDJ2TzNQMmI0N3gwWF9EYm82dlJxYjU0LUlNR18yOTQ0LmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI2OTk1NzUsImV4cCI6MTgyNDIzNTU3NX0.0g8S3Y6b8GjOyde16NWSnhgsUjqJUmDj7thT3fxshoDNiumq140DCiuIfzFyt5WezqYmGl7flb6t9dJP3oLFdw",
+      "enfoque": "50% 60%",
+      "etiqueta": "Después · flakes",
+      "titulo": "Trabajos reales hechos en *Orlando*",
+      "puntos": [
+        "Después"
+      ]
+    },
+    {
+      "tipo": "dato",
+      "dur": 100,
+      "grande": "$6",
+      "texto": "Desde *$6* por pie cuadrado"
+    },
+    {
+      "tipo": "cierre",
+      "dur": 170,
+      "cta": "WhatsApp 407-777-7610",
+      "sub": "Pide tu cotización gratis hoy",
+      "url": "IG: Epoxy Systems FL",
+      "nota": "Orlando, FL"
+    }
+  ],
+  "cliente": {
+    "fondo": "#01020A",
+    "texto": "#EAF1F5",
+    "acento": "#4497C6",
+    "fuente": "Montserrat",
+    "nombre": "Imperium Epoxy Systems",
+    "acento2": "#056CB6",
+    "estilos": [
+      "impacto",
+      "tecno"
+    ],
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/imperium-epoxy/drive-1sh7xh-OD1ddczoTAAm5_oc24K4s6GIea-LOGO.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvaW1wZXJpdW0tZXBveHkvZHJpdmUtMXNoN3hoLU9EMWRkY3pvVEFBbTVfb2MyNEs0czZHSWVhLUxPR08ucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjY5OTU3NSwiZXhwIjoxODI0MjM1NTc1fQ.bH-PXs0j30KdKJhKww9QFB3dMCyE8QolrYp-wRusYmvMFL-9FQtCrwPt43_aVLs6jC1o1S-VeqHCnvWKD7-tjg",
+    "subtitulo": "Orlando, FL"
+  }
+}
