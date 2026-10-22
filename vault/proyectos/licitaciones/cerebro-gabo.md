@@ -139,3 +139,5 @@ Elvin sin contestar; si no, solo el resumen de los lunes.
   ganadores distintos, 43 % a empresas nuevas.
 - (19/oct) En publicidad vencen $14.3M en 55 contratos en los próximos 180 días (la mayoría
   municipales). Pocas subastas de publicidad salen abiertas: el juego grande son los recompites.
+- (22/oct) `/c/advertising` trae más que publicidad: fotógrafos, artes gráficas, imprenta, eventos. Barre la lista
+  completa de 180 días (no solo los 30 de `?seg=exp`) y cruza por número de contrato; los links son `/contrato/<id>`.
