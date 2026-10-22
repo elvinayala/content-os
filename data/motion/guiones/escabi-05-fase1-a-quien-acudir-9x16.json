@@ -1,0 +1,117 @@
+{
+  "id": "escabi-05-fase1-a-quien-acudir-9x16",
+  "formato": "9:16",
+  "titulo": "¿Sabes a quién acudir? (fase 1, reconocimiento)",
+  "angulo": "Memoria/atención + autoridad de la doctora (guion de María del Carmen, 22/oct)",
+  "estilo": "editorial",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 110,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/dra-escabi/drive-17Zxj6GN8ZAmt0Y5DpBG4BqvfyyJlmE6v-_DSC3372.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZHJhLWVzY2FiaS9kcml2ZS0xN1p4ajZHTjhaQW10MFk1RHBCRzRCcXZmeXlKbG1FNnYtX0RTQzMzNzIuSlBHIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjcwNjU1MCwiZXhwIjoxODI0MjQyNTUwfQ.pVnb81epGeKJiCdcByk6_uXxllzHHeUnauWu4Dcxu7TnLBjWwF48at2e4koTefP9ePZ_4pX7dUlfonLH1j33EA",
+      "enfoque": "50% 35%",
+      "lineas": [
+        "Memoria, atención…",
+        "¿sabes a quién acudir",
+        "cuando algo *no anda bien*?"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 130,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/dra-escabi/drive-1frPx3a83ASuDOshpKjvfDMj7cQbeWSUW-_DSC3425.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZHJhLWVzY2FiaS9kcml2ZS0xZnJQeDNhODNBU3VET3NocEtqdmZETWo3Y1FiZVdTVVctX0RTQzM0MjUuSlBHIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjcwNjU1MiwiZXhwIjoxODI0MjQyNTUyfQ.vMgZe-QMkRuJpBYlRzFYkwI_Vo6DP-jU2fEOK1q1L_zBMjlRkgH6aXmTrUhkwieQNyUu53InO5enGv98IRqpyQ",
+      "enfoque": "50% 40%",
+      "etiqueta": "Psy.D.",
+      "titulo": "Ella es la *Dra. Yamilet Escabí*",
+      "puntos": [
+        "Neuropsicóloga clínica"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 150,
+      "modo": "marcar",
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/dra-escabi/drive-1G1WL34Cqwz6fUs4La_7PIaQ86g8GsyR3-_DSC3390.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZHJhLWVzY2FiaS9kcml2ZS0xRzFXTDM0Q3F3ejZmVXM0TGFfN1BJYVE4Nmc4R3N5UjMtX0RTQzMzOTAuSlBHIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjcwNjU1MiwiZXhwIjoxODI0MjQyNTUyfQ.kmK0TXQNB45xYfiU6vltmE9T4fpC-PmHEOik3MMetlx6zI2ns6uAwhg7boxnCEuwX4Y3-3pfDB0PE5cO3y9uRg",
+      "enfoque": "60% 30%",
+      "titulo": "*Psy.D.* · Postdoctorado · +10 años",
+      "items": [
+        {
+          "texto": "Doctorado en Psicología Clínica"
+        },
+        {
+          "texto": "Postdoctorado en neuropsicología"
+        },
+        {
+          "texto": "Más de 10 años evaluando adultos"
+        }
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 150,
+      "modo": "marcar",
+      "titulo": "La doctora *evalúa*",
+      "items": [
+        {
+          "texto": "Memoria"
+        },
+        {
+          "texto": "Atención"
+        },
+        {
+          "texto": "TDAH"
+        },
+        {
+          "texto": "Casos de veteranos"
+        },
+        {
+          "texto": "En español o en inglés"
+        }
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 130,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/dra-escabi/drive-1M7WeT-sTy_e8pqkPOBvnxXJIq5i45uyp-_DSC3385.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZHJhLWVzY2FiaS9kcml2ZS0xTTdXZVQtc1R5X2U4cHFrUE9Cdm54WEpJcTVpNDV1eXAtX0RTQzMzODUuSlBHIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjcwNjU1MCwiZXhwIjoxODI0MjQyNTUwfQ.0jjn3UxZVypuc8Ck3n5HHPX8l-H2f1DMgxShsyXhqFWWIlI4s6PS_iZPJP9_fFnDTqUGpH7aTtdqCBcka8cZsA",
+      "enfoque": "55% 35%",
+      "lineas": [
+        "Su atención es *puntual*",
+        "y personalizada,",
+        "y te orienta antes de",
+        "una evaluación completa."
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 140,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/dra-escabi/drive-1rNDRLJYyQgdYefZs9yzEvmVpc3E7r4aA-20260925_165531.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZHJhLWVzY2FiaS9kcml2ZS0xck5EUkxKWXlRZ2RZZWZaczl5ekV2bVZwYzNFN3I0YUEtMjAyNjA5MjVfMTY1NTMxLmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI3MDY1NTAsImV4cCI6MTgyNDI0MjU1MH0.YJ_zYuuO_CxE_4F-1OSqmOnrKQMS-tMT-7DTxH8iUnKTox0SabngL6giIxZVAM6Wt1fCckEFk8rovluchFi-Sg",
+      "enfoque": "50% 30%",
+      "etiqueta": "Plaza Alemar · Hormigueros",
+      "titulo": "A minutos de *Mayagüez*",
+      "puntos": [
+        "Martes a viernes, con cita previa"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 180,
+      "cta": "Escríbele: 787-546-6143",
+      "sub": "Escríbenos y te orientamos",
+      "url": "@draescabi",
+      "nota": "Plaza Alemar, Suite 5, Hormigueros · martes a viernes, 9:00 a.m.–5:00 p.m., solo con cita previa"
+    }
+  ],
+  "cliente": {
+    "fondo": "#00679A",
+    "texto": "#FFFFFF",
+    "acento": "#FFCC00",
+    "fuente": "Montserrat",
+    "nombre": "Dra. Yamilet Escabí",
+    "acento2": "#0B4A82",
+    "estilos": [
+      "editorial",
+      "minimal"
+    ],
+    "subtitulo": "Neuropsicóloga Clínica · Hormigueros, PR"
+  }
+}
