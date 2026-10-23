@@ -1,0 +1,120 @@
+{
+  "id": "gatefactory-03-fase1-precio-fijo-9x16",
+  "formato": "9:16",
+  "titulo": "¿Sabes cuánto cuesta tu portón? (fase 1)",
+  "angulo": "Precio fijo sin sacrificar calidad",
+  "estilo": "impacto",
+  "musica": "audio/vital-energia.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 95,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/gate-factory-pr/drive-1zlbUn801WvVRdnnuPP0119EMMl89ZNJE-a77a522c-01b3-4eef-b0f1-83c8a456e5fa.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZ2F0ZS1mYWN0b3J5LXByL2RyaXZlLTF6bGJVbjgwMVd2VlJkbm51UFAwMTE5RU1NbDg5Wk5KRS1hNzdhNTIyYy0wMWIzLTRlZWYtYjBmMS04M2M4YTQ1NmU1ZmEuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc4MzExMCwiZXhwIjoxODI0MzE5MTEwfQ.kJK8mwZThfRzRIQa7ieqrC3961P68qPIdy9ymAGBoQUaDYWzvc7Gbtggx04NkJgZA39W1Bw6JSV7ZutpYaGBrQ",
+      "enfoque": "50% 50%",
+      "lineas": [
+        "¿Sabes cuánto cuesta",
+        "tu portón antes de que",
+        "vengan a *medir*?"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 90,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/gate-factory-pr/drive-1N_Xwl2DB4SiB0L26I_3Kzx_IvNpL19bz-cd3495fb-5eb7-4ae4-9392-2021824e9571.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZ2F0ZS1mYWN0b3J5LXByL2RyaXZlLTFOX1h3bDJEQjRTaUIwTDI2SV8zS3p4X0l2TnBMMTliei1jZDM0OTVmYi01ZWI3LTRhZTQtOTM5Mi0yMDIxODI0ZTk1NzEuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc4MzExMCwiZXhwIjoxODI0MzE5MTEwfQ.ilJtyjankkksKEmNSH1tzSjYmuXXuUaN-_xCsY2ENwA537ZzBUbv0GY6mPNsmZXGi3-j0qM2hJqA0qQq-V-vpw",
+      "enfoque": "50% 50%",
+      "etiqueta": "Fabricamos e instalamos",
+      "titulo": "Puertas de *garaje*",
+      "puntos": [
+        "Imágenes de referencia"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 90,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/gate-factory-pr/drive-1uUqmoI5XzBDgcfsz4ji0nrCNBVX31Jru-06bf5ea0-ee83-4a0e-8435-899f084fa645.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZ2F0ZS1mYWN0b3J5LXByL2RyaXZlLTF1VXFtb0k1WHpCRGdjZnN6NGppMG5yQ05CVlgzMUpydS0wNmJmNWVhMC1lZTgzLTRhMGUtODQzNS04OTlmMDg0ZmE2NDUuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc4MzEwOSwiZXhwIjoxODI0MzE5MTA5fQ.A8f9hJhi1Fv_KKqER1rwWgtlS6af3FCMm6m5FFAS4QTJDpXS83Kcze3bVxBjpdHCxTETdWe1siz5dkWsjO0h0w",
+      "enfoque": "50% 50%",
+      "etiqueta": "Portones de marquesina",
+      "titulo": "Corredizos y *batientes*",
+      "puntos": [
+        "Imágenes de referencia"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 90,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/gate-factory-pr/drive-16eL-8jHuIuLrFg7B0t9_kxuFmMFj1Oc2-55c7b7cb-0478-4f2c-ad67-920179dd51b0.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZ2F0ZS1mYWN0b3J5LXByL2RyaXZlLTE2ZUwtOGpIdUl1THJGZzdCMHQ5X2t4dUZtTUZqMU9jMi01NWM3YjdjYi0wNDc4LTRmMmMtYWQ2Ny05MjAxNzlkZDUxYjAuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc4MzEwOSwiZXhwIjoxODI0MzE5MTA5fQ.9pYqEcWGxY5scEsyoiWz3_gXvKcWV6DPbpg-OtnnMnpq6fOYYH8VqoTAOpZzvWGaFSDq5h7LisxCbKGFI-FAiw",
+      "enfoque": "50% 50%",
+      "etiqueta": "Medidas fijas",
+      "titulo": "Modelos con *precio fijo*",
+      "puntos": [
+        "Imágenes de referencia"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 110,
+      "modo": "marcar",
+      "titulo": "Calidad que se *nota*",
+      "items": [
+        {
+          "texto": "Cortes a 45°"
+        },
+        {
+          "texto": "Soldaduras selladas"
+        },
+        {
+          "texto": "Mejor pintura"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 90,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/gate-factory-pr/drive-1XX6B1EZnWaaQxAf5DSKxpFlLI2KBbGO8-fc2b6f59-41b8-475d-a7c0-0ab32bc72d38.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZ2F0ZS1mYWN0b3J5LXByL2RyaXZlLTFYWDZCMUVabldhYVF4QWY1RFNLeHBGbExJMktCYkdPOC1mYzJiNmY1OS00MWI4LTQ3NWQtYTdjMC0wYWIzMmJjNzJkMzguanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc4MzEwOSwiZXhwIjoxODI0MzE5MTA5fQ.LtsTUA6LHuFXAE9TMqM9yL7NJdVgBeYY2nmDykDoMJxnGmWlYr1q1kW4A3VXG4emQRHSq4z840HoO-vIMdCLKw",
+      "enfoque": "70% 50%",
+      "etiqueta": "Si quieres",
+      "titulo": "Motor automatizado *opcional*",
+      "puntos": [
+        "Imágenes de referencia"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 120,
+      "modo": "marcar",
+      "titulo": "Envías *alto y ancho*",
+      "items": [
+        {
+          "texto": "Recibes tu presupuesto"
+        },
+        {
+          "texto": "Contrato"
+        },
+        {
+          "texto": "Instalación en 2 a 3 semanas"
+        }
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 150,
+      "cta": "WhatsApp 939-775-8087",
+      "sub": "Área metro y toda la isla",
+      "url": "@gatefactorypr"
+    }
+  ],
+  "cliente": {
+    "fondo": "#0D0D0D",
+    "texto": "#FFFFFF",
+    "acento": "#E3141B",
+    "fuente": "Montserrat",
+    "nombre": "Gate Factory PR",
+    "acento2": "#C9CCD1",
+    "estilos": [
+      "impacto",
+      "editorial"
+    ],
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/gate-factory-pr/drive-1X1OATSdr2d3ayO0Ku0E-OEWpR_JKDrrl-LOGO.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZ2F0ZS1mYWN0b3J5LXByL2RyaXZlLTFYMU9BVFNkcjJkM2F5TzBLdTBFLU9FV3BSX0pLRHJybC1MT0dPLmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI3ODMxMTEsImV4cCI6MTgyNDMxOTExMX0.fo8_ernxFA9Y5zQKQUgbFkgpkVU_DS7euR5U_VEImYz1qGtfxhudj9X76pLJY4WzcAFAcLlldLhKjvTNPwAGvg",
+    "subtitulo": "Portones · Puertas de garaje"
+  }
+}
