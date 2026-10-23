@@ -1,48 +1,21 @@
 {
   "id": "queen-01-fase2-antojo-cada-dia-9x16",
   "formato": "9:16",
-  "titulo": "Un antojo distinto cada día (fase 2, ventas)",
-  "angulo": "Promos por día + helado chino desde 1964 (guion de María del Carmen, 23/oct)",
+  "titulo": "Antojo cada día (fase 2)",
   "estilo": "pop",
   "escenas": [
     {
       "tipo": "gancho",
-      "dur": 105,
-      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/queen-ice-cream-pr/drive-1DUDFVkMk3GI8huDn2i-bZ4WHdbl2NTdh-IMG_7058-1-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVlZW4taWNlLWNyZWFtLXByL2RyaXZlLTFEVURGVmtNazNHSThodURuMmktYlo0V0hkYmwyTlRkaC1JTUdfNzA1OC0xLS5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI4NTY1LCJleHAiOjE4MjQyNjQ1NjV9.15ga_vGFKJ85rybiordjkXt11DcAWi7z8iKcsfLGeyrJ_QTlxk1j9nKkzZgNt5wqcxfUT7MxZEErsAxv5ssukQ",
-      "enfoque": "50% 60%",
+      "dur": 110,
       "lineas": [
-        "¿Antojo de algo *dulce*",
-        "y no sabes",
-        "pa’ dónde ir?"
+        "¿Antojo de algo dulce",
+        "y no sabes pa dónde ir?"
       ]
     },
     {
       "tipo": "gancho",
-      "dur": 120,
-      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/queen-ice-cream-pr/drive-1Of9mpqUwyfdlxTynhrdHkMmH3o8H3M-_-IMG_7055-1-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVlZW4taWNlLWNyZWFtLXByL2RyaXZlLTFPZjltcHFVd3lmZGx4VHluaHJkSGtNbUgzbzhIM00tXy1JTUdfNzA1NS0xLS5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI4NTY0LCJleHAiOjE4MjQyNjQ1NjR9.03yk-g66vniRmjGPUcMCNV4m1Uu8sQzzVGIUXLCrGRKXfxwhr4R6VzJAnf03C7jBLJwSZGGIVL4uloOQ5YYQMQ",
-      "enfoque": "70% 60%",
-      "lineas": [
-        "Los mismos helados",
-        "de siempre ya aburren,",
-        "y tú quieres algo",
-        "que *valga la pena*."
-      ]
-    },
-    {
-      "tipo": "gancho",
-      "dur": 95,
-      "logo": true,
-      "lineas": [
-        "En Queen Ice Cream",
-        "cada día tiene",
-        "*su antojo*."
-      ],
-      "sub": "Un dulce plan pa’ cada día"
-    },
-    {
-      "tipo": "gancho",
-      "dur": 80,
-      "etiqueta": "Martes",
+      "dur": 90,
+      "etiqueta": "MARTES",
       "lineas": [
         "Nachos helados",
         "*$4.99*"
@@ -50,25 +23,26 @@
     },
     {
       "tipo": "gancho",
-      "dur": 80,
-      "etiqueta": "Miércoles",
+      "dur": 90,
+      "etiqueta": "MIÉRCOLES",
       "lineas": [
         "Waffle bowls",
         "*$4.99*"
       ]
     },
     {
-      "tipo": "retrato",
-      "dur": 80,
-      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/queen-ice-cream-pr/drive-1BX0cuPiMK6gJLQXh8Ye9BdlUY6GNziAX-IMG_7057.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVlZW4taWNlLWNyZWFtLXByL2RyaXZlLTFCWDBjdVBpTUs2Z0pMUVhoOFllOUJkbFVZNkdOemlBWC1JTUdfNzA1Ny5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI4NTY2LCJleHAiOjE4MjQyNjQ1NjZ9.HRKWiT4OAbVYS_awvdqPsDjtNyICTolfVjVPl-gz6ZWEqSqz8KDHJWJE0IU11cPhpq8xQafgMib_Q_7es-37sQ",
-      "enfoque": "40% 70%",
-      "etiqueta": "Jueves",
-      "titulo": "Batida grande *$4.99*"
+      "tipo": "gancho",
+      "dur": 90,
+      "etiqueta": "JUEVES",
+      "lineas": [
+        "Batida grande",
+        "*$4.99*"
+      ]
     },
     {
       "tipo": "gancho",
-      "dur": 80,
-      "etiqueta": "Viernes",
+      "dur": 90,
+      "etiqueta": "VIERNES",
       "lineas": [
         "Blackout grande",
         "*$4.99*"
@@ -76,51 +50,44 @@
     },
     {
       "tipo": "gancho",
-      "dur": 80,
-      "etiqueta": "Sábados",
+      "dur": 90,
+      "etiqueta": "SÁBADOS",
       "lineas": [
         "Galletas",
         "*2 x $1.00*"
       ]
     },
     {
-      "tipo": "retrato",
-      "dur": 80,
-      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/queen-ice-cream-pr/drive-14ueZr3sDYSjLSgn8QhOCHiELKjVaNpmw-IMG_7053-1-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVlZW4taWNlLWNyZWFtLXByL2RyaXZlLTE0dWVacjNzRFlTakxTZ244UWhPQ0hpRUxLalZhTnBtdy1JTUdfNzA1My0xLS5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI4NTY0LCJleHAiOjE4MjQyNjQ1NjR9.N-tN9FZoatrDjxu-wgM2fcE-ZnF05TK2T0l4wzAY9EmuUBWE_8fvI6G8l6j2a43eGml3Mb32kVx7PjDTZsEU8g",
-      "enfoque": "50% 75%",
-      "etiqueta": "Domingos",
-      "titulo": "Cheesecakes y bizcochos *$2.99*"
-    },
-    {
-      "tipo": "retrato",
-      "dur": 130,
-      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/queen-ice-cream-pr/drive-1HHq3b9c1xWUiFaa0wAapyXqtWDXYgvtC-IMG_7054.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVlZW4taWNlLWNyZWFtLXByL2RyaXZlLTFISHEzYjljMXhXVWlGYWEwd0FhcHlYcXRXRFhZZ3Z0Qy1JTUdfNzA1NC5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI4NTY0LCJleHAiOjE4MjQyNjQ1NjR9.B9ieJjZdb_WmP0RvzCKWpPOHyAtiyrynoNM34QICA91fuVuTO9U2aV1bC4WdDoiBNPGd4i0syM1_3oFu2M1QYg",
-      "enfoque": "50% 65%",
-      "etiqueta": "Desde 1964",
-      "titulo": "Helado chino *desde 1964*",
-      "puntos": [
-        "24 sabores",
-        "Varios sin leche"
+      "tipo": "gancho",
+      "dur": 90,
+      "etiqueta": "DOMINGOS",
+      "lineas": [
+        "Cheesecakes y bizcochos",
+        "*$2.99*"
       ]
     },
     {
-      "tipo": "gancho",
-      "dur": 110,
-      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/queen-ice-cream-pr/drive-1WLM4Q7XHSBF8Ge0zQQUbUKkx9JA0_p7C-IMG_6797.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVlZW4taWNlLWNyZWFtLXByL2RyaXZlLTFXTE00UTdYSFNCRjhHZTB6UVFVYlVLa3g5SkEwX3A3Qy1JTUdfNjc5Ny5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI4NTY0LCJleHAiOjE4MjQyNjQ1NjR9.5bWJLZbGLg_rX7wzPEIqXkYkXHiwqVBrPDYvAXHc5E2c7JIz-s_TRH92cl3vdllHtIggq4blNEnM3HxDw__AyA",
-      "enfoque": "50% 55%",
-      "lineas": [
-        "Ven, siéntate",
-        "y *disfrútalo*",
-        "en el local."
+      "tipo": "lista",
+      "dur": 120,
+      "titulo": "*Queen Ice Cream PR*",
+      "items": [
+        {
+          "texto": "Desde 1964"
+        },
+        {
+          "texto": "24 sabores"
+        },
+        {
+          "texto": "Varios sin leche"
+        }
       ]
     },
     {
       "tipo": "cierre",
-      "dur": 165,
-      "cta": "WhatsApp 787-458-8143",
-      "sub": "Zúmbale hoy · ¡Aprovecha ahora!",
-      "url": "22 Calle Javilla, San Germán, PR",
-      "nota": "Desde 1964 · 24 sabores · varios sin leche"
+      "dur": 130,
+      "cta": "Visítanos ya",
+      "sub": "Zúmbale hoy • ¡Aprovecha ahora!",
+      "url": "787-458-8143"
     }
   ],
   "cliente": {
