@@ -102,12 +102,12 @@
     }
   ],
   "cliente": {
-    "fondo": "#F4F7FA",
-    "texto": "#0B4A82",
-    "acento": "#00679A",
+    "fondo": "#0B3F6E",
+    "texto": "#FFFFFF",
+    "acento": "#FFCC00",
     "fuente": "Montserrat",
     "nombre": "Dra. Yamilet Escabí",
-    "acento2": "#FFCC00",
+    "acento2": "#00679A",
     "estilos": [
       "editorial",
       "minimal"
