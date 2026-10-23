@@ -1,0 +1,123 @@
+{
+  "id": "west-01-fase4-a-quien-llamas-9x16",
+  "formato": "9:16",
+  "titulo": "¿A quién llamas? (fase 4, recordación)",
+  "angulo": "Remarketing top of mind: Miguel responde L-D y da el precio al ver el trabajo (guion de María del Carmen, 23/oct)",
+  "estilo": "impacto",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1pKr3JojXdf36pf1YomTNqZBXe0olyO_W-Collage-de-limpieza-de-desagues.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xcEtyM0pvalhkZjM2cGYxWW9tVE5xWkJYZTBvbHlPX1ctQ29sbGFnZS1kZS1saW1waWV6YS1kZS1kZXNhZ3Vlcy5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI5NTAzLCJleHAiOjE4MjQyNjU1MDN9.kabvewNZ8EuTXsJEbJqaaVk_FVXQd_gJDuf457c2cSve-T4K4zpLhNK_-Og7OhGStntpLA2PIW9j6rPBVpVAHA",
+      "enfoque": "25% 25%",
+      "lineas": [
+        "Si hoy se te rompe",
+        "una tubería…",
+        "¿a quién *llamas*?"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 130,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1_yVtJIzdju3IqkGqk-XUaQ2rNRoXlv0k-miguel-1.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xX3lWdEpJemRqdTNJcWtHcWstWFVhUTJyTlJvWGx2MGstbWlndWVsLTEucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjcyOTUwNSwiZXhwIjoxODI0MjY1NTA1fQ.2rApavPRFy0q_StzZtQ4P8f5lKLTzDGQU79ruwZ0baPi4F_DcH0WWXRwNU__MynEewxSqUPzlxLOlYiMkIn4sA",
+      "enfoque": "40% 30%",
+      "etiqueta": "West Plumbing",
+      "titulo": "Él es *Miguel*",
+      "puntos": [
+        "6 años resolviendo salideros, destapes e instalaciones"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1Fzthh47nrfYDWJ1Cl3CvOKS6UpzAfYGT-Captura-de-pantalla-2026-10-22-164615.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xRnp0aGg0N25yZllEV0oxQ2wzQ3ZPS1M2VXB6QWZZR1QtQ2FwdHVyYS1kZS1wYW50YWxsYS0yMDI2LTEwLTIyLTE2NDYxNS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI5NTAzLCJleHAiOjE4MjQyNjU1MDN9.WpLVtOhjYHmCYFS4Q-K_kb3tB_A_Du7nhm5LUmpXi1YDdfDRwrPKwvhTf2kEU-__B-D4JKn2h2oLdjj-6B7H-g",
+      "enfoque": "50% 50%",
+      "lineas": [
+        "En casas…",
+        "y en *negocios*."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 120,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1u34-R_lC8lg9LYF5BsykndgfN6GdSVFl-maquina.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xdTM0LVJfbEM4bGc5TFlGNUJzeWtuZGdmTjZHZFNWRmwtbWFxdWluYS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI5NTA1LCJleHAiOjE4MjQyNjU1MDV9.RCocmgVQY54QLJH27ZKe67hUwx7WGZiX3w1dFayFnsaVx2ccEFphY1kpdmzZyMIC2q-XvL91n_U1lSKP9flyzQ",
+      "enfoque": "50% 55%",
+      "lineas": [
+        "De lunes a *domingo*.",
+        "Sí, también",
+        "de madrugada."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "Porque una fuga",
+        "no espera a que",
+        "*abra el horario*."
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 140,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1lIBXrV_w4Y2t4dU19levCz_TsHQmEtrz-Captura-de-pantalla-2026-10-22-164538.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xbElCWHJWX3c0WTJ0NGRVMTlsZXZDel9Uc0hRbUV0cnotQ2FwdHVyYS1kZS1wYW50YWxsYS0yMDI2LTEwLTIyLTE2NDUzOC5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI5NTAzLCJleHAiOjE4MjQyNjU1MDN9.jJUKnYT9GeCMPyvYMO8P0dli76fxTF_z_s_6B7T0KE3FN_uC7LKMPQGJ6hElX6IvrHbdIyZqMWLiWAlQehZyYA",
+      "enfoque": "40% 60%",
+      "etiqueta": "Todo claro",
+      "titulo": "El precio lo da *cuando ve el trabajo*",
+      "puntos": [
+        "No a ciegas por teléfono"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 170,
+      "modo": "marcar",
+      "titulo": "Llega a *toda la isla*",
+      "items": [
+        {
+          "texto": "Base en Dorado"
+        },
+        {
+          "texto": "Servicio a toda la isla"
+        },
+        {
+          "texto": "Evidencia: cómo estaba y cómo quedó"
+        }
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 120,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1_yVtJIzdju3IqkGqk-XUaQ2rNRoXlv0k-miguel-1.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xX3lWdEpJemRqdTNJcWtHcWstWFVhUTJyTlJvWGx2MGstbWlndWVsLTEucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjcyOTUwNSwiZXhwIjoxODI0MjY1NTA1fQ.2rApavPRFy0q_StzZtQ4P8f5lKLTzDGQU79ruwZ0baPi4F_DcH0WWXRwNU__MynEewxSqUPzlxLOlYiMkIn4sA",
+      "enfoque": "40% 25%",
+      "lineas": [
+        "Guarda *su número*.",
+        "Cuando lo necesites,",
+        "escríbele por WhatsApp."
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 180,
+      "grande": true,
+      "cta": "WhatsApp 939-255-9713",
+      "sub": "Lunes a domingo · emergencias",
+      "url": "Base en Dorado · servicio a toda la isla",
+      "nota": "6 años de experiencia · casas y negocios"
+    }
+  ],
+  "cliente": {
+    "fondo": "#001226",
+    "texto": "#FFFFFF",
+    "acento": "#F87820",
+    "fuente": "Montserrat",
+    "nombre": "West Plumbing",
+    "acento2": "#F8A038",
+    "estilos": [
+      "impacto",
+      "editorial"
+    ],
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1SI9uJztQD6GMB7MJBaZUQOzID7RF9ST5-LOGO-WESTPLUMBNG.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xU0k5dUp6dFFENkdNQjdNSkJhWlVRT3pJRDdSRjlTVDUtTE9HTy1XRVNUUExVTUJORy5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI5NTA1LCJleHAiOjE4MjQyNjU1MDV9.2Rp0IIUSa2IQE_GFkkcR9ueXYA7UlPD9nxJnPR6uKEzTFOPxMuU6xamvE6tGcAHF6DKbbOum9wnoMk5k-0ck_w",
+    "subtitulo": "Plomería · Dorado, PR · toda la isla"
+  }
+}
