@@ -1,0 +1,70 @@
+{
+  "id": "west-02-fase4-a-quien-llamas-9x16",
+  "formato": "9:16",
+  "titulo": "¿A quién llamas? (fase 4 remarketing)",
+  "angulo": "Urgencia + top-of-mind",
+  "estilo": "impacto",
+  "musica": "audio/lu-suspenso.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 120,
+      "lineas": [
+        "Si hoy se te rompe",
+        "una tubería…",
+        "¿a quién *llamas*?"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 140,
+      "modo": "marcar",
+      "titulo": "*West Plumbing* resuelve…",
+      "items": [
+        {
+          "texto": "Emergencias 24/7"
+        },
+        {
+          "texto": "Plomería residencial"
+        },
+        {
+          "texto": "Plomería comercial"
+        },
+        {
+          "texto": "Reparación y instalación"
+        }
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 110,
+      "lineas": [
+        "Base en Dorado",
+        "servicio a toda la isla",
+        "*disponibles siempre*"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 150,
+      "cta": "Guarda su número",
+      "sub": "Cuando lo necesites, escríbele por WhatsApp",
+      "url": "939-255-9713",
+      "nota": "West Plumbing · Dorado, PR · lunes a domingo, emergencias 24/7"
+    }
+  ],
+  "cliente": {
+    "fondo": "#001226",
+    "texto": "#FFFFFF",
+    "acento": "#F87820",
+    "fuente": "Montserrat",
+    "nombre": "West Plumbing",
+    "acento2": "#F8A038",
+    "estilos": [
+      "impacto",
+      "editorial"
+    ],
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/west-plumbing/drive-1SI9uJztQD6GMB7MJBaZUQOzID7RF9ST5-LOGO-WESTPLUMBNG.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvd2VzdC1wbHVtYmluZy9kcml2ZS0xU0k5dUp6dFFENkdNQjdNSkJhWlVRT3pJRDdSRjlTVDUtTE9HTy1XRVNUUExVTUJORy5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyNzI5NTA1LCJleHAiOjE4MjQyNjU1MDV9.2Rp0IIUSa2IQE_GFkkcR9ueXYA7UlPD9nxJnPR6uKEzTFOPxMuU6xamvE6tGcAHF6DKbbOum9wnoMk5k-0ck_w",
+    "subtitulo": "Plomería · Dorado, PR · toda la isla"
+  }
+}
