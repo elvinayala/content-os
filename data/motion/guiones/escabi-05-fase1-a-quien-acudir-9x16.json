@@ -102,16 +102,17 @@
     }
   ],
   "cliente": {
-    "fondo": "#00679A",
-    "texto": "#FFFFFF",
-    "acento": "#FFCC00",
+    "fondo": "#F4F7FA",
+    "texto": "#0B4A82",
+    "acento": "#00679A",
     "fuente": "Montserrat",
     "nombre": "Dra. Yamilet Escabí",
-    "acento2": "#0B4A82",
+    "acento2": "#FFCC00",
     "estilos": [
       "editorial",
       "minimal"
     ],
-    "subtitulo": "Neuropsicóloga Clínica · Hormigueros, PR"
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/dra-escabi/drive-1t-9i2zGFTak5fitClHZSCkdolN63ALI0-LOGO-YAMILET.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZHJhLWVzY2FiaS9kcml2ZS0xdC05aTJ6R0ZUYWs1Zml0Q2xIWlNDa2RvbE42M0FMSTAtTE9HTy1ZQU1JTEVULnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI3MDY1NTIsImV4cCI6MTgyNDI0MjU1Mn0.CeFilRHus6QOwwHcKGtJFev3PlVXuce0XGbOEnaetEvylO14v_5A0jZCK4NoDyFtWRw13wxis7ykPJuSzxI0NA",
+    "subtitulo": "Psy.D. · Hormigueros, PR"
   }
 }
