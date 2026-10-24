@@ -20,3 +20,12 @@ deploy) para Content OS, Bori, Cortex, AIB Core, ISLA Run, landings de Resuelto/
 externos en ~/bori-trabajo/pulido-legal-ux/. Segunda ronda lanzada el mismo día: AMBC 360 (en copia ~/bori-trabajo/pulido-legal-ux/ambc +
 parche, porque su repo no tiene commits), AIB SaaS, Quality Care y dashboard de ventas. Rutas legales fijas en Content OS:
 /terminos, /privacidad, /reembolsos, /cookies; el consentimiento (lib/consentimientos) lo hace la sesión de /f/. Relacionado: [[legal-sitio-web]].
+
+**Estado al cierre del 24/oct/2026 (ronda legal + UX):** EN VIVO → 1000X app (fuente real de prod en
+~/1000x-produccion, NO en 1000x-fuente; respaldo pre-cambio ahí mismo), AIB Core piloto (aicore-piloto),
+Ángelo/Quality Care (Worker + Netlify), Closer Lab (rama staff-agency → Railway) y AI Borinquen Salud (Railway).
+LISTO SIN PUBLICAR (el modo auto bloquea deploys delegados; Elvin aprueba o publica con DEPLOY-PENDIENTE.md /
+docs/contexto/consentimientos.md): Content OS (rama worktree-agent-af3189d862b544f7f, migración 0045 antes del push),
+Cortex (f129533), Bori (b01bf0f — arrastra 45 commits de pendiente-flyers + MALLOC_ARENA_MAX=2), AIB SaaS (token de
+Supabase vencido en app/.env.supabase.local; migración 014 antes). Sin producción: ISLA Run (main local),
+La Granja, Resuelto (Netlify bloqueado). AMBC: parche aplicado al original, go-live 2/nov.
