@@ -82,6 +82,7 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
                     </Link>
                     {f.estado !== "abierto" && <span className={cn("ml-2 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase", f.estado === "ganado" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700")}>{f.estado}</span>}
                     {f.noLeidos > 0 && <span className="ml-2 rounded-full bg-[#25d366] px-1.5 text-[10px] font-bold text-white">{f.noLeidos}</span>}
+                    {f.enOtraMarca && <span className="ml-2 rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-bold text-sky-800" title="Este contacto también está abierto en la otra marca: cuidado con el nombre de la empresa">⚠️ {c.m.marca === "level_up" ? "También en AIB" : "También en LU"}</span>}
                   </td>
                   <td className="py-2 pr-3 text-muted-foreground">{f.negocio ?? "—"}</td>
                   <td className="max-w-72 py-2 pr-3 text-muted-foreground" title={f.ultimaNota ?? undefined}>

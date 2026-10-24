@@ -37,6 +37,7 @@ export interface TratoTarjeta {
   prioridad: "super" | "alta" | null;
   llamadaEl: string | null;
   closerLlamada: string | null;
+  enOtraMarca: boolean;
 }
 
 // ---------- Acceso ------------------------------------------------------------------------------
@@ -183,6 +184,8 @@ const camposTarjeta = {
   prioridad: sql<"super" | "alta" | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'prioridad'`,
   llamadaEl: sql<string | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'fecha'`,
   closerLlamada: sql<string | null>`trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer')`,
+  // Lis (21/oct): el mismo teléfono abierto en la otra marca → etiqueta en la tarjeta para no nombrarle la otra empresa.
+  enOtraMarca: sql<boolean>`(leads_tratos.telefono is not null and exists (select 1 from leads_tratos o where o.telefono = leads_tratos.telefono and o.marca <> leads_tratos.marca and o.estado = 'abierto'))`,
 };
 
 function aTarjeta(r: Record<string, unknown>): TratoTarjeta {

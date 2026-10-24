@@ -136,7 +136,7 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
           <div className="flex items-start gap-2">
             <span className="text-lg">⚠️</span>
             <div>
-              <p className="font-semibold">Este contacto también existe en {duploEnOtraMarca.marca}</p>
+              <p className="font-semibold">Este contacto también está abierto en {duploEnOtraMarca.marca === "level_up" ? "Level Up" : "AI Borinquen"}</p>
               <p className="text-xs text-yellow-700">Lead: <strong>{duploEnOtraMarca.nombre}</strong> — cuidado con el nombre de la empresa al contactar.</p>
             </div>
           </div>

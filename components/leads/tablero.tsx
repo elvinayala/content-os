@@ -38,6 +38,7 @@ export interface TarjetaUI {
   prioridad?: "super" | "alta" | null;
   llamadaEl?: string | null;
   closerLlamada?: string | null;
+  enOtraMarca?: boolean;
 }
 
 const usd = (n: number) => (n ? `$${n.toLocaleString("en-US")}` : "$0");
@@ -796,6 +797,11 @@ function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaU
               ) : t.prioridad === "alta" ? (
                 <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-px text-[10px] font-bold text-amber-800" title="Alta intención: califica para DFY (profesional o $10K+ al mes)">
                   ⭐ Alta
+                </span>
+              ) : null}
+              {t.enOtraMarca ? (
+                <span className="shrink-0 rounded-full bg-sky-100 px-1.5 py-px text-[10px] font-bold text-sky-800" title={`Este contacto también está abierto en ${marcaSlug === "level-up" ? "AI Borinquen" : "Level Up"}: cuidado con el nombre de la empresa al contactarlo`}>
+                  ⚠️ {marcaSlug === "level-up" ? "También en AIB" : "También en LU"}
                 </span>
               ) : null}
               {t.noLeidos > 0 && (
