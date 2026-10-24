@@ -14,7 +14,7 @@ import sharp from "sharp";
 import { RAIZ, almacen, type Trabajo } from "./almacen.js";
 import * as despacho from "./despacho.js";
 import { enviarTexto, avisarCoordinador } from "./canales/whatsapp.js";
-import { avisarCliente } from "./aviso-cliente.js";
+import { avisoAutomatico } from "./aviso-cliente.js";
 import { crearLinkPago } from "./integraciones/cobros.js";
 import { actualizarOportunidad } from "./integraciones/crm.js";
 import { menu } from "./prompt.js";
@@ -61,7 +61,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
     if (t.estado !== "agendado") return { ok: false, motivo: "Ya marcaste este paso." };
     almacen.guardarTrabajo({ ...t, estado: "en-camino", enCaminoEn: ahora });
     archivar(t.contactoId, "sistema", `${t.id}: ${p.nombre} marcó "voy en camino".`, t.id);
-    await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]} 👋 Te escribe Resuelto.\n\n${primer}, tu ${tecnicoDe(t)}, va en camino para tu ${t.servicio.toLowerCase()}. Llega dentro de tu ventana (${hora(t.inicio)}–${hora(t.fin)}).\n\nRecuerda: al final le pagas a Resuelto por link o ATH Móvil, nunca en efectivo al plomero. Cualquier cosa, escríbenos por aquí.`).catch(() => undefined);
+    await avisoAutomatico(t, `Hola ${t.nombre.split(" ")[0]} 👋 Te escribe Resuelto.\n\n${primer}, tu ${tecnicoDe(t)}, va en camino para tu ${t.servicio.toLowerCase()}. Llega dentro de tu ventana (${hora(t.inicio)}–${hora(t.fin)}).\n\nRecuerda: al final le pagas a Resuelto por link o ATH Móvil, nunca en efectivo al plomero. Cualquier cosa, escríbenos por aquí.`).catch(() => undefined);
     return { ok: true, estado: "en-camino" };
   }
   if (paso === "llegue") {
@@ -89,7 +89,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
     const reembolso = r2(Math.min(mat, 150));
     almacen.guardarTrabajo({ ...t, estado: "cobrado", terminadoEn: ahora, cobradoEn: ahora, manoObraFinal: 0, materialesCosto: mat, totalCliente: 0, pagoPlomero: 0, piezasPlomero: reembolso, notaCierre: d.nota?.trim() || undefined });
     archivar(t.contactoId, "sistema", `${t.id} (garantía de ${t.garantiaDe}) resuelto por ${p.nombre}. ${d.nota ?? ""}`.trim(), t.id);
-    await avisarCliente(t, `✅ ${t.nombre.split(" ")[0]}, ${primer} corrigió tu trabajo (${t.garantiaDe}). No tienes que pagar nada. Si algo no quedó bien, escríbenos por aquí.`).catch(() => undefined);
+    await avisoAutomatico(t, `✅ ${t.nombre.split(" ")[0]}, ${primer} corrigió tu trabajo (${t.garantiaDe}). No tienes que pagar nada. Si algo no quedó bien, escríbenos por aquí.`).catch(() => undefined);
     await avisarCoordinador(`🛡️ Garantía cerrada ${t.id} (de ${t.garantiaDe}) por ${p.nombre}${mat ? ` · materiales $${mat} (reembolso $${reembolso})` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
     return { ok: true, estado: "completado", total: 0, pago: reembolso, garantia: true };
   }
@@ -103,10 +103,10 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
   archivar(t.contactoId, "sistema", `${t.id} terminado por ${p.nombre}. Cliente $${total.toFixed(2)} (mano de obra $${mano}${mat ? `, materiales $${matCliente}` : ""}). Pago plomero $${pago.toFixed(2)}${piezas ? ` + piezas $${piezas.toFixed(2)}` : ""}.${d.nota ? " Nota: " + d.nota : ""}`, t.id);
   // 19/oct/2026 (Aure): al cliente solo el monto final, sin desglose. La garantía solo si el servicio la tiene (destapes).
   const gar = garantiaDe(t.servicioId).texto;
-  await avisarCliente(t, `✅ ¡Listo, ${t.nombre.split(" ")[0]}! ${primer} terminó tu ${t.servicio.toLowerCase()}.\n\n*Total: $${total.toFixed(2)}*\n\nPaga aquí: ${link.url ?? ""}\nO por ATH Móvil: ${link.athMovil}\n\n${gar ? `Tu trabajo tiene garantía de ${gar} en mano de obra. ` : ""}Mañana te escribimos para saber cómo te fue.`).catch(() => undefined);
+  await avisoAutomatico(t, `✅ ¡Listo, ${t.nombre.split(" ")[0]}! ${primer} terminó tu ${t.servicio.toLowerCase()}.\n\n*Total: $${total.toFixed(2)}*\n\nPaga aquí: ${link.url ?? ""}\nO por ATH Móvil: ${link.athMovil}\n\n${gar ? `Tu trabajo tiene garantía de ${gar} en mano de obra. ` : ""}Mañana te escribimos para saber cómo te fue.`).catch(() => undefined);
   if (t.ghlOpportunityId && process.env.GHL_STAGE_COMPLETADO) await actualizarOportunidad(t.ghlOpportunityId, { stageId: process.env.GHL_STAGE_COMPLETADO, monetaryValue: total }).catch(() => undefined);
   const fueraDeRango = rango && t.manoObra == null && mano - extra > rango[1];
-  await avisarCoordinador(`${fueraDeRango ? "⚠️ FUERA DE RANGO · " : "🧾 "}${t.id} terminado por ${p.nombre}\n${t.servicio} · ${t.municipio}\nTotal cliente $${total.toFixed(2)} · comisión plomero (viernes) $${pago.toFixed(2)}${mat ? `\n💵 Devolverle piezas $${piezas.toFixed(2)} (costo $${mat.toFixed(2)} + 10 %) antes del ${new Date(Date.now() + 48 * 3600_000).toLocaleDateString("es-PR", { timeZone: config.zonaHoraria, weekday: "short", day: "numeric", month: "short" })} (regla de 48 h)` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
+  await avisarCoordinador(`${fueraDeRango ? "⚠️ FUERA DE RANGO · " : "🧾 "}${t.id} terminado por ${p.nombre}\n${t.servicio} · ${t.municipio}\nTotal cliente $${total.toFixed(2)} · comisión plomero (viernes) $${pago.toFixed(2)}${mat ? `\n💵 Devolverle piezas $${piezas.toFixed(2)} (costo $${mat.toFixed(2)} + 10 %) antes del ${new Date(Date.now() + 48 * 3600_000).toLocaleDateString("es-PR", { timeZone: config.zonaHoraria, weekday: "short", day: "numeric", month: "short" })} (regla de 48 h)` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}${process.env.AVISOS_CLIENTE === "on" ? "" : `\n💳 El cobro al cliente es a mano (no se le envió). Link generado: ${link.url ?? "—"} · ATH Móvil: ${link.athMovil}`}`).catch(() => undefined);
   return { ok: true, estado: "completado", total, pago, piezas, link: link.url, simulado: link.simulado };
 }
 

@@ -5,6 +5,8 @@
 import { pideLlamada, avisarLlamarCliente, esReclutamiento } from "./ventas.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { archivar } from "./historial.js";
+import { trabajoActivoDe } from "./aviso-cliente.js";
+import { avisarCoordinador } from "./canales/whatsapp.js";
 import { recortarHistorial } from "./recorte-historial.js";
 import { config } from "./config.js";
 import { almacen, type Contacto } from "./almacen.js";
@@ -52,6 +54,14 @@ export async function responder(contacto: Contacto, entrada: Entrada): Promise<s
   if (tel) { contacto = { ...contacto, telefono: tel }; almacen.guardarContacto(contacto); }
   if (!entrada.reintento && pideLlamada(entrada.texto) && contacto.telefono && !esReclutamiento(contacto)) void avisarLlamarCliente(contacto, entrada.texto ?? "").catch(console.error);
   if (contacto.humano) return []; // un humano está atendiendo; el agente calla
+  // Aure (22/oct): con la cita agendada el chat es del equipo (plomero, Yaileen, Heileen); la IA no contesta y les pasa
+  // lo que escribió el cliente. Después del cobro (o 30 días sin moverse) el agente vuelve a atender.
+  const activo = !esReclutamiento(contacto) ? trabajoActivoDe(store.trabajos(), contacto.id) : undefined;
+  if (activo) {
+    const texto = (entrada.texto || (entrada.adjuntos?.length ? "📷 [adjunto]" : "")).slice(0, 500);
+    if (!entrada.reintento) void avisarCoordinador(`💬 ${contacto.nombre ?? activo.nombre} (${activo.id} · ${activo.estado} · ${activo.municipio}) escribió y la IA NO le contestó (cita agendada, lo atiende el equipo):\n"${texto}"`).catch(() => undefined);
+    return [];
+  }
 
   const conv = almacen.conversacion(contacto.id);
   const bloques: Anthropic.Beta.BetaContentBlockParam[] = [{ type: "text", text: contexto(contacto) }];

@@ -22,3 +22,25 @@ export async function avisarCliente(d: { contactoId?: string; telefono?: string 
     return true;
   } catch (e) { console.error("aviso al cliente", d.contactoId, e); return false; }
 }
+
+/**
+ * Aure (22/oct/2026): "luego de que se confirma la fecha, la IA no debe escribirle más nada a ese chat; ahí se encarga
+ * el plomero, Yaileen y Heileen" — los clientes se confundían. Los avisos automáticos después de agendar (confirmando
+ * plomero, cita confirmada, va en camino, garantía) y el link de pago (el cobro lo mandan a mano según el diagnóstico)
+ * ya NO salen al cliente: quedan en el historial como nota. AVISOS_CLIENTE=on los vuelve a prender.
+ */
+export async function avisoAutomatico(d: { contactoId?: string; telefono?: string }, texto: string): Promise<boolean> {
+  if (process.env.AVISOS_CLIENTE === "on") return avisarCliente(d, texto);
+  if (d.contactoId) archivar(d.contactoId, "sistema", `[No enviado al cliente: lo atiende el equipo] ${texto}`);
+  return false;
+}
+
+/** Estados en que el chat del cliente es del equipo (agendado → cobrado). Pasado el cobro, el agente vuelve a atender. */
+const ACTIVO = new Set(["agendado", "en-camino", "en-sitio", "completado"]);
+const DIAS_ACTIVO = 30;
+
+/** Trabajo activo de este contacto (o undefined). Pura sobre la lista: testeable. */
+export function trabajoActivoDe<T extends { contactoId: string; estado: string; creado: string; inicio?: string }>(trabajos: T[], contactoId: string, ahora = Date.now()): T | undefined {
+  const limite = ahora - DIAS_ACTIVO * 86_400_000;
+  return trabajos.filter((t) => t.contactoId === contactoId && ACTIVO.has(t.estado) && Math.max(Date.parse(t.creado) || 0, Date.parse(t.inicio ?? "") || 0) > limite).at(-1);
+}
