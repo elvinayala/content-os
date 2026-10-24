@@ -21,7 +21,7 @@ test("las editoras administran pero no sacan ni borran en masa", () => {
   assert.equal(p.eliminarTablero, false);
   assert.equal(p.eliminarColumnas, false);
   assert.equal(p.quitarEtiquetasEnUso, false);
-  assert.equal(p.administrarAccesoTableros, false);
+  assert.equal(p.administrarAccesoTableros, true);
   assert.equal(p.topeBorradoItems, TOPE_BORRADO_NO_ADMIN);
 });
 

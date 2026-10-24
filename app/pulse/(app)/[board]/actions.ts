@@ -239,9 +239,19 @@ export async function actualizarBoardAction(p: { boardId: string; patch: { nombr
 
 export async function guardarAccesoBoardAction(p: { boardId: string; privado: boolean; miembros: string[] }): Promise<R> {
   return envolver(async () => {
-    const admin = await requiereAdmin();
-    await repo.guardarAccesoBoard(p.boardId, { privado: p.privado, miembros: [...new Set(p.miembros)] });
-    await registrarEvento({ tipo: "acceso_tablero", actorId: admin.id, email: admin.email, detalle: `${p.boardId}: ${p.privado ? `privado (${p.miembros.length} miembros)` : "para todos"}` });
+    // Admin: todo. Editoras (Aure/Carilin, 24/oct): quién entra a los privados que ya ven; no lo vuelven público ni se
+    // sacan a sí mismas.
+    const u = await requiereAccesoBoard(p.boardId);
+    if (!poderes(u.rol).administrarAccesoTableros) await prohibido(u, "cambiar quién entra a un tablero");
+    let privado = p.privado;
+    const miembros = new Set(p.miembros);
+    if (u.rol !== "admin") {
+      privado = (await repo.boardEsPrivado(p.boardId)) ?? true;
+      if (!privado) await prohibido(u, "cambiar el acceso de un tablero público");
+      miembros.add(u.id);
+    }
+    await repo.guardarAccesoBoard(p.boardId, { privado, miembros: [...miembros] });
+    await registrarEvento({ tipo: "acceso_tablero", actorId: u.id, email: u.email, detalle: `${p.boardId}: ${privado ? `privado (${miembros.size} miembros)` : "para todos"}` });
     refresh();
     return {};
   });

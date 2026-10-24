@@ -17,7 +17,7 @@ export interface Poderes {
   topeBorradoItems: number | null; // null = sin tope
   exportarDatos: boolean; // sacar la base fuera de Pulse (CSV, respaldo, API de n8n)
   verRegistroSeguridad: boolean;
-  administrarAccesoTableros: boolean; // marcar un tablero como privado y elegir quién entra
+  administrarAccesoTableros: boolean; // elegir quién entra a un tablero privado (editoras: solo los que ven; privado↔público, solo admin)
   editarAutomatizaciones: boolean; // crear/editar/apagar reglas del tablero
 }
 
@@ -48,7 +48,7 @@ export function poderes(rol: RolUsuario): Poderes {
       topeBorradoItems: TOPE_BORRADO_NO_ADMIN,
       exportarDatos: false,
       verRegistroSeguridad: true,
-      administrarAccesoTableros: false,
+      administrarAccesoTableros: true, // Aure (24/oct): dar acceso a HR sin pedírselo a Elvin
       editarAutomatizaciones: true,
     };
   }

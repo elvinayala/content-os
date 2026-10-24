@@ -15,8 +15,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { NOMBRE_ROL } from "@/lib/pulse/types";
 
-// Quién ve el tablero (solo admins). Privado = admins + los marcados.
-export function BoardAcceso({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+// Quién ve el tablero. Privado = admins + los marcados. Las editoras eligen quién entra a un privado, pero no lo
+// vuelven público ni se quitan a sí mismas (Aure, 24/oct).
+export function BoardAcceso({ open, onOpenChange, esAdmin = true, yo }: { open: boolean; onOpenChange: (v: boolean) => void; esAdmin?: boolean; yo?: string }) {
   const { board, usuarios } = useBoard();
   const { dispatch } = useBoardActions();
   const router = useRouter();
@@ -51,7 +52,7 @@ export function BoardAcceso({ open, onOpenChange }: { open: boolean; onOpenChang
             <span>Tablero privado</span>
             <span className="text-xs font-normal text-muted-foreground">{privado ? "Solo admins y las personas marcadas" : "Lo ve todo el equipo"}</span>
           </Label>
-          <Switch id="privado" checked={privado} onCheckedChange={setPrivado} />
+          <Switch id="privado" checked={privado} onCheckedChange={setPrivado} disabled={!esAdmin} />
         </div>
         {privado ? (
           <div className="flex max-h-72 flex-col gap-1 overflow-auto rounded-lg border p-2">
@@ -59,7 +60,8 @@ export function BoardAcceso({ open, onOpenChange }: { open: boolean; onOpenChang
             {noAdmins.map((u) => (
               <label key={u.id} className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted">
                 <Checkbox
-                  checked={miembros.has(u.id)}
+                  disabled={!esAdmin && u.id === yo}
+                  checked={miembros.has(u.id) || (!esAdmin && u.id === yo)}
                   onCheckedChange={(v) => {
                     const n = new Set(miembros);
                     if (v) n.add(u.id);

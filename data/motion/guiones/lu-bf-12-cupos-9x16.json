@@ -1,0 +1,56 @@
+{
+ "id": "lu-bf-12-cupos-9x16",
+ "marca": "level-up",
+ "formato": "9:16",
+ "estilo": "impacto",
+ "titulo": "LU-BF-12 · Solo 6 arrancan en octubre",
+ "angulo": "Black Friday adelantado · cupos de octubre (sin precio)",
+ "escenas": [
+  {
+   "tipo": "gancho",
+   "dur": 96,
+   "lineas": [
+    "*12* cupos.",
+    "Solo *6* arrancan",
+    "en octubre."
+   ],
+   "logo": true
+  },
+  {
+   "tipo": "pasos",
+   "dur": 210,
+   "titulo": "Así va el Black Friday",
+   "pasos": [
+    "Octubre · 6 cupos: anuncios corriendo para TU temporada",
+    "Noviembre · 6 cupos: llegas a enero con todo montado",
+    "30 nov: se cae la 1:1 con el CEO",
+    "1 dic: se cierra"
+   ]
+  },
+  {
+   "tipo": "clip",
+   "dur": 327,
+   "video": "lu-peli/al-grano/bryan.mp4",
+   "desde": 6.4,
+   "etiqueta": "Dr. Bryan Vega · quiropráctico",
+   "titulo": "Eso es *un sistema*.",
+   "nota": "Resultados de un cliente real. Cada negocio es distinto."
+  },
+  {
+   "tipo": "gancho",
+   "dur": 120,
+   "lineas": [
+    "Sistema completo",
+    "*+ 2 bonos*",
+    "de Black Friday."
+   ]
+  },
+  {
+   "tipo": "cierre",
+   "dur": 150,
+   "cta": "Escribe SISTEMA",
+   "sub": "Quedan pocos cupos de octubre.",
+   "nota": "Black Friday · hasta el 1 de diciembre."
+  }
+ ]
+}

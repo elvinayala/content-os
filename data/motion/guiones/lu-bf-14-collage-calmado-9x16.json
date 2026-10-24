@@ -1,0 +1,111 @@
+{
+ "id": "lu-bf-14-collage-calmado-9x16",
+ "marca": "level-up",
+ "formato": "9:16",
+ "estilo": "editorial",
+ "musica": "audio/lu-pelicula.mp3",
+ "titulo": "LU-BF-14 · Collage calmado: en sus palabras",
+ "angulo": "Black Friday adelantado · diciembre se gana en octubre (sin precio)",
+ "escenas": [
+  {
+   "tipo": "gancho",
+   "dur": 120,
+   "lineas": [
+    "La mejor época",
+    "para vender del año",
+    "*ya empezó*."
+   ],
+   "logo": true
+  },
+  {
+   "tipo": "gancho",
+   "dur": 120,
+   "lineas": [
+    "El que monta sus anuncios",
+    "en noviembre",
+    "*llega tarde*."
+   ],
+   "sub": "Diciembre se gana en octubre."
+  },
+  {
+   "tipo": "collage",
+   "ritmo": "calmado",
+   "titulo": "En sus palabras",
+   "nota": "Resultados de clientes reales. Cada negocio es distinto.",
+   "clips": [
+    {
+     "video": "lu-peli/al-grano/bryan.mp4",
+     "desde": 0.0,
+     "hasta": 4.25,
+     "nombre": "Dr. Bryan Vega · quiropráctico"
+    },
+    {
+     "video": "lu-peli/al-grano/reina.mp4",
+     "desde": 8.5,
+     "hasta": 14.2,
+     "nombre": "Reina · Mr. iPhone, Mayagüez"
+    },
+    {
+     "video": "lu-peli/al-grano/magdalys.mp4",
+     "desde": 4.38,
+     "hasta": 8.45,
+     "nombre": "Magdalys · Beauty Salon, Bayamón"
+    },
+    {
+     "video": "lu-peli/al-grano/robert.mp4",
+     "desde": 8.95,
+     "hasta": 11.55,
+     "nombre": "Robert · RK Automatic Transmission",
+     "enfoque": "0% 50%",
+     "zoom": 1.12,
+     "origen": "0% 50%"
+    },
+    {
+     "video": "lu-peli/al-grano/oliver.mp4",
+     "desde": 7.6,
+     "hasta": 13.55,
+     "nombre": "Oliver · Tinos, Cabo Rojo"
+    }
+   ],
+   "dur": 678
+  },
+  {
+   "tipo": "gancho",
+   "dur": 120,
+   "lineas": [
+    "+100 negocios en Puerto Rico",
+    "ya tienen *su sistema*."
+   ]
+  },
+  {
+   "tipo": "lista",
+   "dur": 210,
+   "titulo": "Te instalamos *todo*:",
+   "modo": "marcar",
+   "items": [
+    {
+     "texto": "Anuncios con estrategia"
+    },
+    {
+     "texto": "Creativos y edición de videos"
+    },
+    {
+     "texto": "Videos motion graphics"
+    },
+    {
+     "texto": "Visita de contenido profesional"
+    },
+    {
+     "texto": "Soporte 24/7"
+    }
+   ]
+  },
+  {
+   "tipo": "cierre",
+   "dur": 150,
+   "cta": "Escribe SISTEMA",
+   "sub": "Solo 6 cupos arrancan en octubre.",
+   "nota": "Black Friday · hasta el 1 de diciembre."
+  }
+ ]
+}

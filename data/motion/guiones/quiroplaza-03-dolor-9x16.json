@@ -1,0 +1,123 @@
+{
+  "id": "quiroplaza-03-dolor-9x16",
+  "marca": "level-up",
+  "formato": "9:16",
+  "estilo": "minimal",
+  "musica": "audio/quiroplaza-musica.mp3",
+  "titulo": "Quiroplaza · el dolor no se aguanta, se evalúa (fase 2)",
+  "angulo": "Dolor normalizado → evaluación con radiografía y electromiografía",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 115,
+      "lineas": [
+        "¿Hace cuánto dejaste",
+        "de preguntarte",
+        "*por qué te duele*…"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/drive-10J3JjYPuaFRecMSQzgmOjvwzWZQx90Tk-FF70043A-116B-4462-8B2C-4E55A0130691.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9kcml2ZS0xMEozSmpZUHVhRlJlY01TUXpnbU9qdnd6V1pReDkwVGstRkY3MDA0M0EtMTE2Qi00NDYyLThCMkMtNEU1NUEwMTMwNjkxLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE1NTA1NjAsImV4cCI6MTgyMzA4NjU2MH0.3g4_8QVHISGnQeEmz-NFf8tWPY82mvgTOXXM5yYo888Z2JjzhnM-jHrZH1bGs0dLj4nbl1_ihRGZC2CR16ONDA",
+      "enfoque": "40% 35%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "alarma": true,
+      "lineas": [
+        "…y simplemente",
+        "aprendiste a *aguantarlo*?"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/slack-F0C7CA0P0D9-IMG_8726.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9zbGFjay1GMEM3Q0EwUDBEOS1JTUdfODcyNi5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxNTUwMzQ5LCJleHAiOjE4MjMwODYzNDl9.AdLE51rH9esz_ID4wEP0tpDypnQkaHvMuVCE0GLPSAeAESPnQvcul9SIZc5WSqlJ5pd5LrOa18HJ4BFYvwEvug",
+      "enfoque": "50% 50%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 125,
+      "lineas": [
+        "Muchas personas pasan",
+        "*meses o hasta años*",
+        "con dolor de cuello o espalda…"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/slack-F0C735MEYK1-IMG_8728.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9zbGFjay1GMEM3MzVNRVlLMS1JTUdfODcyOC5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxNTUwMzUwLCJleHAiOjE4MjMwODYzNTB9.fkTVUqC8_rl6MSd6NOV4mZKTrTM9OqlqKVL9aVRrz2-2mk2_sl1lHGs0-UFwBjGCJwNo0C9WsxgMfnr7hyvPWw",
+      "enfoque": "50% 40%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 95,
+      "alarma": true,
+      "lineas": [
+        "…y terminan",
+        "*normalizándolo*."
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/slack-F0C7LF3FH17-20260826_124420.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9zbGFjay1GMEM3TEYzRkgxNy0yMDI2MDgyNl8xMjQ0MjAuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDM0OSwiZXhwIjoxODIzMDg2MzQ5fQ.Kl83CGGhdZYHCa4DgMtIg_vmB0tBbyQhmJoDxyFiUYd3M_ylbO_SeVoHWK_1j3sb19LYRLXn4sHxaQqrIZoyTg",
+      "enfoque": "50% 55%"
+    },
+    {
+      "tipo": "retrato",
+      "dur": 180,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/slack-F0C8CTTUQ3S-20260826_124523.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9zbGFjay1GMEM4Q1RUVVEzUy0yMDI2MDgyNl8xMjQ1MjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDM0OSwiZXhwIjoxODIzMDg2MzQ5fQ.T9YtK8IqwC62zeWcEqfECOXIumEMdd0U1dapCKa6EiPvyhsX0HG4fJdARULj9m-ILQhq1g_Ayjv2ND1p2yX85g",
+      "enfoque": "50% 50%",
+      "etiqueta": "Quiroplaza · San Juan",
+      "titulo": "Radiografía, electromiografía y *evaluación*",
+      "puntos": [
+        "Todo en la misma oficina",
+        "Para entender mejor tu caso",
+        "Y establecer un plan de atención"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 140,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/slack-F0C7CA6J0QK-DE7A9636-76AC-4F21-8B42-06AAA8222317.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9zbGFjay1GMEM3Q0E2SjBRSy1ERTdBOTYzNi03NkFDLTRGMjEtOEI0Mi0wNkFBQTgyMjIzMTcucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDM1MSwiZXhwIjoxODIzMDg2MzUxfQ.tluZPHoNwasToASrp_kS0bRQbEtdgTaQ0bJb6nm6gMHYWyDMOHbs_MRYAon8KYEu7NzIVJQ0WHSr_nMk76cNjw",
+      "enfoque": "50% 40%",
+      "etiqueta": "Tu evaluación",
+      "titulo": "Un plan de atención *personalizado*",
+      "puntos": [
+        "Evaluación y plan para tu caso"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 180,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/slack-F0C7LF5T9UZ-6FC2C198-0A68-4E37-BEF7-83508CD277E5.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9zbGFjay1GMEM3TEY1VDlVWi02RkMyQzE5OC0wQTY4LTRFMzctQkVGNy04MzUwOENEMjc3RTUucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDM1MCwiZXhwIjoxODIzMDg2MzUwfQ.X2HF4AD4aXNq0oYo1x7lfECg8TnIEthgBg_MgfC0FbnzRV4u6eZyKGfp5qg145-f-AegsauoI8ybAjV4pLJEUA",
+      "enfoque": "50% 30%",
+      "etiqueta": "Dr. Goar Blanco Blasco",
+      "titulo": "Llevo *más de tres décadas* atendiendo pacientes.",
+      "puntos": [
+        "+35 años de práctica"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 105,
+      "lineas": [
+        "Si ya te cansaste",
+        "de simplemente",
+        "*aguantar el dolor*…"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/drive-10ldyRogYmNkRKLbg0YgT1ANPAAFSJAw--E8E751E9-014A-4B81-B77D-D09E5A0FC7E7.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9kcml2ZS0xMGxkeVJvZ1ltTmtSS0xiZzBZZ1QxQU5QQUFGU0pBdy0tRThFNzUxRTktMDE0QS00QjgxLUI3N0QtRDA5RTVBMEZDN0U3LnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE1NTA1NjAsImV4cCI6MTgyMzA4NjU2MH0.6JlhPPVjurWkfxU7aplp5_9x2BmzttKsLb3C8ghZAvYZNvnwsDdQ-eQNJPfQctxe-AnJEDa8166LahZdTPHgVA",
+      "enfoque": "50% 30%"
+    },
+    {
+      "tipo": "cierre",
+      "dur": 180,
+      "cta": "Escríbenos: 787-504-8804",
+      "url": "o llámanos: 787-751-9147",
+      "sub": "y agenda tu evaluación · Adler Medical Plaza, Suite 501, Hato Rey",
+      "nota": "Lun, Mié y Vie 8:00 a.m.–6:00 p.m. · Mar 1:00–6:00 p.m."
+    }
+  ],
+  "cliente": {
+    "fondo": "#F5F4F4",
+    "texto": "#0A2D85",
+    "acento": "#FE6702",
+    "fuente": "Montserrat",
+    "musica": "quiroplaza-musica.mp3",
+    "nombre": "Quiroplaza",
+    "estilos": [
+      "minimal",
+      "editorial"
+    ],
+    "logoUrl": "clientes/quiroplaza/logo.png",
+    "subtitulo": "Dr. Goar Blanco Blasco · Hato Rey"
+  }
+}

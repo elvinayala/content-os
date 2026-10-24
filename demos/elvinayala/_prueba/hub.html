@@ -1,0 +1,229 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:20px;font-family:serif;background:#fff} .bar,.panel,.cta,.marca,.carril,.indice,.linea{color:red;background:pink;padding:40px}</style></head><body><h1>PÁGINA SIMULADA DE CLICKFUNNELS</h1><div class="bar">bar</div><link href=""https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+
+  #ea-hub {
+    --bg: #0b0c0f; --fg: #f2efe8; --muted: rgba(242,239,232,.62); --line: rgba(242,239,232,.14);
+    --gold: #e8c26a; --gold-fg: #17120a;
+    --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  #ea-hub * { box-sizing: border-box; margin: 0; }
+  #ea-hub, #ea-hub { height: 100%; background: var(--bg); color: var(--fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+  #ea-hub a { color: inherit; text-decoration: none; }
+  #ea-hub button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  #ea-hub :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  /* barra superior */
+  #ea-hub .ea-bar { position: fixed; inset: 0 0 auto 0; z-index: 30; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: max(18px, env(safe-area-inset-top)) clamp(16px, 3vw, 36px) 0; pointer-events: none; }
+  #ea-hub .ea-bar > * { pointer-events: auto; }
+  #ea-hub .ea-explorar { justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; background: rgba(11,12,15,.5); backdrop-filter: blur(8px); font: 600 11px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; transition: border-color .2s, background .2s; }
+  #ea-hub .ea-explorar:hover { border-color: var(--gold); }
+  #ea-hub .ea-explorar i { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+  #ea-hub .ea-marca { font: 600 12px var(--font-mono); letter-spacing: .32em; text-transform: uppercase; }
+  #ea-hub .ea-contador { justify-self: end; font: 500 12px var(--font-mono); letter-spacing: .14em; color: var(--muted); }
+  #ea-hub .ea-contador b { color: var(--fg); font-weight: 600; }
+
+  /* carril horizontal */
+  #ea-hub .ea-carril { position: fixed; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; cursor: grab; }
+  #ea-hub .ea-carril::-webkit-scrollbar { display: none; }
+  #ea-hub .ea-carril.ea-arrastrando { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+  #ea-hub .ea-panel { position: relative; flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: grid; align-content: center; justify-items: center; text-align: center; padding: 96px clamp(20px, 6vw, 96px) 120px; overflow: hidden; isolation: isolate; }
+
+  /* fondo: video opcional + atmósfera propia de cada pantalla */
+  #ea-hub .ea-fondo { position: absolute; inset: 0; z-index: -2; background: var(--bg); }
+  #ea-hub .ea-fondo video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
+  #ea-hub .ea-atmosfera { position: absolute; inset: -20%; z-index: -1; background:
+      radial-gradient(40% 45% at 22% 30%, var(--h1), transparent 70%),
+      radial-gradient(38% 42% at 80% 72%, var(--h2), transparent 70%);
+    animation: ea-deriva 22s ease-in-out infinite alternate; }
+  @keyframes ea-deriva { from { transform: translate3d(-2%, -1%, 0) scale(1); } to { transform: translate3d(3%, 2%, 0) scale(1.08); } }
+  #ea-hub .ea-panel::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background:
+      linear-gradient(to bottom, rgba(11,12,15,.55), rgba(11,12,15,.15) 40%, rgba(11,12,15,.7)),
+      repeating-linear-gradient(to bottom, rgba(242,239,232,.035) 0 1px, transparent 1px 34px); }
+  #ea-hub .ea-p1 { --h1: rgba(232,194,106,.22); --h2: rgba(91,140,255,.16); }
+  #ea-hub .ea-p2 { --h1: rgba(255,138,91,.22); --h2: rgba(232,194,106,.14); }
+  #ea-hub .ea-p3 { --h1: rgba(43,255,136,.17); --h2: rgba(31,182,166,.16); }
+  #ea-hub .ea-p4 { --h1: rgba(91,140,255,.24); --h2: rgba(255,225,77,.12); }
+
+  #ea-hub .ea-etiqueta { font: 600 11px var(--font-mono); letter-spacing: .24em; text-transform: uppercase; color: var(--gold); margin-bottom: clamp(18px, 3vh, 30px); }
+  #ea-hub .ea-etiqueta span { color: var(--muted); }
+  #ea-hub h1, #ea-hub h2 { font-family: var(--font-serif); font-weight: 500; font-variation-settings: "opsz" 144; letter-spacing: -.02em; line-height: 1.04; font-size: clamp(34px, 6.4vw, 84px); max-width: 15ch; text-wrap: balance; text-transform: uppercase; }
+  #ea-hub h1 em, #ea-hub h2 em { font-style: italic; color: var(--gold); text-transform: none; font-weight: 400; white-space: nowrap; margin-right: .1em; }
+  #ea-hub .ea-linea { margin-top: clamp(16px, 2.6vh, 26px); max-width: 46ch; color: var(--muted); font-size: clamp(15px, 1.6vw, 19px); line-height: 1.55; text-wrap: pretty; }
+  #ea-hub .ea-cta { margin-top: clamp(26px, 4.5vh, 44px); display: inline-flex; align-items: center; gap: 10px; padding: 17px 30px; border-radius: 999px; background: var(--gold); color: var(--gold-fg); font: 600 12px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; box-shadow: 0 10px 40px rgba(232,194,106,.22); transition: transform .18s, box-shadow .18s; }
+  #ea-hub .ea-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(232,194,106,.34); }
+  #ea-hub .ea-cta svg { width: 16px; height: 16px; }
+  #ea-hub .ea-tiempo { margin-top: 14px; font: 500 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+  /* pie fijo */
+  #ea-hub .ea-pie { position: fixed; inset: auto 0 0 0; z-index: 30; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 clamp(16px, 3vw, 36px) max(20px, env(safe-area-inset-bottom)); pointer-events: none; }
+  #ea-hub .ea-pie > * { pointer-events: auto; }
+  #ea-hub .ea-arrastra { font: 500 10px var(--font-mono); letter-spacing: .26em; text-transform: uppercase; color: var(--muted); display: inline-flex; align-items: center; gap: 10px; }
+  #ea-hub .ea-arrastra i { width: 26px; height: 1px; background: var(--muted); position: relative; }
+  #ea-hub .ea-arrastra i::after { content: ""; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid var(--muted); border-right: 1px solid var(--muted); transform: rotate(45deg); }
+  #ea-hub .ea-puntos { display: flex; gap: 10px; }
+  #ea-hub .ea-puntos button { width: 28px; height: 28px; display: grid; place-items: center; }
+  #ea-hub .ea-puntos button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--muted); transition: all .2s; }
+  #ea-hub .ea-puntos button[aria-current="true"]::before { background: var(--gold); border-color: var(--gold); transform: scale(1.25); }
+  #ea-hub .ea-legal { justify-self: end; font: 500 10px var(--font-mono); letter-spacing: .12em; color: var(--muted); }
+
+  #ea-hub .ea-flechas { position: fixed; top: 50%; z-index: 25; transform: translateY(-50%); width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 50%; background: rgba(11,12,15,.45); backdrop-filter: blur(8px); display: none; place-items: center; transition: border-color .2s, opacity .2s; }
+  #ea-hub .ea-flechas:hover { border-color: var(--gold); }
+  #ea-hub .ea-flechas svg { width: 18px; height: 18px; }
+  #ea-hub .ea-flechas.ea-ant { left: clamp(14px, 2.4vw, 32px); } #ea-hub .ea-flechas.ea-sig { right: clamp(14px, 2.4vw, 32px); }
+  #ea-hub .ea-flechas[disabled] { opacity: .2; pointer-events: none; }
+  @media (hover: hover) and (min-width: 820px) { #ea-hub .ea-flechas { display: grid; } }
+
+  /* índice */
+  #ea-hub .ea-indice { position: fixed; inset: 0; z-index: 40; background: rgba(8,9,11,.96); display: grid; align-content: center; padding: 0 clamp(24px, 9vw, 140px); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+  #ea-hub .ea-indice.ea-abierto { opacity: 1; visibility: visible; }
+  #ea-hub .ea-indice ol { list-style: none; padding: 0; display: grid; gap: clamp(8px, 2vh, 20px); }
+  #ea-hub .ea-indice a { display: flex; align-items: baseline; gap: 20px; font-family: var(--font-serif); font-size: clamp(28px, 5vw, 56px); letter-spacing: -.02em; color: rgba(242,239,232,.5); transition: color .2s, transform .2s; }
+  #ea-hub .ea-indice a:hover, #ea-hub .ea-indice a:focus-visible { color: var(--fg); transform: translateX(8px); }
+  #ea-hub .ea-indice a small { font: 500 11px var(--font-mono); letter-spacing: .14em; color: var(--muted); min-width: 2ch; }
+  #ea-hub .ea-cerrar { position: absolute; top: max(18px, env(safe-area-inset-top)); right: clamp(16px, 3vw, 36px); font: 600 11px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; }
+  #ea-hub .ea-cerrar:hover { border-color: var(--gold); }
+
+  @media (max-width: 640px) {
+    #ea-hub .ea-bar { grid-template-columns: auto 1fr; } #ea-hub .ea-marca { justify-self: end; font-size: 11px; letter-spacing: .24em; } #ea-hub .ea-contador { display: none; }
+    #ea-hub .ea-pie { grid-template-columns: 1fr; justify-items: center; } #ea-hub .ea-arrastra, #ea-hub .ea-legal { display: none; }
+    #ea-hub h1, #ea-hub h2 { max-width: 11ch; }
+  }
+  @media (prefers-reduced-motion: reduce) { #ea-hub .ea-atmosfera { animation: none; } #ea-hub .ea-carril { scroll-behavior: auto; } }
+
+#ea-hub { position: fixed; inset: 0; z-index: 2147483000; background: var(--bg); color: var(--fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; overflow: hidden; line-height: normal; }
+#ea-hub h1, #ea-hub h2 { margin: 0; }
+#ea-hub p { margin: 0; }
+
+</style>
+<div id="ea-hub">
+<header class="ea-bar">
+  <button class="ea-explorar" id="abrir" aria-haspopup="dialog"><i></i>Explorar todo</button>
+  <span class="ea-marca">Elvin Ayala</span>
+  <span class="ea-contador" aria-live="polite"><b id="n">01</b> / 04</span>
+</header>
+
+<main class="ea-carril" id="carril" tabindex="0" aria-label="Elige tu camino. Desliza hacia los lados.">
+
+  <section class="ea-panel ea-p1" data-id="escalar" aria-labelledby="t1">
+    <div class="ea-fondo"></div><div class="ea-atmosfera"></div>
+    <p class="ea-etiqueta">01 <span>/ 04 ·</span> Negocio digital</p>
+    <h1 id="t1">¿Quieres llevar tu negocio digital a <em>$10K–$20K</em> al mes?</h1>
+    <p class="ea-linea">Para creadores de contenido, coaches y mentores. Oferta, contenido, cierre y sistema: descubre cuál de las cuatro palancas te está frenando.</p>
+    <a class="ea-cta" href="/escalar" data-quiz>Auditar mi negocio digital <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <p class="ea-tiempo">Auditoría en 1 minuto · plan de 14 días</p>
+  </section>
+
+  <section class="ea-panel ea-p2" data-id="marketing" aria-labelledby="t2">
+    <div class="ea-fondo"></div><div class="ea-atmosfera"></div>
+    <p class="ea-etiqueta">02 <span>/ 04 ·</span> Marketing</p>
+    <h2 id="t2">¿Tu negocio ya vende pero depende de <em>referidos</em>?</h2>
+    <p class="ea-linea">Anuncios con IA y un sistema completo para que lleguen clientes nuevos cada semana. Para negocios tradicionales que ya facturan.</p>
+    <a class="ea-cta" href="/marketing" data-quiz>Auditar mi marketing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <p class="ea-tiempo">Auditoría en 1 minuto · plan de 14 días</p>
+  </section>
+
+  <section class="ea-panel ea-p3" data-id="ia" aria-labelledby="t3">
+    <div class="ea-fondo"></div><div class="ea-atmosfera"></div>
+    <p class="ea-etiqueta">03 <span>/ 04 ·</span> Inteligencia artificial</p>
+    <h2 id="t3">¿Tu negocio todavía depende de que alguien <em>conteste</em>?</h2>
+    <p class="ea-linea">Agentes de IA personalizados, sistemas desarrollados a la medida y capacitación para ti y tu equipo.</p>
+    <a class="ea-cta" href="/ia" data-quiz>Auditar mi operación <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <p class="ea-tiempo">Auditoría en 1 minuto · plan de 14 días</p>
+  </section>
+
+  <section class="ea-panel ea-p4" data-id="aprende" aria-labelledby="t4">
+    <div class="ea-fondo"></div><div class="ea-atmosfera"></div>
+    <p class="ea-etiqueta">04 <span>/ 04 ·</span> Shadow Operator</p>
+    <h2 id="t4">¿Quieres vivir de internet sin volverte <em>influencer</em>?</h2>
+    <p class="ea-linea">Aprende a operar negocios digitales con IA, desde tu primer cliente hasta tus primeros $10K al mes. Nicho, oferta, contenido y estrategia.</p>
+    <a class="ea-cta" href="/auditoria" data-quiz>Auditar mi idea <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <p class="ea-tiempo">Auditoría en 1 minuto · plan de 14 días</p>
+  </section>
+
+</main>
+
+<button class="ea-flechas ea-ant" id="ant" aria-label="Pantalla anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+<button class="ea-flechas ea-sig" id="sig" aria-label="Pantalla siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+
+<footer class="ea-pie">
+  <span class="ea-arrastra"><i></i>Arrastra para explorar</span>
+  <nav class="ea-puntos" id="puntos" aria-label="Pantallas"></nav>
+  <span class="ea-legal">© <span id="anio"></span> Elvin Ayala</span>
+</footer>
+
+<div class="ea-indice" id="indice" role="dialog" aria-modal="true" aria-label="Todos los caminos">
+  <button class="ea-cerrar" id="cerrar">Cerrar ×</button>
+  <ol>
+    <li><a href="#escalar" data-ir="0"><small>01</small>Negocio digital</a></li>
+    <li><a href="#marketing" data-ir="1"><small>02</small>Marketing</a></li>
+    <li><a href="#ia" data-ir="2"><small>03</small>Inteligencia artificial</a></li>
+    <li><a href="#aprende" data-ir="3"><small>04</small>Aprender a operar</a></li>
+  </ol>
+</div>
+</div>
+<script>
+(function () {
+document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden';
+
+(function () {
+  var raiz = document.getElementById('ea-hub');
+  var $ = function (s) { return raiz.querySelector(s); };
+  var carril = $('#carril'), paneles = [].slice.call(raiz.querySelectorAll('.ea-panel')), n = $('#n');
+  var puntos = $('#puntos'), idx = 0, reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $('#anio').textContent = new Date().getFullYear();
+
+  // los UTM que traiga el link de la bio viajan al quiz que elijas
+  var qs = location.search; // los UTM del link viajan al quiz que elijan
+  if (qs) [].forEach.call(raiz.querySelectorAll('[data-quiz]'), function (a) { a.href = a.getAttribute('href') + qs; });
+
+  // puntos
+  paneles.forEach(function (p, i) {
+    var b = document.createElement('button'); b.setAttribute('aria-label', 'Pantalla ' + (i + 1));
+    b.addEventListener('click', function () { ir(i); }); puntos.appendChild(b);
+  });
+  function ir(i) { i = Math.max(0, Math.min(paneles.length - 1, i)); carril.scrollTo({ left: paneles[i].offsetLeft, behavior: reducir ? 'auto' : 'smooth' }); }
+  function pintar() {
+    idx = Math.round(carril.scrollLeft / carril.clientWidth);
+    n.textContent = ('0' + (idx + 1)).slice(-2);
+    [].forEach.call(puntos.children, function (b, i) { b.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
+    $('#ant').disabled = idx === 0; $('#sig').disabled = idx === paneles.length - 1;
+    paneles.forEach(function (p, i) { var v = p.querySelector('video'); if (!v || !v.src) return; if (i === idx) v.play().catch(function () {}); else v.pause(); });
+  }
+  carril.addEventListener('scroll', function () { window.requestAnimationFrame(pintar); }, { passive: true });
+  $('#ant').addEventListener('click', function () { ir(idx - 1); });
+  $('#sig').addEventListener('click', function () { ir(idx + 1); });
+  carril.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') { e.preventDefault(); ir(idx + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); ir(idx - 1); } });
+
+  // rueda vertical = avanzar de pantalla
+  var bloqueo = false;
+  carril.addEventListener('wheel', function (e) {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    e.preventDefault(); if (bloqueo || Math.abs(e.deltaY) < 8) return; bloqueo = true;
+    ir(idx + (e.deltaY > 0 ? 1 : -1)); setTimeout(function () { bloqueo = false; }, 650);
+  }, { passive: false });
+
+  // arrastrar con el mouse
+  var down = false, x0 = 0, s0 = 0, movio = false;
+  carril.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse' || e.target.closest('a,button')) return; down = true; movio = false; x0 = e.clientX; s0 = carril.scrollLeft; });
+  window.addEventListener('pointermove', function (e) { if (!down) return; var dx = e.clientX - x0; if (Math.abs(dx) > 4) { movio = true; carril.classList.add('ea-arrastrando'); } carril.scrollLeft = s0 - dx; });
+  window.addEventListener('pointerup', function (e) { if (!down) return; down = false; carril.classList.remove('ea-arrastrando'); if (movio) { var dx = e.clientX - x0; ir(idx + (dx < -60 ? 1 : dx > 60 ? -1 : 0)); } });
+
+  // índice
+  var indice = $('#indice');
+  $('#abrir').addEventListener('click', function () { indice.classList.add('ea-abierto'); $('#cerrar').focus(); });
+  function cerrar() { indice.classList.remove('ea-abierto'); $('#abrir').focus(); }
+  $('#cerrar').addEventListener('click', cerrar);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+  [].forEach.call(raiz.querySelectorAll('[data-ir]'), function (a) { a.addEventListener('click', function (e) { e.preventDefault(); indice.classList.remove('ea-abierto'); ir(+a.getAttribute('data-ir')); }); });
+
+
+  // entrada por #ancla
+  var h = location.hash.slice(1), k = paneles.map(function (p) { return p.getAttribute('data-id'); }).indexOf(h);
+  if (k > 0) carril.scrollLeft = paneles[k].offsetLeft;
+  pintar(); carril.focus({ preventScroll: true });
+})();
+})();
+</script>
+</body></html>

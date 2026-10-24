@@ -1,0 +1,28 @@
+{
+  "municipio": "Municipio Autónomo de Caguas",
+  "medidoEl": "2026-10-19",
+  "contrato": { "servicio": "Análisis de Redes Sociales", "titular": "Digital Presencial, LLC", "monto": 45000, "vence": "2026-12-31", "fuente": "OCPR vía LicitaPR (Recompiten)" },
+  "contactos": {
+    "alcalde": "Hon. William E. Miranda Torres",
+    "prensa": "Sra. Jossie I. Vega Santiago, Directora de la Oficina de Prensa y Comunicaciones",
+    "telefono": "(787) 744-8833, ext. 2660 y 2657 (Prensa); ext. 2606 (Alcaldía)",
+    "direccion": "Alcaldía William Miranda Marín, Calle Alejandro Tapia y Rivera, Caguas, Puerto Rico (Prensa: 2do nivel; Alcalde: 5to nivel)",
+    "fuente": "https://caguas.gov.pr/comunicaciones/"
+  },
+  "facebook": { "pagina": "facebook.com/caguasgovpr", "seguidores": 141427, "categoria": "Public & Government Service", "anunciosActivos": true, "muestra": 15, "dias": 1.8, "postsPorDia": 8.2, "interaccionesMediana": 12, "likesMediana": 11, "comentariosMediana": 0, "compartidosMediana": 3, "videos": 4, "vistasVideoMediana": 2248, "fuente": "Apify facebook-pages-scraper y facebook-posts-scraper" },
+  "instagram": { "cuenta": "@caguasgovpr", "seguidores": 28314, "publicaciones": 22891, "verificada": false, "muestra": 12, "dias": 1.7, "postsPorDia": 7.2, "interaccionesMediana": 4, "comentariosMediana": 0, "tipos": { "imagen": 7, "reel": 2, "carrusel": 3 }, "vistasVideoMediana": 177, "conTextoAlternativo": 0, "hashtagsPorPost": 5.5, "largoTextoMediana": 628, "fuente": "Apify instagram-profile-scraper" },
+  "mejorContenido": [
+    { "red": "facebook", "fecha": "2026-10-18", "tipo": "video sin texto", "reproducciones": 16825, "interacciones": 296, "url": "https://www.facebook.com/caguasgovpr/videos/1639858897816090/" },
+    { "red": "facebook", "fecha": "2026-10-18", "tema": "Convocatoria a la oración por Puerto Rico", "interacciones": 84 },
+    { "red": "facebook", "fecha": "2026-10-19", "tema": "Semana del Profesional de Recursos Humanos", "interacciones": 56 }
+  ],
+  "otrasRedes": ["YouTube", "X", "TikTok @municipiodecaguas", "LinkedIn"],
+  "web": {
+    "url": "https://caguas.gov.pr/",
+    "plataforma": "WordPress",
+    "lighthouseMovil": { "rendimiento": 45, "accesibilidad": 84, "buenasPracticas": 100, "seo": 100, "lcpSegundos": 19.1, "indiceVelocidadSegundos": 15.0, "cls": 0.29, "pesoKiB": 5335, "ahorroImagenesKiB": 1300, "jsSinUsoKiB": 304, "contrasteInsuficiente": 31, "enlacesSinNombre": 2 },
+    "lighthouseEscritorio": { "rendimiento": 72, "accesibilidad": 84, "lcpSegundos": 3.5, "pesoKiB": 4312 },
+    "codigo": { "idiomaDeclarado": "en-US", "h1EnPortada": 0, "analitica": ["Google Analytics/Tag Manager", "Hotjar"], "descripcionGoogle": true, "imagenParaCompartir": true },
+    "fuente": "Google Lighthouse 12.6.1 y revisión del HTML de la portada"
+  }
+}

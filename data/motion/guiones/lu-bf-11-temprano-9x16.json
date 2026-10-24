@@ -1,0 +1,88 @@
+{
+ "id": "lu-bf-11-temprano-9x16",
+ "marca": "level-up",
+ "formato": "9:16",
+ "estilo": "neon",
+ "titulo": "LU-BF-11 · El Black Friday llegó temprano",
+ "angulo": "Black Friday adelantado · sistema completo + 2 bonos (sin precio)",
+ "escenas": [
+  {
+   "tipo": "gancho",
+   "dur": 96,
+   "lineas": [
+    "El Black Friday",
+    "llegó *temprano*."
+   ],
+   "sub": "No el de comprar: el de tu negocio.",
+   "logo": true
+  },
+  {
+   "tipo": "gancho",
+   "dur": 108,
+   "alarma": true,
+   "lineas": [
+    "Si arrancas tus anuncios",
+    "en noviembre, *llegas tarde*."
+   ],
+   "sub": "Diciembre es tu temporada."
+  },
+  {
+   "tipo": "lista",
+   "dur": 270,
+   "titulo": "Todo esto *te instalamos*:",
+   "modo": "marcar",
+   "items": [
+    {
+     "texto": "Manejo de anuncios"
+    },
+    {
+     "texto": "Estrategia completa"
+    },
+    {
+     "texto": "Artes y creativos"
+    },
+    {
+     "texto": "Edición de videos"
+    },
+    {
+     "texto": "Videos motion graphics"
+    },
+    {
+     "texto": "Visita de contenido"
+    },
+    {
+     "texto": "Soporte 24/7"
+    }
+   ]
+  },
+  {
+   "tipo": "clip",
+   "dur": 408,
+   "video": "lu-peli/al-grano/oliver.mp4",
+   "etiqueta": "Oliver · Tinos, Cabo Rojo",
+   "titulo": "$30K → *$100K* al mes",
+   "nota": "Resultados de un cliente real. Cada negocio es distinto."
+  },
+  {
+   "tipo": "lista",
+   "dur": 195,
+   "titulo": "Y en *Black Friday*, de bono:",
+   "modo": "marcar",
+   "items": [
+    {
+     "texto": "Llamada 1:1 con nuestro CEO"
+    },
+    {
+     "texto": "6 meses de Bori Pro incluidos"
+    }
+   ]
+  },
+  {
+   "tipo": "cierre",
+   "dur": 150,
+   "cta": "Escribe SISTEMA",
+   "sub": "Solo 6 de 12 cupos arrancan en octubre.",
+   "nota": "Black Friday · hasta el 1 de diciembre."
+  }
+ ]
+}

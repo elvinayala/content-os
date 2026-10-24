@@ -1,0 +1,140 @@
+{
+  "id": "medspa-01-un-mismo-sitio-9x16",
+  "marca": "level-up",
+  "formato": "9:16",
+  "estilo": "editorial",
+  "musica": "audio/cliente-calma.mp3",
+  "titulo": "Med Spa Infusion · todo en un mismo sitio (fase 1)",
+  "angulo": "Personal de salud dentro del local + todos los servicios bajo una marca",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "lineas": [
+        "Hay una facilidad",
+        "en *Hormigueros*…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "donde la infusión",
+        "te la pone una *enfermera*…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "…y el control de peso",
+        "te lo evalúa un *médico*."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "alarma": true,
+      "lineas": [
+        "Lo común es ir a un sitio",
+        "*distinto* para cada cosa…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "alarma": true,
+      "lineas": [
+        "…y que en ninguno haya",
+        "*personal de salud*",
+        "dentro del local."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "logo": true,
+      "lineas": [
+        "Eso es",
+        "*Med Spa Infusion*."
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 250,
+      "modo": "marcar",
+      "titulo": "Todo en *un mismo sitio*",
+      "items": [
+        {
+          "texto": "Infusiones intravenosas de vitaminas"
+        },
+        {
+          "texto": "Rejuvenecimiento facial con radiofrecuencia, por esteticista con licencia"
+        },
+        {
+          "texto": "Masaje postoperatorio y drenaje linfático"
+        },
+        {
+          "texto": "Masaje corporal y relajante"
+        },
+        {
+          "texto": "Control de peso con evaluación y seguimiento médico"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 200,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/slack-F0C75PXSWJ2-FOTO.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9zbGFjay1GMEM3NVBYU1dKMi1GT1RPLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE1NTA1NzQsImV4cCI6MTgyMzA4NjU3NH0.Yk9E5qvClW2WjefIvEe5dmjrX4wGBaASFd_jIHzPcBStrUiNXEXDYUm3Bed8cPs16vegLIq_jAn359rfUcgqSw",
+      "enfoque": "50% 40%",
+      "etiqueta": "En la facilidad",
+      "titulo": "Un médico y *dos enfermeras*",
+      "puntos": [
+        "Dos licencias del Departamento de Salud",
+        "Productos de farmacéuticas reconocidas"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 120,
+      "lineas": [
+        "*26 años*",
+        "en el mismo pueblo,",
+        "frente al CDT Hospital",
+        "La Concepción."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "Cada tratamiento empieza",
+        "con una *evaluación*."
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 170,
+      "cta": "WhatsApp: 787-458-1031",
+      "url": "Ave. Luis Muñoz Marín #5, Hormigueros",
+      "sub": "Si quieres saber cuál te toca a ti, escríbenos",
+      "nota": "Frente al CDT Hospital La Concepción · L–V 8:00 a.m.–5:00 p.m."
+    }
+  ],
+  "cliente": {
+    "fondo": "#F7F5F0",
+    "texto": "#0B2550",
+    "acento": "#1A9BBA",
+    "fuente": "Montserrat",
+    "musica": "cliente-calma.mp3",
+    "nombre": "Med Spa Infusion",
+    "acento2": "#B8862A",
+    "estilos": [
+      "editorial",
+      "minimal"
+    ],
+    "logoUrl": "clientes/med-spa-infusion/logo.png",
+    "subtitulo": "Hormigueros · desde hace 26 años",
+    "fuenteAcento": "Playfair Display"
+  }
+}

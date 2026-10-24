@@ -92,6 +92,11 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
               <Zap /> Automatizaciones
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setEditando(true)}>Renombrar tablero</DropdownMenuItem>
+            {usuario.rol === "editor" && board.privado ? (
+              <DropdownMenuItem onClick={() => setAcceso(true)}>
+                <Lock /> Quién puede verlo…
+              </DropdownMenuItem>
+            ) : null}
             {usuario.rol === "admin" ? (
               <>
                 <DropdownMenuItem onClick={() => setAcceso(true)}>
@@ -107,7 +112,7 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
         </DropdownMenu>
       </div>
       {automatizaciones ? <BoardAutomatizaciones open={automatizaciones} onOpenChange={setAutomatizaciones} /> : null}
-      {usuario.rol === "admin" && acceso ? <BoardAcceso open={acceso} onOpenChange={setAcceso} /> : null}
+      {(usuario.rol === "admin" || usuario.rol === "editor") && acceso ? <BoardAcceso open={acceso} onOpenChange={setAcceso} esAdmin={usuario.rol === "admin"} yo={usuario.id} /> : null}
       <AlertDialog
         open={confirmar}
         onOpenChange={(v) => {

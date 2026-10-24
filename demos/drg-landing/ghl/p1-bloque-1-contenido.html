@@ -1,0 +1,484 @@
+<!-- Programa DRG · p1 bloque 1 (contenido) · pegar completo en un elemento "Custom JS/HTML" de GHL -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Programa DRG · estilos con prefijo .drg para que no choquen con el tema de GHL.
+   Paleta: negro + verde neón + amarillo (logo y flyers). Para cambiarla, toca solo estas variables. */
+.drg {
+  --drg-negro: #0a0a0a;
+  --drg-carbon: #141414;
+  --drg-carbon-2: #1c1c1c;
+  --drg-borde: #2a2a2a;
+  --drg-verde: #b8ff2c;
+  --drg-amarillo: #ffe14d;
+  --drg-texto: #f4f4f2;
+  --drg-suave: #a8a8a3;
+  --drg-wa: #25d366;
+  --drg-titulo: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+  --drg-cuerpo: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  background: var(--drg-negro);
+  color: var(--drg-texto);
+  font-family: var(--drg-cuerpo);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  width: 100%;
+  overflow-x: hidden;
+}
+.drg *, .drg *::before, .drg *::after { box-sizing: border-box; }
+.drg h1, .drg h2, .drg h3, .drg p, .drg ul, .drg blockquote, .drg figure { margin: 0; padding: 0; }
+.drg h1, .drg h2, .drg h3 {
+  font-family: var(--drg-titulo);
+  color: var(--drg-texto);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.drg ul { list-style: none; }
+.drg a { color: inherit; text-decoration: none; }
+.drg img { max-width: 100%; display: block; }
+
+.drg .drg-wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+.drg .drg-sec { padding: 64px 0; }
+.drg .drg-sec--claro { background: var(--drg-carbon); }
+
+.drg .drg-etiqueta {
+  display: inline-block;
+  font-family: var(--drg-cuerpo);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--drg-verde);
+  margin-bottom: 14px;
+}
+.drg .drg-h2 { font-size: clamp(34px, 8vw, 54px); margin-bottom: 14px; }
+.drg .drg-h2 em { font-style: normal; color: var(--drg-verde); }
+.drg .drg-lead { color: var(--drg-suave); font-size: 17px; max-width: 640px; }
+.drg .drg-centro { text-align: center; }
+.drg .drg-centro .drg-lead { margin-left: auto; margin-right: auto; }
+
+/* Botón principal: el único botón grande de la página */
+.drg .drg-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 16px 30px;
+  border-radius: 999px;
+  background: var(--drg-verde);
+  color: #0a0a0a;
+  font-family: var(--drg-cuerpo);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border: 0;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(184,255,44,.5), 0 10px 30px -10px rgba(184,255,44,.55);
+  transition: transform .15s ease, box-shadow .15s ease;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+.drg .drg-cta:hover { transform: translateY(-2px); box-shadow: 0 0 0 6px rgba(184,255,44,.15), 0 14px 34px -10px rgba(184,255,44,.6); }
+.drg .drg-cta svg { width: 18px; height: 18px; flex: none; }
+.drg .drg-cta-nota { display: block; margin-top: 12px; font-size: 13px; color: var(--drg-suave); }
+.drg .drg-cta-zona { margin-top: 36px; }
+
+/* Marcador de foto o video: se reemplaza en GHL por <img src="..." alt="..."> o el video */
+.drg .drg-foto {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 18px;
+  background:
+    linear-gradient(160deg, rgba(184,255,44,.10), rgba(255,225,77,.04) 60%, transparent),
+    repeating-linear-gradient(135deg, #161616 0 12px, #121212 12px 24px);
+  border: 1px dashed #3a3a3a;
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  color: #8a8a85;
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+}
+.drg .drg-foto img, .drg .drg-foto video, .drg .drg-foto iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0;
+}
+.drg .drg-foto--ancha { aspect-ratio: 16 / 10; }
+.drg .drg-foto--cuadrada { aspect-ratio: 1 / 1; }
+
+/* Lo que falta del cliente: amarillo con borde punteado para que nadie lo publique sin ver */
+.drg .drg-pendiente {
+  display: inline;
+  background: rgba(255,225,77,.12);
+  color: var(--drg-amarillo);
+  border: 1px dashed var(--drg-amarillo);
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-size: .92em;
+}
+
+/* Tarjetas */
+.drg .drg-grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+.drg .drg-card {
+  background: var(--drg-carbon);
+  border: 1px solid var(--drg-borde);
+  border-radius: 18px;
+  padding: 22px;
+}
+.drg .drg-sec--claro .drg-card { background: var(--drg-carbon-2); }
+.drg .drg-card h3 { font-size: 26px; margin-bottom: 8px; }
+.drg .drg-card p { color: var(--drg-suave); font-size: 15px; }
+.drg .drg-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: rgba(184,255,44,.12); color: var(--drg-verde);
+  font-weight: 800; font-size: 14px; margin-bottom: 14px;
+}
+.drg .drg-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px; font-weight: 700; font-size: 14px; color: var(--drg-verde);
+  border-bottom: 1px solid rgba(184,255,44,.35);
+}
+.drg .drg-link:hover { border-bottom-color: var(--drg-verde); }
+.drg .drg-aviso { margin-top: 22px; font-size: 13px; color: var(--drg-suave); }
+
+/* Hero */
+.drg .drg-hero { position: relative; padding: 40px 0 56px; overflow: hidden; }
+.drg .drg-hero::before {
+  content: ""; position: absolute; inset: -20% -40% auto auto; width: 520px; height: 520px;
+  background: radial-gradient(circle, rgba(184,255,44,.20), transparent 65%);
+  pointer-events: none;
+}
+.drg .drg-hero-in { position: relative; display: grid; gap: 32px; align-items: center; }
+.drg .drg-marca {
+  font-family: var(--drg-titulo); font-weight: 800; font-size: 30px; letter-spacing: .02em;
+  color: var(--drg-verde); line-height: 1; margin-bottom: 28px; display: flex; align-items: center; gap: 10px;
+}
+.drg .drg-marca span { color: var(--drg-texto); font-family: var(--drg-cuerpo); font-size: 11px; font-weight: 700; letter-spacing: .16em; }
+.drg .drg-h1 { font-size: clamp(56px, 15vw, 104px); text-transform: uppercase; font-style: italic; }
+.drg .drg-h1--largo { font-size: clamp(48px, 12vw, 80px); }
+.drg .drg-h1 em { font-style: italic; color: var(--drg-verde); }
+.drg .drg-sub { font-family: var(--drg-titulo); font-size: clamp(24px, 5.5vw, 32px); font-weight: 700; color: var(--drg-amarillo); margin: 14px 0 16px; line-height: 1.1; }
+.drg .drg-hero p.drg-lead { color: #d6d6d1; }
+.drg .drg-hero p.drg-lead strong { color: var(--drg-texto); }
+.drg .drg-sellos { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 22px; font-size: 13px; color: var(--drg-suave); }
+.drg .drg-sellos li { display: flex; align-items: center; gap: 8px; }
+.drg .drg-sellos li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--drg-verde); }
+
+/* Citas */
+.drg .drg-cita { display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: center; }
+.drg .drg-cita .drg-foto { aspect-ratio: 1 / 1; border-radius: 14px; padding: 8px; font-size: 10px; }
+.drg .drg-cita blockquote { font-family: var(--drg-titulo); font-size: 26px; font-weight: 700; line-height: 1.08; }
+.drg .drg-cita cite { display: block; margin-top: 8px; font-style: normal; font-size: 13px; color: var(--drg-suave); font-family: var(--drg-cuerpo); }
+
+/* Frases */
+.drg .drg-frase { font-family: var(--drg-titulo); font-size: 26px; font-weight: 700; line-height: 1.1; display: flex; gap: 12px; align-items: flex-start; }
+.drg .drg-frase::before { content: "“"; color: var(--drg-verde); font-size: 44px; line-height: .8; }
+.drg .drg-bloque-texto { margin-top: 28px; display: grid; gap: 14px; max-width: 760px; }
+.drg .drg-bloque-texto p { color: #d6d6d1; font-size: 17px; }
+.drg .drg-bloque-texto p strong { color: var(--drg-verde); font-weight: 700; }
+
+/* Sueroterapia */
+.drg .drg-oferta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+  background: var(--drg-amarillo); color: #0a0a0a; border-radius: 16px; padding: 16px 20px; margin: 26px 0 22px;
+}
+.drg .drg-oferta strong { font-family: var(--drg-titulo); font-size: 30px; font-weight: 800; line-height: 1; }
+.drg .drg-oferta span { font-size: 14px; font-weight: 600; }
+.drg .drg-oferta .drg-pendiente { color: #0a0a0a; border-color: #0a0a0a; background: rgba(0,0,0,.06); }
+.drg .drg-suero h3 { display: flex; align-items: center; gap: 10px; }
+.drg .drg-suero h3::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--drg-verde); flex: none; }
+.drg .drg-formulas { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--drg-borde); font-size: 12px; font-weight: 600; color: #8a8a85; letter-spacing: .04em; text-transform: uppercase; }
+.drg .drg-suero ul { display: grid; gap: 6px; }
+.drg .drg-suero li { color: #d6d6d1; font-size: 15px; padding-left: 18px; position: relative; }
+.drg .drg-suero li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 2px; background: var(--drg-verde); }
+
+/* Personas */
+.drg .drg-persona .drg-foto { margin-bottom: 14px; }
+.drg .drg-persona blockquote { font-family: var(--drg-titulo); font-size: 24px; font-weight: 700; line-height: 1.1; }
+.drg .drg-persona .drg-quien { margin-top: 8px; font-size: 13px; color: var(--drg-suave); }
+
+/* Cierre que antecede a la sección nativa de GHL (formulario + calendario) */
+.drg .drg-pre-form { padding: 64px 0 28px; text-align: center; background: var(--drg-carbon); border-top: 1px solid var(--drg-borde); }
+.drg .drg-rutas { display: grid; gap: 12px; margin-top: 26px; text-align: left; }
+.drg .drg-ruta { display: flex; gap: 14px; align-items: flex-start; background: var(--drg-carbon-2); border: 1px solid var(--drg-borde); border-radius: 16px; padding: 16px 18px; }
+.drg .drg-ruta b { display: block; font-family: var(--drg-titulo); font-size: 22px; font-weight: 800; line-height: 1.1; margin-bottom: 4px; }
+.drg .drg-ruta p { color: var(--drg-suave); font-size: 14px; }
+.drg .drg-ruta .drg-num { margin: 0; flex: none; }
+
+/* Productos (página 2) */
+.drg .drg-producto { display: flex; flex-direction: column; }
+.drg .drg-producto .drg-foto { aspect-ratio: 1 / 1; margin-bottom: 14px; }
+.drg .drg-producto h3 { font-size: 24px; letter-spacing: .02em; }
+.drg .drg-destacado {
+  display: grid; gap: 22px; align-items: center;
+  background: linear-gradient(140deg, rgba(184,255,44,.12), rgba(255,225,77,.06) 60%, transparent), var(--drg-carbon-2);
+  border: 1px solid rgba(184,255,44,.45); border-radius: 22px; padding: 22px; margin-bottom: 18px;
+}
+.drg .drg-destacado .drg-insignia { display: inline-block; background: var(--drg-verde); color: #0a0a0a; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; border-radius: 999px; padding: 6px 12px; margin-bottom: 12px; }
+.drg .drg-destacado h3 { font-size: 40px; margin-bottom: 8px; }
+.drg .drg-pago {
+  margin-top: 18px; border: 1px dashed var(--drg-amarillo); border-radius: 14px; padding: 16px;
+  color: var(--drg-amarillo); font-size: 13px; text-align: center;
+}
+
+/* Pie y WhatsApp flotante */
+.drg .drg-pie { background: #050505; border-top: 1px solid var(--drg-borde); padding: 44px 0 110px; font-size: 14px; color: var(--drg-suave); }
+.drg .drg-pie-marca { font-family: var(--drg-titulo); font-size: 30px; font-weight: 800; color: var(--drg-verde); line-height: 1; }
+.drg .drg-pie-lema { font-family: var(--drg-titulo); font-size: 20px; font-weight: 700; color: var(--drg-texto); margin: 6px 0 18px; letter-spacing: .04em; }
+.drg .drg-pie-datos { display: grid; gap: 6px; }
+.drg .drg-pie-datos a { color: var(--drg-texto); font-weight: 600; }
+.drg .drg-pie-legal { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--drg-borde); font-size: 12px; line-height: 1.6; }
+.drg .drg-pie-links { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; }
+.drg .drg-pie-links a { text-decoration: underline; text-underline-offset: 3px; }
+.drg .drg-wa {
+  position: fixed; right: 16px; bottom: 16px; z-index: 9999;
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 58px; padding: 0 20px 0 16px; border-radius: 999px;
+  background: var(--drg-wa); color: #fff; font-family: var(--drg-cuerpo); font-weight: 800; font-size: 15px;
+  box-shadow: 0 10px 30px -6px rgba(0,0,0,.55), 0 0 0 4px rgba(37,211,102,.18);
+}
+.drg .drg-wa svg { width: 28px; height: 28px; flex: none; }
+.drg .drg-wa:hover { transform: translateY(-2px); }
+
+/* Computadora */
+@media (min-width: 760px) {
+  .drg .drg-wrap { padding: 0 32px; }
+  .drg .drg-sec { padding: 96px 0; }
+  .drg .drg-hero { padding: 48px 0 96px; }
+  .drg .drg-hero-in { grid-template-columns: 1.1fr .9fr; gap: 56px; }
+  .drg .drg-cta { width: auto; }
+  .drg .drg-g2 { grid-template-columns: 1fr 1fr; }
+  .drg .drg-g3 { grid-template-columns: repeat(3, 1fr); }
+  .drg .drg-g4 { grid-template-columns: repeat(4, 1fr); }
+  .drg .drg-g5 { grid-template-columns: repeat(5, 1fr); }
+  .drg .drg-grid { gap: 18px; }
+  .drg .drg-rutas { grid-template-columns: 1fr 1fr; }
+  .drg .drg-destacado { grid-template-columns: .8fr 1.2fr; padding: 32px; }
+  .drg .drg-pie-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media (min-width: 760px) and (max-width: 1023px) {
+  .drg .drg-g4, .drg .drg-g5 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 420px) {
+  .drg .drg-wa span { display: none; }
+  .drg .drg-wa { width: 58px; padding: 0; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drg .drg-cta, .drg .drg-wa { transition: none; }
+}
+</style>
+<div class="drg">
+<!-- 1 · HERO -->
+<section class="drg-hero">
+  <div class="drg-wrap drg-hero-in">
+    <div>
+      <div class="drg-marca">DRG <span>PROGRAMA DRG · PUERTO RICO</span></div>
+      <h1 class="drg-h1">El lunes <em>empiezo.</em></h1>
+      <p class="drg-sub">Hoy es un buen día para empezar de verdad.</p>
+      <p class="drg-lead">No es solo bajar de peso. Es <strong>rebajar bonito</strong>. Evaluación inicial sin costo con el <strong>Dr. Ricardo Guerrero</strong>.</p>
+      <div class="drg-cta-zona">
+        <a class="drg-cta" href="#empezar">Quiero empezar hoy <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <span class="drg-cta-nota">Evaluación inicial sin costo · Te confirmamos por WhatsApp</span>
+      </div>
+      <ul class="drg-sellos">
+        <li>Supervisión médica</li>
+        <li>Dieta y entrenamiento a tu medida</li>
+        <li>Isla Verde, PR</li>
+      </ul>
+    </div>
+    <div class="drg-foto" role="img" aria-label="Pacientes del Programa DRG entrenando juntos en el gimnasio">
+      [FOTO/VIDEO HERO: acción y comunidad, vertical 4:5]
+    </div>
+  </div>
+</section>
+
+<!-- 2 · PRUEBA SOCIAL -->
+<section class="drg-sec drg-sec--claro" style="padding-top:44px;padding-bottom:44px">
+  <div class="drg-wrap">
+    <div class="drg-grid drg-g2">
+      <figure class="drg-cita">
+        <div class="drg-foto" role="img" aria-label="Alcalde Ángel Bory, paciente del Programa DRG">[FOTO: Ángel Bory]</div>
+        <div>
+          <blockquote>“Mi salud no puede esperar.”</blockquote>
+          <cite>Ángel Bory, Alcalde · paciente del Programa DRG</cite>
+        </div>
+      </figure>
+      <figure class="drg-cita">
+        <div class="drg-foto" role="img" aria-label="Pareja de pacientes del Programa DRG">[FOTO: pareja]</div>
+        <div>
+          <blockquote>“Decidimos hacerlo juntos.”</blockquote>
+          <cite>Pareja de pacientes del Programa DRG</cite>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · ¿TE SUENA ALGUNA DE ESTAS FRASES? -->
+<section class="drg-sec">
+  <div class="drg-wrap">
+    <span class="drg-etiqueta">Empieza por aquí</span>
+    <h2 class="drg-h2">¿Te suena alguna de <em>estas frases?</em></h2>
+    <div class="drg-grid drg-g4" style="margin-top:28px">
+      <div class="drg-card"><p class="drg-frase">Necesito bajar de peso.</p></div>
+      <div class="drg-card"><p class="drg-frase">Ya probé varias dietas.</p></div>
+      <div class="drg-card"><p class="drg-frase">Quiero volver al gimnasio.</p></div>
+      <div class="drg-card"><p class="drg-frase">Quiero saber si los péptidos son para mí.</p></div>
+    </div>
+    <div class="drg-bloque-texto">
+      <p><strong>No necesitas saber qué tratamiento requieres antes de llegar.</strong> Para eso está la evaluación.</p>
+      <p>Cada persona llega con una historia diferente. En DRG no partimos de una fórmula igual para todos: todo comienza con tu evaluación, y de ahí el Dr. Guerrero define tu estrategia.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · UN PROGRAMA, TODO BAJO SUPERVISIÓN MÉDICA -->
+<section class="drg-sec drg-sec--claro">
+  <div class="drg-wrap">
+    <span class="drg-etiqueta">Qué incluye</span>
+    <h2 class="drg-h2">Un programa, todo bajo <em>supervisión médica.</em></h2>
+    <div class="drg-grid drg-g4" style="margin-top:28px">
+      <div class="drg-card"><span class="drg-num">01</span><h3>Orientación gratis</h3><p>Conoce tu punto de partida, sin costo.</p></div>
+      <div class="drg-card"><span class="drg-num">02</span><h3>Evaluación médica</h3><p>Laboratorios y condición física antes del plan.</p></div>
+      <div class="drg-card"><span class="drg-num">03</span><h3>Dieta personalizada</h3><p>No es “comer menos”: se adapta a ti.</p></div>
+      <div class="drg-card"><span class="drg-num">04</span><h3>Entrenamiento personalizado</h3><p>Fuerza, resistencia y composición corporal.</p></div>
+      <div class="drg-card"><span class="drg-num">05</span><h3>Acceso al gimnasio</h3><p>Entrena con la estrategia trazada para ti.</p></div>
+      <div class="drg-card"><span class="drg-num">06</span><h3>Sueroterapia</h3><p>Terapia IV según tu evaluación.</p><a class="drg-link" href="#sueroterapia">Ver sueroterapia →</a></div>
+      <div class="drg-card"><span class="drg-num">07</span><h3>Clínica de Péptidos DRG</h3><p>Cuando aplica médicamente.</p><a class="drg-link" href="/clinica-peptidos">Conocer la clínica →</a></div>
+      <div class="drg-card"><span class="drg-num">08</span><h3>Suplementos DRG</h3><p>Complementan tu plan.</p><a class="drg-link" href="/clinica-peptidos#productos">Ver suplementos →</a></div>
+    </div>
+    <p class="drg-aviso"><strong style="color:var(--drg-texto)">¿Tienes plan médico?</strong> Este programa no depende de tu seguro. Es una inversión 100% en ti, definida en tu evaluación.</p>
+  </div>
+</section>
+
+<!-- 5 · SUEROTERAPIA (NUEVA) -->
+<section class="drg-sec" id="sueroterapia">
+  <div class="drg-wrap">
+    <span class="drg-etiqueta">Nuevo en DRG</span>
+    <h2 class="drg-h2">Sueroterapia <em>DRG.</em></h2>
+    <p class="drg-lead">Terapia IV según tu evaluación. El Dr. Guerrero decide contigo cuál fórmula va con tu plan.</p>
+
+    <div class="drg-oferta">
+      <strong>20% – 30% OFF</strong>
+      <span>Ciertas restricciones aplican. <span class="drg-pendiente">PENDIENTE: vigencia y restricciones exactas del cliente</span></span>
+    </div>
+
+    <div class="drg-grid drg-g3">
+      <div class="drg-card drg-suero">
+        <h3>Masa muscular</h3>
+        <ul>
+          <li>Apoya la fuerza, la resistencia y el rendimiento físico.</li>
+          <li>Apoya tus niveles de energía.</li>
+          <li>Fórmula pensada para apoyar tu bienestar y tu vitalidad.</li>
+        </ul>
+        <p class="drg-formulas">Muscle Mass IV Nutrition · Energy Booster</p>
+      </div>
+      <div class="drg-card drg-suero">
+        <h3>Cuidado de la piel</h3>
+        <ul>
+          <li>Apoya la salud general de la piel.</li>
+          <li>Apoya el cuidado de la piel y su apariencia juvenil.</li>
+          <li>Ayuda a mejorar la apariencia de la piel.</li>
+        </ul>
+        <p class="drg-formulas">Skin Regeneration · Anti Aging</p>
+      </div>
+      <div class="drg-card drg-suero">
+        <h3>Metabolismo y tonificación</h3>
+        <ul>
+          <li>Apoya tu metabolismo dentro de tu plan de nutrición y entrenamiento.</li>
+          <li>Apoya la salud general de la piel.</li>
+          <li>Ayuda a mejorar la apariencia de la piel.</li>
+        </ul>
+        <p class="drg-formulas">Fat Burner · Skin Regeneration</p>
+      </div>
+      <div class="drg-card drg-suero">
+        <h3>Bienestar general</h3>
+        <ul>
+          <li>Apoya tu bienestar general.</li>
+          <li>Apoya la respuesta natural del cuerpo.</li>
+          <li>Apoya tu estado de ánimo y tu bienestar.</li>
+        </ul>
+        <p class="drg-formulas">Fórmula definida en tu evaluación médica</p>
+      </div>
+      <div class="drg-card drg-suero">
+        <h3>Defensas</h3>
+        <ul>
+          <li>Apoya tus defensas.</li>
+          <li>Ayuda a reponer vitaminas y minerales.</li>
+        </ul>
+        <p class="drg-formulas">Súper Inmune · Vitamin/Mineral Repletion</p>
+      </div>
+      <div class="drg-card drg-suero">
+        <h3>Recuperación e hidratación</h3>
+        <ul>
+          <li>Apoya tu recuperación e hidratación.</li>
+          <li>Aporta antioxidantes.</li>
+        </ul>
+        <p class="drg-formulas">Antioxidant Formula · Hangover Formula</p>
+      </div>
+    </div>
+
+    <p class="drg-aviso">La sueroterapia se indica solo después de tu evaluación médica. No sustituye un diagnóstico ni tratamiento médico.</p>
+    <div class="drg-cta-zona drg-centro">
+      <a class="drg-cta" href="#empezar">Quiero empezar hoy <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · PERSONAS REALES. PROCESOS REALES. -->
+<section class="drg-sec drg-sec--claro">
+  <div class="drg-wrap">
+    <span class="drg-etiqueta">Comunidad DRG</span>
+    <h2 class="drg-h2">Personas reales. <em>Procesos reales.</em></h2>
+    <div class="drg-grid drg-g5" style="margin-top:28px">
+      <div class="drg-persona">
+        <div class="drg-foto" role="img" aria-label="Ángel Bory, Alcalde, en su proceso con el Programa DRG">[FOTO/VIDEO: Ángel Bory]</div>
+        <blockquote>“Mi salud no puede esperar.”</blockquote>
+        <p class="drg-quien">Ángel Bory, Alcalde · su proceso real con el Programa DRG</p>
+      </div>
+      <div class="drg-persona">
+        <div class="drg-foto" role="img" aria-label="Pareja entrenando junta en el Programa DRG">[FOTO/VIDEO: pareja]</div>
+        <blockquote>“Decidimos hacerlo juntos.”</blockquote>
+        <p class="drg-quien">Transformación en pareja</p>
+      </div>
+      <div class="drg-persona">
+        <div class="drg-foto" role="img" aria-label="Paciente del Programa DRG en su proceso de pérdida de peso">[FOTO/VIDEO: pérdida de peso]</div>
+        <blockquote>“Decidí dejar de postergarlo.”</blockquote>
+        <p class="drg-quien">Pérdida de peso</p>
+      </div>
+      <div class="drg-persona">
+        <div class="drg-foto" role="img" aria-label="Joven paciente del Programa DRG entrenando">[FOTO/VIDEO: joven DRG]</div>
+        <blockquote>“Los buenos hábitos no tienen edad para comenzar.”</blockquote>
+        <p class="drg-quien">Joven DRG</p>
+      </div>
+      <div class="drg-persona">
+        <div class="drg-foto" role="img" aria-label="Atleta del Programa DRG entrenando">[FOTO/VIDEO: atleta]</div>
+        <blockquote>“El objetivo no es solo verte mejor: es rendir mejor.”</blockquote>
+        <p class="drg-quien">Atleta</p>
+      </div>
+    </div>
+    <p class="drg-aviso">Cada persona es diferente. Los resultados y experiencias pueden variar.</p>
+  </div>
+</section>
+
+<!-- 7 · ENCABEZADO DE LA DOBLE RUTA (debajo va la sección nativa de GHL: formulario + calendario) -->
+<section class="drg-pre-form" id="empezar">
+  <div class="drg-wrap">
+    <span class="drg-etiqueta">Evaluación inicial sin costo</span>
+    <h2 class="drg-h2">Hoy es un buen día <em>para empezar.</em></h2>
+    <p class="drg-lead">Escoge cómo prefieres dar el primer paso. Los dos terminan igual: te confirmamos por WhatsApp.</p>
+    <div class="drg-rutas">
+      <div class="drg-ruta"><span class="drg-num">A</span><div><b>Preevaluación breve</b><p>Cuéntanos qué buscas y agenda tu día y horario al finalizar.</p></div></div>
+      <div class="drg-ruta"><span class="drg-num">B</span><div><b>¿Prefieres agendar directo?</b><p>Elige fecha y hora. Te confirmamos por WhatsApp.</p></div></div>
+    </div>
+  </div>
+</section>
+
+</div>

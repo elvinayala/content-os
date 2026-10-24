@@ -1,0 +1,113 @@
+{
+ "id": "lu-bf-13-collage-rapido-9x16",
+ "marca": "level-up",
+ "formato": "9:16",
+ "estilo": "impacto",
+ "musica": "audio/lu-hiphop.mp3",
+ "titulo": "LU-BF-13 · Collage rápido: la mejor época para vender",
+ "angulo": "Black Friday adelantado · llegar tarde a la temporada (sin precio)",
+ "escenas": [
+  {
+   "tipo": "gancho",
+   "dur": 75,
+   "lineas": [
+    "Diciembre es la",
+    "*mejor época*",
+    "para vender."
+   ],
+   "logo": true
+  },
+  {
+   "tipo": "gancho",
+   "dur": 75,
+   "alarma": true,
+   "lineas": [
+    "Si arrancas en noviembre,",
+    "*llegas tarde*."
+   ]
+  },
+  {
+   "tipo": "gancho",
+   "dur": 54,
+   "lineas": [
+    "Ellos *no esperaron*."
+   ]
+  },
+  {
+   "tipo": "collage",
+   "ritmo": "rapido",
+   "nota": "Resultados de clientes reales. Cada negocio es distinto.",
+   "clips": [
+    {
+     "video": "lu-peli/al-grano/bryan.mp4",
+     "desde": 2.3,
+     "hasta": 4.25,
+     "nombre": "Dr. Bryan Vega · quiropráctico",
+     "frase": "*Agenda llena*"
+    },
+    {
+     "video": "lu-peli/al-grano/robert.mp4",
+     "desde": 10.38,
+     "hasta": 11.55,
+     "nombre": "Robert · RK Automatic",
+     "frase": "*Triplicó* sus números",
+     "enfoque": "0% 50%",
+     "zoom": 1.12,
+     "origen": "0% 50%"
+    },
+    {
+     "video": "lu-peli/al-grano/magdalys.mp4",
+     "desde": 6.4,
+     "hasta": 8.45,
+     "nombre": "Magdalys · Beauty Salon",
+     "frase": "*+80 %* en ingresos"
+    },
+    {
+     "video": "lu-peli/al-grano/reina.mp4",
+     "desde": 0.0,
+     "hasta": 2.85,
+     "nombre": "Reina · Mr. iPhone",
+     "frase": "*+50 %* su negocio"
+    },
+    {
+     "video": "lu-peli/al-grano/ernest.mp4",
+     "desde": 2.85,
+     "hasta": 4.45,
+     "nombre": "Lcdo. Ernest Crisson",
+     "frase": "No da *abasto*"
+    },
+    {
+     "video": "lu-peli/al-grano/grissel.mp4",
+     "desde": 2.9,
+     "hasta": 5.0,
+     "nombre": "Dra. Grissel Villanueva",
+     "frase": "Un *alza increíble* en leads"
+    },
+    {
+     "video": "lu-peli/al-grano/oliver.mp4",
+     "desde": 2.4,
+     "hasta": 4.15,
+     "nombre": "Oliver · Tinos, Cabo Rojo",
+     "frase": "*No se lo esperaba*"
+    }
+   ],
+   "dur": 405
+  },
+  {
+   "tipo": "gancho",
+   "dur": 75,
+   "lineas": [
+    "Su temporada",
+    "ya está *corriendo*."
+   ],
+   "sub": "¿Y la tuya?"
+  },
+  {
+   "tipo": "cierre",
+   "dur": 120,
+   "cta": "Escribe SISTEMA",
+   "sub": "Solo 6 cupos arrancan en octubre.",
+   "nota": "Black Friday · hasta el 1 de diciembre."
+  }
+ ]
+}

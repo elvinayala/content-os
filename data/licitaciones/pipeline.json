@@ -1,0 +1,1192 @@
+{
+  "actualizadoEl": "2026-10-23",
+  "empresa": {
+    "nombre": "Digital Seed Ventures LLC",
+    "cuentaLicitapr": "elvin@levelupmediapr.net",
+    "cambio": "19/oct/2026: Elvin cambió la empresa proponente de EA Market LLC a Digital Seed Ventures LLC. El perfil de LicitaPR sigue a nombre de EA MARKET LLC (es solo el nombre de la cuenta; no se somete ahí).",
+    "plan": "LicitaPR Pro · prueba gratis hasta el 2 nov 2026 ($59/mes después)",
+    "servicios": [
+      "publicidad",
+      "redes sociales",
+      "contenido y video",
+      "marketing digital",
+      "páginas web",
+      "email marketing",
+      "automatizaciones",
+      "inteligencia artificial",
+      "consultoría",
+      "negocios digitales",
+      "e-commerce",
+      "adiestramientos"
+    ],
+    "categoriasLicitapr": [
+      "advertising",
+      "tech",
+      "consulting",
+      "education",
+      "otras"
+    ],
+    "palabrasBusqueda": [
+      "redes",
+      "digital",
+      "web",
+      "contenido",
+      "video",
+      "audiovisual",
+      "publicidad",
+      "mercadeo",
+      "comunica",
+      "relaciones",
+      "promoci",
+      "campa",
+      "medios",
+      "dise",
+      "adiestra",
+      "capacita",
+      "taller",
+      "inteligencia",
+      "automatiza",
+      "software",
+      "plataforma",
+      "sistema",
+      "comercio",
+      "electr",
+      "call",
+      "orienta",
+      "consultor",
+      "estrateg",
+      "educaci",
+      "evento"
+    ]
+  },
+  "documentos": [
+    {
+      "id": "rup",
+      "nombre": "RUP · Registro Único de Proveedores de Servicios Profesionales (ASG)",
+      "estado": "no",
+      "vence": null,
+      "clave": true,
+      "nota": "Obligatorio en las RFP de servicios profesionales (DDEC-RFP-2026-003). Sin él = descalificación automática. 19/oct: Digital Seed no lo tiene; plan y lista en data/licitaciones/registros/rup-digital-seed-ventures.md (someter a ASG a más tardar el 23/oct).",
+      "plan": "data/licitaciones/registros/rup-digital-seed-ventures.md"
+    },
+    {
+      "id": "antecedentes",
+      "nombre": "Antecedentes penales de quienes firman (Policía)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true,
+      "nota": "Lo pide el RUP: todos en un solo PDF."
+    },
+    {
+      "id": "rul",
+      "nombre": "RUL · Registro Único de Licitadores (ASG)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true,
+      "nota": "Lo pide casi toda subasta del Ejecutivo. No sale el mismo día."
+    },
+    {
+      "id": "comerciante",
+      "nombre": "Registro de Comerciante (Hacienda/SURI)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true
+    },
+    {
+      "id": "deuda-hacienda",
+      "nombre": "Certificación de deuda (Hacienda/SURI)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true,
+      "nota": "Sacarla cerca de la entrega."
+    },
+    {
+      "id": "planillas",
+      "nombre": "Radicación de planillas 5 años (Hacienda/SURI)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true
+    },
+    {
+      "id": "crim",
+      "nombre": "Certificación de deuda (CRIM)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true
+    },
+    {
+      "id": "asume",
+      "nombre": "Certificación de ASUME",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true
+    },
+    {
+      "id": "dtrh",
+      "nombre": "Certificación de deuda desempleo y choferil (DTRH)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true
+    },
+    {
+      "id": "cfse",
+      "nombre": "Póliza o certificación de deuda (Fondo del Seguro del Estado)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true
+    },
+    {
+      "id": "good-standing",
+      "nombre": "Good Standing (Departamento de Estado)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": true
+    },
+    {
+      "id": "sam",
+      "nombre": "SAM.gov activo (UEI)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": false,
+      "nota": "Solo con fondos federales directos (FEMA, CDBG-DR) o subrecipientes."
+    },
+    {
+      "id": "seguro-rp",
+      "nombre": "Seguro de responsabilidad pública",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": false,
+      "nota": "Cuando el pliego lo exige, con sus límites."
+    },
+    {
+      "id": "fianza",
+      "nombre": "Capacidad de fianza (carta del fiador)",
+      "estado": "desconocido",
+      "vence": null,
+      "clave": false,
+      "nota": "Para subastas con fianza de licitación."
+    }
+  ],
+  "oportunidades": [
+    {
+      "id": "DDEC-RFP-2026-003",
+      "tipo": "rfp",
+      "titulo": "Página web, redes sociales y contenido (CEDD)",
+      "agencia": "DDEC · Consejo Estatal sobre Deficiencias en el Desarrollo (CEDD)",
+      "fuente": "DDEC (desarrollo.pr.gov) vía LicitaPR",
+      "licitapr": "https://licitapr.com/oportunidad/DDEC%7CRFP-2026-003",
+      "pliego": "https://docs.pr.gov/files/DDEC/RFP%202026-003%20P%C3%A1gina%20web,%20manejo%20de%20redes%20sociales%20y%20creaci%C3%B3n%20de%20contenido%201D.pdf",
+      "adendas": [
+        "https://docs.pr.gov/files/DDEC/Aviso%20Pu%CC%81blico/CEDD%20ADENDA%20N%C3%9AM.%201%20RFP%202026-001%20al%20RFP%202026-008.pdf"
+      ],
+      "cierre": "2026-11-05T16:00",
+      "fechasClave": [
+        {
+          "fecha": "2026-11-02T16:00",
+          "que": "último día para preguntas por escrito (Adenda 1)"
+        },
+        {
+          "fecha": "2026-11-05T16:00",
+          "que": "entrega por el formulario Jotform de CEDD"
+        }
+      ],
+      "contacto": "ceddpr21@gmail.com · 787-722-0590 (solo por email)",
+      "comoSeSomete": "Se pide por email a ceddpr21@gmail.com el formulario Jotform + tablas oficiales (1B–7B, 3A–5A) + la capacitación grabada; se somete por ese Jotform.",
+      "estado": "preparando",
+      "encaje": 90,
+      "monto": {
+        "max": 54740,
+        "base": "lo que facturaríamos en 12 meses según el borrador ($4,430/mes + arranque); la RFP no publica tope"
+      },
+      "margenEstimado": "35–45 % con el equipo de Level Up y producción con IA",
+      "evaluacion": {
+        "Carta de interés": 20,
+        "Plan de trabajo, acción y evaluación": 30,
+        "Presupuesto, pareo y anejos": 40,
+        "Plan de sostenibilidad": 10
+      },
+      "requiere": [
+        "rup"
+      ],
+      "porQue": "Es lo que ya hace Level Up. De las 8 RFP de CEDD es la única con ganancia permitida, y en publicidad de DDEC el 43 % de los contratos va a empresas nuevas.",
+      "necesitoDeElvin": [
+        {
+          "que": "Sacar el RUP y someterlo a ASG a más tardar el vie 23/oct (lista y plan: data/licitaciones/registros/rup-digital-seed-ventures.md)",
+          "para": "el requisito obligatorio",
+          "urgente": true
+        },
+        {
+          "que": "Datos de Digital Seed: registro en Estado, dirección, beneficiarios finales, quién firma, empleados, IVU y deudas",
+          "para": "el perfil y la ASG-674",
+          "urgente": true
+        },
+        {
+          "que": "OK para el email a CEDD pidiendo el formulario, las tablas y la capacitación (texto listo)",
+          "para": "llenar la propuesta",
+          "urgente": true
+        },
+        {
+          "que": "Qué es Digital Seed y cómo trabaja con el equipo de Level Up (mismo dueño o subcontrato)",
+          "para": "la carta de interés",
+          "urgente": true
+        },
+        {
+          "que": "Aprobar el pareo: tus 4 h/mes de dirección (~$6K al año)",
+          "para": "el presupuesto (40 puntos)"
+        },
+        {
+          "que": "Qué clientes y resultados puedo citar",
+          "para": "la carta de interés"
+        },
+        {
+          "que": "El correo oficial de Digital Seed para el proceso",
+          "para": "el formulario y el contrato"
+        }
+      ],
+      "proximoPaso": "Paquete en borrador (carta con auditoría de su web, plan, presupuesto, sostenibilidad, 10 preguntas). Con el Jotform y las tablas, lo paso a sus formatos.",
+      "carpeta": "data/licitaciones/DDEC-RFP-2026-003",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "preparando",
+          "nota": "RFP + Adenda 1 leídas; paquete en borrador"
+        }
+      ]
+    },
+    {
+      "id": "REC-ISABELA-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Municipio de Isabela",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-11-08",
+      "titular": "Livany Media Group and Events, INC",
+      "estado": "nueva",
+      "encaje": 70,
+      "monto": {
+        "max": 107500,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Publicidad municipal es el centro de Level Up. Al vencer, el municipio vuelve a contratar: hay que llegar antes.",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Me presento a Municipio de Isabela? Te preparo el diagnóstico y la carta en tu nombre",
+          "para": "llegar antes de que vuelvan a contratar",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Bajar el contrato 2027 de la OCPR (alcance y tarifa) y armar la propuesta.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-AGUADILLA-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Municipio de Aguadilla",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-11-04",
+      "titular": "Sombrero Media, INC",
+      "estado": "nueva",
+      "encaje": 70,
+      "monto": {
+        "max": 67264,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Publicidad municipal, mismo juego que Isabela.",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Me presento a Municipio de Aguadilla? Te preparo el diagnóstico y la carta en tu nombre",
+          "para": "llegar antes de que vuelvan a contratar",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Bajar el contrato de la OCPR y armar la propuesta.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-FAMILIA-RRPP",
+      "tipo": "recompite",
+      "titulo": "Servicios de Relaciones Públicas (contrato que vence)",
+      "agencia": "Departamento de la Familia",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-10-31",
+      "titular": "AMG Strategic Communications, LLC",
+      "estado": "nueva",
+      "encaje": 55,
+      "monto": {
+        "max": 65000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Comunicaciones de una agencia grande; nos sirve más como el próximo año si no llegamos a tiempo.",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Le entramos a relaciones públicas de gobierno o nos quedamos en contenido, redes y digital?",
+          "para": "decidir si la perseguimos"
+        }
+      ],
+      "proximoPaso": "Si dices que sí: sacar el contrato de la OCPR y mirar cuándo lo vuelven a anunciar.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-CAGUAS-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Municipio de Caguas",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-10-23",
+      "titular": "Quality and Reliable Services INC",
+      "estado": "descartada",
+      "encaje": 40,
+      "monto": {
+        "max": 27850,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Vence en 4 días: casi seguro ya está renovado. Queda en el radar para la próxima vuelta.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "sin tiempo; vigilar la próxima"
+        }
+      ]
+    },
+    {
+      "id": "DDEC-RFP-2026-001",
+      "tipo": "rfp",
+      "titulo": "Academia de Testimonios (CEDD)",
+      "agencia": "DDEC · CEDD",
+      "cierre": "2026-11-05T16:00",
+      "estado": "descartada",
+      "encaje": 35,
+      "porQue": "La Adenda 1 la clasifica como subrecipiente: sin ganancia ni honorarios, solo costos y 15 % indirecto. Solo valdría para hacer historial con el gobierno.",
+      "pliego": "https://docs.pr.gov/files/DDEC/RFP%202026-001%20Academia%20de%20Testimonios%201B.pdf",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "subrecipiente, sin margen"
+        }
+      ]
+    },
+    {
+      "id": "DDEC-RFP-2026-007",
+      "tipo": "rfp",
+      "titulo": "Talleres de destrezas financieras y desarrollo de materiales (CEDD)",
+      "agencia": "DDEC · CEDD",
+      "cierre": "2026-11-05T16:00",
+      "estado": "descartada",
+      "encaje": 30,
+      "porQue": "Subrecipiente (sin ganancia) y es educación financiera para personas con DID: no es nuestro servicio.",
+      "pliego": "https://docs.pr.gov/files/DDEC/RFP%202026-007%20Destrezas%20financieras%20saludables%203B.pdf",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada"
+        }
+      ]
+    },
+    {
+      "id": "REC-CAGUAS-REDES",
+      "tipo": "recompite",
+      "titulo": "Servicios de Análisis de Redes Sociales (contrato que vence)",
+      "agencia": "Municipio de Caguas",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Digital Presencial, LLC",
+      "estado": "preparando",
+      "encaje": 80,
+      "monto": {
+        "max": 45000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "El servicio es análisis de redes, lo que hace Level Up. Caguas publica ~8 veces al día en Facebook con una mediana de 12 interacciones, y un solo video sacó 16,825 reproducciones: hay mucho que mejorar y medir.",
+      "necesitoDeElvin": [
+        {
+          "que": "Tu cargo en Digital Seed, teléfono, correo y una línea de experiencia que apruebes, para cerrar la carta",
+          "para": "firmar y enviar",
+          "urgente": true
+        },
+        {
+          "que": "Firmar y enviar la carta con el diagnóstico (o darme el OK y la imprimo lista); llamada de seguimiento a los 7 días",
+          "para": "pedir la reunión de 20 minutos"
+        }
+      ],
+      "proximoPaso": "Diagnóstico de 2 páginas listo (diagnostico.pdf) y carta al Alcalde con atención a Jossie I. Vega Santiago (Prensa). Cuando la mandes, anoto el contacto y te recuerdo la llamada a los 7 días.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        },
+        {
+          "fecha": "2026-10-19",
+          "a": "preparando",
+          "nota": "Diagnóstico (web + redes, datos reales) y carta en borrador listos"
+        }
+      ],
+      "carpeta": "data/licitaciones/REC-CAGUAS-REDES",
+      "contactos": []
+    },
+    {
+      "id": "REC-BAYAMON-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Municipio de Bayamón",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Veintinueve de Febrero, INC",
+      "estado": "preparando",
+      "encaje": 75,
+      "monto": {
+        "max": 125000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Publicidad municipal de $125K que cambia de manos a menudo (10 empresas en 8 años). Bayamón tiene 148K en Facebook pero su página está clasificada como organización comunitaria, hay una cuenta que confunde y los enlaces se comparten sin foto: es un caso de marca.",
+      "necesitoDeElvin": [
+        {
+          "que": "Tu cargo en Digital Seed, teléfono, correo y una línea de experiencia que apruebes, para cerrar la carta",
+          "para": "firmar y enviar",
+          "urgente": true
+        },
+        {
+          "que": "¿Dejo el párrafo de condolencias por el fallecimiento del padre del Alcalde (30/sep), lo quito o esperamos unas semanas para escribirle?",
+          "para": "el tono de la carta",
+          "hecho": true,
+          "respuesta": "Dejarlo (Elvin, 19/oct)"
+        },
+        {
+          "que": "Firmar y enviar la carta con el diagnóstico (o darme el OK y la imprimo lista); llamada de seguimiento a los 7 días",
+          "para": "pedir la reunión de 20 minutos"
+        }
+      ],
+      "proximoPaso": "Diagnóstico de 2 páginas listo (diagnostico.pdf) y carta al Alcalde. Cuando la mandes, anoto el contacto y te recuerdo la llamada a los 7 días (Oficina del Alcalde 787-780-8447).",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        },
+        {
+          "fecha": "2026-10-19",
+          "a": "preparando",
+          "nota": "Diagnóstico (web + redes, datos reales) y carta en borrador listos"
+        }
+      ],
+      "carpeta": "data/licitaciones/REC-BAYAMON-PUBLICIDAD",
+      "contactos": []
+    },
+    {
+      "id": "REC-ORQUESTA-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Corporación de la Orquesta Sinfónica de Puerto Rico",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2027-01-31",
+      "titular": "Muuaaa Design Studio, LLC",
+      "estado": "nueva",
+      "encaje": 75,
+      "monto": {
+        "max": 80000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Publicidad y contenido para una marca cultural; vence el 31/ene, con tiempo de sobra. Agencia estatal: casi seguro pide RUP.",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Me presento a Corporación de la Orquesta Sinfónica de Puerto Rico? Te preparo el diagnóstico y la carta en tu nombre",
+          "para": "llegar antes de que vuelvan a contratar",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Bajar el contrato 2027-000040 y revisar sus redes para el diagnóstico.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-BARCELONETA-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Municipio de Barceloneta",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2027-02-28",
+      "titular": "Alta Communication, INC",
+      "estado": "nueva",
+      "encaje": 70,
+      "monto": {
+        "max": 38400,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Publicidad municipal de tamaño manejable; vence el 28/feb.",
+      "proximoPaso": "Vigilar; preparar cuando falten ~60 días.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-OATRH-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Oficina de Administración y Transformación de los Recursos Humanos (OATRH)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2027-03-31",
+      "titular": "Creactivo Media Solutions LLC",
+      "estado": "nueva",
+      "encaje": 70,
+      "monto": {
+        "max": 45500,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Publicidad para una oficina estatal (reclutamiento/comunicación interna); vence el 31/mar.",
+      "proximoPaso": "Vigilar; preparar cuando falten ~60 días.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-EDUCACION-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Departamento de Educación de Puerto Rico",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Publicidad Tere Suárez, LLC",
+      "estado": "nueva",
+      "encaje": 65,
+      "monto": {
+        "max": 122500,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Publicidad del DE; vence el 31/dic. Estatal: pide RUP (que no está listo).",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Me presento a Departamento de Educación de Puerto Rico? Te preparo el diagnóstico y la carta en tu nombre",
+          "para": "llegar antes de que vuelvan a contratar",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Bajar el contrato 2027-000126.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-SANJUAN-RRPP",
+      "tipo": "recompite",
+      "titulo": "Servicios de Relaciones Públicas (contrato que vence)",
+      "agencia": "Municipio de San Juan",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Conexión 5 LLC",
+      "estado": "nueva",
+      "encaje": 65,
+      "monto": {
+        "max": 55500,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "RRPP municipal con contenido y redes; cambia de titular a menudo (7 empresas en 8 años).",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Me presento a Municipio de San Juan? Te preparo el diagnóstico y la carta en tu nombre",
+          "para": "llegar antes de que vuelvan a contratar",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Bajar el contrato 2026-001863.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-OGP-PUBLICIDAD-35K",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Oficina de Gerencia y Presupuesto (OGP)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Populicom, INC",
+      "estado": "nueva",
+      "encaje": 65,
+      "monto": {
+        "max": 35000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Contrato chico de OGP que cambia de titular (8 empresas en 8 años): buena puerta de entrada al gobierno central. Pide RUP.",
+      "proximoPaso": "Bajar el contrato 2027-000047.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-HACIENDA-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Departamento de Hacienda",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-11-30",
+      "titular": "Veintinueve de Febrero, INC",
+      "estado": "nueva",
+      "encaje": 60,
+      "monto": {
+        "max": 5074000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "El más grande ($5.07M). Por la tabla da alto, pero casi seguro exige agencia de medios con compra de pauta, equipo grande y experiencia con gobierno que Digital Seed Ventures no tiene: más bien para historial o subcontrato.",
+      "necesitoDeElvin": [
+        {
+          "que": "¿La perseguimos o la dejamos pasar? Mi voto: dejarla pasar, salvo que quieras ir como subcontratista de una agencia grande",
+          "para": "decidir antes del 30/nov"
+        }
+      ],
+      "proximoPaso": "Esperar la decisión de Elvin.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-ADFAN-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Administración de Familias y Niños (ADFAN)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-30",
+      "titular": "Veintinueve de Febrero, INC",
+      "estado": "nueva",
+      "encaje": 60,
+      "monto": {
+        "max": 1100000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "$1.1M, mismo caso que Hacienda: grande para la primera; cambia de titular a menudo (7 en 8 años).",
+      "proximoPaso": "Vigilar; decidir junto con Hacienda.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "nueva"
+        }
+      ]
+    },
+    {
+      "id": "REC-OGP-PUBLICIDAD-456K",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Oficina de Gerencia y Presupuesto (OGP)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Publicidad Tere Suárez, LLC",
+      "estado": "descartada",
+      "encaje": 55,
+      "monto": {
+        "max": 455975,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Mismo titular 5 de 8 años y $456K: difícil para una primera. Mejor la de $35K de la misma OGP.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "titular fuerte; entrar por la de $35K"
+        }
+      ]
+    },
+    {
+      "id": "REC-EDUCACION-RRPP",
+      "tipo": "recompite",
+      "titulo": "Servicios de Relaciones Públicas (contrato que vence)",
+      "agencia": "Departamento de Educación de Puerto Rico",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "ARM Consulting Group, LLC",
+      "estado": "descartada",
+      "encaje": 50,
+      "monto": {
+        "max": 60000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Mismo titular 8 de 8 años: no la van a soltar.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "titular fijo"
+        }
+      ]
+    },
+    {
+      "id": "REC-CEE-RRPP",
+      "tipo": "recompite",
+      "titulo": "Servicios de Relaciones Públicas (contrato que vence)",
+      "agencia": "Comisión Estatal de Elecciones",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Knockout Strategies & Public Relations, LLC",
+      "estado": "descartada",
+      "encaje": 45,
+      "monto": {
+        "max": 30000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "RRPP electoral: sensible y poco encaje con lo que hacemos.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "sensible"
+        }
+      ]
+    },
+    {
+      "id": "REC-WIPR-PAUTAS-210K",
+      "tipo": "recompite",
+      "titulo": "Pautas Televisivas y/o Radio (contrato que vence)",
+      "agencia": "Corporación de PR para la Difusión Pública (WIPR)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-12-31",
+      "titular": "Hello Media, LLC",
+      "estado": "descartada",
+      "encaje": 45,
+      "monto": {
+        "max": 210000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Son pautas/programación en WIPR (74 titulares en 8 años): no es servicio de agencia.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "no es servicio nuestro"
+        }
+      ]
+    },
+    {
+      "id": "REC-WIPR-PAUTAS-50K",
+      "tipo": "recompite",
+      "titulo": "Pautas Televisivas y/o Radio (contrato que vence)",
+      "agencia": "Corporación de PR para la Difusión Pública (WIPR)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-11-12",
+      "titular": "Alliance Française de Puerto Rico, INC",
+      "estado": "descartada",
+      "encaje": 35,
+      "monto": {
+        "max": 50000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Programación en WIPR, no servicio de agencia.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "no es servicio nuestro"
+        }
+      ]
+    },
+    {
+      "id": "REC-MANATI-PANTALLA",
+      "tipo": "recompite",
+      "titulo": "Pantalla Digital Publicitaria (contrato que vence)",
+      "agencia": "Municipio de Manatí",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-10-24",
+      "titular": "Audio-Visual Concepts, LLC",
+      "estado": "descartada",
+      "encaje": 30,
+      "monto": {
+        "max": 215480,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Es una pantalla física (equipo) y vence en 5 días.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "equipo; sin tiempo"
+        }
+      ]
+    },
+    {
+      "id": "REC-EVENTOS-OCT",
+      "tipo": "recompite",
+      "titulo": "Promotor de espectáculos, servicios artísticos y boletería (Caguas, Aguadilla, Canóvanas) (contrato que vence)",
+      "agencia": "Municipios de Caguas, Aguadilla y Canóvanas",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "cierre": "2026-10-25",
+      "titular": "varios (Peter Promotions, Midnight Express, Sanabria Events, OPM Events)",
+      "estado": "descartada",
+      "encaje": 20,
+      "monto": {
+        "max": 200000,
+        "base": "monto del contrato que vence"
+      },
+      "porQue": "Producción de eventos y artistas, no es lo nuestro; vencen en ≤ 6 días.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "eventos"
+        }
+      ]
+    },
+    {
+      "id": "REC-EVENTOS-ARECIBO-GURABO",
+      "tipo": "recompite",
+      "titulo": "Servicios de Productor (Arecibo) y Promotor de espectáculos (Gurabo) (contrato que vence)",
+      "agencia": "Municipios de Arecibo y Gurabo",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "licitapr": "https://licitapr.com/contrato/5798093",
+      "cierre": "2026-11-06",
+      "titular": "Stuart Management, Inc. (Arecibo, contrato 2027-000322, $118K); Poche Productions (Gurabo, vence 25/oct)",
+      "estado": "descartada",
+      "encaje": 20,
+      "monto": {
+        "max": 118000,
+        "base": "monto del contrato de Arecibo que vence (LicitaPR)"
+      },
+      "porQue": "Producción de eventos y espectáculos, no es lo nuestro; vencen en ≤ 14 días.",
+      "historial": [
+        {
+          "fecha": "2026-10-23",
+          "a": "descartada",
+          "nota": "eventos; registrada en la ronda para no volver a proponerla"
+        }
+      ]
+    },
+    {
+      "id": "DE-RFPS-OC-2026-006",
+      "tipo": "RFP",
+      "titulo": "Portal digital para registrar y autorizar pagos",
+      "agencia": "Departamento de Educación de Puerto Rico",
+      "fuente": "Educación vía LicitaPR",
+      "cierre": "2026-10-20",
+      "estado": "descartada",
+      "encaje": 30,
+      "porQue": "Es software, pero cierra mañana: sin tiempo para preparar.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "cierra 20/oct"
+        }
+      ]
+    },
+    {
+      "id": "TURISMO-RFP-005-2026",
+      "tipo": "RFP",
+      "titulo": "Apoyo operacional, orientación turística y bienvenida a visitantes en puertos de cruceros",
+      "agencia": "Compañía de Turismo",
+      "fuente": "Turismo vía LicitaPR",
+      "estado": "descartada",
+      "encaje": 25,
+      "porQue": "Es personal en los muelles, no servicio nuestro; el aviso es de julio y no tiene fecha publicada.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "personal en muelles"
+        }
+      ]
+    },
+    {
+      "id": "DE-OCC-2026-10-NA-000001",
+      "tipo": "RFP",
+      "titulo": "Curso universitario de maestría para docentes",
+      "agencia": "Departamento de Educación de Puerto Rico",
+      "fuente": "Educación vía LicitaPR",
+      "estado": "descartada",
+      "encaje": 15,
+      "porQue": "Es para universidades acreditadas.",
+      "historial": [
+        {
+          "fecha": "2026-10-19",
+          "a": "descartada",
+          "nota": "solo universidades"
+        }
+      ]
+    },
+    {
+      "id": "DDEC-RFP-2026-002",
+      "tipo": "rfp",
+      "titulo": "Cumbre de Transportación (CEDD)",
+      "agencia": "DDEC · CEDD",
+      "fuente": "DDEC (desarrollo.pr.gov) vía LicitaPR",
+      "licitapr": "https://licitapr.com/oportunidad/DDEC%7CRFP-2026-002",
+      "cierre": "2026-11-05T16:00",
+      "estado": "descartada",
+      "encaje": 30,
+      "porQue": "Subrecipiente (sin ganancia) y es organizar una cumbre de transportación para personas con DID: no es nuestro servicio.",
+      "historial": [
+        {
+          "fecha": "2026-10-20",
+          "a": "descartada",
+          "nota": "registrada en la ronda para no volver a proponerla"
+        }
+      ]
+    },
+    {
+      "id": "DDEC-RFP-2026-004",
+      "tipo": "rfp",
+      "titulo": "Investigación sobre empleo (CEDD)",
+      "agencia": "DDEC · CEDD",
+      "fuente": "DDEC (desarrollo.pr.gov) vía LicitaPR",
+      "licitapr": "https://licitapr.com/oportunidad/DDEC%7CRFP-2026-004",
+      "cierre": "2026-11-05T16:00",
+      "estado": "descartada",
+      "encaje": 20,
+      "porQue": "Subrecipiente (sin ganancia) y es investigación académica: no es nuestro servicio.",
+      "historial": [
+        {
+          "fecha": "2026-10-20",
+          "a": "descartada",
+          "nota": "registrada en la ronda para no volver a proponerla"
+        }
+      ]
+    },
+    {
+      "id": "DDEC-RFP-2026-005",
+      "tipo": "rfp",
+      "titulo": "Investigación sobre la transición a la vida adulta (CEDD)",
+      "agencia": "DDEC · CEDD",
+      "fuente": "DDEC (desarrollo.pr.gov) vía LicitaPR",
+      "licitapr": "https://licitapr.com/oportunidad/DDEC%7CRFP-2026-005",
+      "cierre": "2026-11-05T16:00",
+      "estado": "descartada",
+      "encaje": 20,
+      "porQue": "Subrecipiente (sin ganancia) y es investigación académica: no es nuestro servicio.",
+      "historial": [
+        {
+          "fecha": "2026-10-20",
+          "a": "descartada",
+          "nota": "registrada en la ronda para no volver a proponerla"
+        }
+      ]
+    },
+    {
+      "id": "DDEC-RFP-2026-006",
+      "tipo": "rfp",
+      "titulo": "Talleres sobre transiciones a lo largo de la vida adulta (CEDD)",
+      "agencia": "DDEC · CEDD",
+      "fuente": "DDEC (desarrollo.pr.gov) vía LicitaPR",
+      "licitapr": "https://licitapr.com/oportunidad/DDEC%7CRFP-2026-006",
+      "cierre": "2026-11-05T16:00",
+      "estado": "descartada",
+      "encaje": 30,
+      "porQue": "Subrecipiente (sin ganancia) y son talleres especializados en DID: no es nuestro servicio.",
+      "historial": [
+        {
+          "fecha": "2026-10-20",
+          "a": "descartada",
+          "nota": "registrada en la ronda para no volver a proponerla"
+        }
+      ]
+    },
+    {
+      "id": "DDEC-RFP-2026-008",
+      "tipo": "rfp",
+      "titulo": "Actividades recreativas para reducir la soledad y el aislamiento (CEDD)",
+      "agencia": "DDEC · CEDD",
+      "fuente": "DDEC (desarrollo.pr.gov) vía LicitaPR",
+      "licitapr": "https://licitapr.com/oportunidad/DDEC%7CRFP-2026-008",
+      "cierre": "2026-11-05T16:00",
+      "estado": "descartada",
+      "encaje": 20,
+      "porQue": "Subrecipiente (sin ganancia) y son actividades recreativas: no es nuestro servicio.",
+      "historial": [
+        {
+          "fecha": "2026-10-20",
+          "a": "descartada",
+          "nota": "registrada en la ronda para no volver a proponerla"
+        }
+      ]
+    },
+    {
+      "id": "REC-CANOVANAS-ARTES-GRAFICAS",
+      "tipo": "recompite",
+      "titulo": "Servicios de Artes Gráficas (contrato que vence)",
+      "agencia": "Municipio de Canóvanas",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "licitapr": "https://licitapr.com/contrato/5758866",
+      "cierre": "2026-12-31",
+      "titular": "Ponce Premium Brands, LLC",
+      "estado": "nueva",
+      "encaje": 70,
+      "monto": {
+        "max": 30000,
+        "base": "monto del contrato que vence (6 meses, $5K/mes; ~$60K al año si lo renuevan igual)"
+      },
+      "porQue": "Diseño gráfico municipal: lo hacen Lola y Level Up. Contrato 2027-000090 vence el 31/dic; mediana en Canóvanas $3.7K. No sé si incluye imprenta: confirmarlo con el contrato de la OCPR.",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Me presento a Municipio de Canóvanas? Te preparo el diagnóstico y la carta en tu nombre",
+          "para": "llegar antes de que vuelvan a contratar",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Si dices que sí: bajar el contrato 2027-000090 de la OCPR (alcance) y armar diagnóstico + carta como en Caguas/Bayamón.",
+      "historial": [
+        {
+          "fecha": "2026-10-22",
+          "a": "nueva",
+          "nota": "entró a la ventana de 180 días de /c/advertising"
+        }
+      ]
+    },
+    {
+      "id": "REC-BAYAMON-FOTOGRAFOS",
+      "tipo": "recompite",
+      "titulo": "Servicios de Fotógrafos (contrato que vence)",
+      "agencia": "Municipio de Bayamón",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "licitapr": "https://licitapr.com/contrato/5771853",
+      "cierre": "2026-12-31",
+      "titular": "IQ Sports Puerto Rico, LLC",
+      "estado": "nueva",
+      "encaje": 60,
+      "monto": {
+        "max": 33000,
+        "base": "monto del contrato que vence (6 meses, $5.5K/mes)"
+      },
+      "porQue": "Contenido para el municipio, y ya tenemos la puerta de Bayamón abierta con la carta de publicidad. Pero es fotografía de campo (el titular es de deportes): hace falta fotógrafo en los eventos.",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Lo sumo a la carta de Bayamón (publicidad + fotografía) o lo dejo? Pide fotógrafo en los eventos del municipio",
+          "para": "decidir si entra en el mismo acercamiento",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Si dices que sí: sumarlo al paquete de REC-BAYAMON-PUBLICIDAD (un solo acercamiento).",
+      "historial": [
+        {
+          "fecha": "2026-10-22",
+          "a": "nueva",
+          "nota": "entró a la ventana de 180 días de /c/advertising"
+        }
+      ]
+    },
+    {
+      "id": "REC-DRD-FOTOGRAFOS",
+      "tipo": "recompite",
+      "titulo": "Servicios de Fotógrafos (contrato que vence)",
+      "agencia": "Departamento de Recreación y Deportes (DRD)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "licitapr": "https://licitapr.com/contrato/5756881",
+      "cierre": "2026-12-31",
+      "titular": "Artifactika, LLC",
+      "estado": "nueva",
+      "encaje": 60,
+      "monto": {
+        "max": 30000,
+        "base": "monto del contrato que vence (6 meses, $5K/mes; mediana en DRD $4K)"
+      },
+      "porQue": "Contenido para una agencia estatal, pero es fotografía de eventos deportivos en la calle y, por ser estatal, pide RUP (en trámite).",
+      "necesitoDeElvin": [
+        {
+          "que": "¿Me presento a Departamento de Recreación y Deportes? Te preparo el diagnóstico y la carta en tu nombre",
+          "para": "llegar antes de que vuelvan a contratar",
+          "tipo": "presentarme"
+        }
+      ],
+      "proximoPaso": "Si dices que sí: bajar el contrato 2027-000007 de la OCPR y armar el acercamiento cuando el RUP esté.",
+      "historial": [
+        {
+          "fecha": "2026-10-22",
+          "a": "nueva",
+          "nota": "entró a la ventana de 180 días de /c/advertising"
+        }
+      ]
+    },
+    {
+      "id": "REC-AMA-PUBLICIDAD",
+      "tipo": "recompite",
+      "titulo": "Servicios de Publicidad (contrato que vence)",
+      "agencia": "Autoridad Metropolitana de Autobuses (AMA)",
+      "fuente": "OCPR vía LicitaPR (Recompiten)",
+      "licitapr": "https://licitapr.com/contrato/5344637",
+      "cierre": "2027-04-09",
+      "titular": "Trans Ad Puerto Rico, Inc",
+      "estado": "descartada",
+      "encaje": 45,
+      "monto": {
+        "max": 62400,
+        "base": "monto del contrato que vence (4 años y 1 mes, ~$1.3K/mes)"
+      },
+      "porQue": "$1.3K al mes por 4 años, con titular de anuncios en guaguas: todo indica que es espacio publicitario, no servicio de agencia. Revisar si sale pliego.",
+      "historial": [
+        {
+          "fecha": "2026-10-22",
+          "a": "descartada",
+          "nota": "monto chico y parece concesión de espacio"
+        }
+      ]
+    },
+    {
+      "id": "BAYAMON-2026-27-10",
+      "tipo": "subasta",
+      "titulo": "Mejoras en sistemas de audio y video en complejo deportivo",
+      "agencia": "Municipio de Bayamón",
+      "fuente": "Municipio vía LicitaPR",
+      "licitapr": "https://licitapr.com/s/Municipio%7C2026-27%2310%7CBayam%C3%B3n",
+      "estado": "descartada",
+      "encaje": 15,
+      "porQue": "Es instalación de equipo (obra), no servicio de contenido.",
+      "historial": [
+        {
+          "fecha": "2026-10-22",
+          "a": "descartada",
+          "nota": "equipo/obra"
+        }
+      ]
+    },
+    {
+      "id": "RUS-DGA-27-01",
+      "tipo": "RFP",
+      "titulo": "Desarrollo e implementación del sistema de gestión de información de carreteras",
+      "agencia": "Autoridad de Carreteras (vía RUS)",
+      "fuente": "RUS vía LicitaPR",
+      "licitapr": "https://licitapr.com/s/RUS%7CDGA-27-01",
+      "cierre": "2026-11-30",
+      "estado": "descartada",
+      "encaje": 30,
+      "porQue": "Software de ingeniería vial (inventario de carreteras): no es lo que hacemos ni tenemos experiencia que citar.",
+      "historial": [
+        {
+          "fecha": "2026-10-22",
+          "a": "descartada",
+          "nota": "software especializado de carreteras"
+        }
+      ]
+    }
+  ]
+}

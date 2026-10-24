@@ -1,0 +1,150 @@
+{
+  "id": "medspa-03-un-mismo-sitio-9x16",
+  "marca": "level-up",
+  "formato": "9:16",
+  "estilo": "editorial",
+  "musica": "audio/medspa-musica.mp3",
+  "titulo": "Med Spa Infusion · todo en un mismo sitio (fase 1)",
+  "angulo": "Personal de salud dentro del local + todos los servicios bajo una marca",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "lineas": [
+        "Hay una facilidad",
+        "en *Hormigueros*…"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/drive-1IAE-RId2dyViueBz_fLIHp2VBs2waDH6-1-01-56-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9kcml2ZS0xSUFFLVJJZDJkeVZpdWVCel9mTElIcDJWQnMyd2FESDYtMS0wMS01Ni0uanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDU3NSwiZXhwIjoxODIzMDg2NTc1fQ.13kIIvSzuhFXr5gVayAabsauwSi_1UH_jDGjrLx_sQRfHHDWmo9fabyMuSBbwA5k0DbGnrmNeI1iezoExSyi5A",
+      "enfoque": "50% 40%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "donde la infusión",
+        "te la pone una *enfermera*…"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/drive-1ge0Myc8TucN9C2pbjt_9Y7kwoEV2aFIW-image-47-.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9kcml2ZS0xZ2UwTXljOFR1Y045QzJwYmp0XzlZN2t3b0VWMmFGSVctaW1hZ2UtNDctLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE1NTA1NzcsImV4cCI6MTgyMzA4NjU3N30.afgn-FqVM6-S_bljCA_7lWPDSnDmGYJnrXC2N0yvoXP4XvmKSOVD9Hn3acy-gIrOMojOgDwJo_RDdzIIjxMA2Q",
+      "enfoque": "50% 45%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "…y el control de peso",
+        "te lo evalúa un *médico*."
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/drive-1Ejmo4WU_9890r-koTf_6f1fEPQcvlbeI-1-02-56-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9kcml2ZS0xRWptbzRXVV85ODkwci1rb1RmXzZmMWZFUFFjdmxiZUktMS0wMi01Ni0uanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDU3NywiZXhwIjoxODIzMDg2NTc3fQ.s8-nSrR9KMiYpn92vSsCzEr2s-7D6fe0G1Smlt95VRpyWUGJujSPmUwREXhDlp--LzaCOfU628Ym3Wd7oEIp3A",
+      "enfoque": "50% 40%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "alarma": true,
+      "lineas": [
+        "Lo común es ir a un sitio",
+        "*distinto* para cada cosa…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "alarma": true,
+      "lineas": [
+        "…y que en ninguno haya",
+        "*personal de salud*",
+        "dentro del local."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "logo": true,
+      "lineas": [
+        "Eso es",
+        "*Med Spa Infusion*."
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 250,
+      "modo": "marcar",
+      "titulo": "Todo en *un mismo sitio*",
+      "items": [
+        {
+          "texto": "Infusiones intravenosas de vitaminas"
+        },
+        {
+          "texto": "Rejuvenecimiento facial con radiofrecuencia, por esteticista con licencia"
+        },
+        {
+          "texto": "Masaje postoperatorio y drenaje linfático"
+        },
+        {
+          "texto": "Masaje corporal y relajante"
+        },
+        {
+          "texto": "Control de peso con evaluación y seguimiento médico"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 200,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/slack-F0C75PXSWJ2-FOTO.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9zbGFjay1GMEM3NVBYU1dKMi1GT1RPLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE1NTA1NzQsImV4cCI6MTgyMzA4NjU3NH0.Yk9E5qvClW2WjefIvEe5dmjrX4wGBaASFd_jIHzPcBStrUiNXEXDYUm3Bed8cPs16vegLIq_jAn359rfUcgqSw",
+      "enfoque": "50% 40%",
+      "etiqueta": "En la facilidad",
+      "titulo": "Un médico y *dos enfermeras*",
+      "puntos": [
+        "Dos licencias del Departamento de Salud",
+        "Productos de farmacéuticas reconocidas"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 120,
+      "lineas": [
+        "*26 años*",
+        "en el mismo pueblo,",
+        "frente al CDT Hospital",
+        "La Concepción."
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/drive-1IAE-RId2dyViueBz_fLIHp2VBs2waDH6-1-01-56-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9kcml2ZS0xSUFFLVJJZDJkeVZpdWVCel9mTElIcDJWQnMyd2FESDYtMS0wMS01Ni0uanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDU3NSwiZXhwIjoxODIzMDg2NTc1fQ.13kIIvSzuhFXr5gVayAabsauwSi_1UH_jDGjrLx_sQRfHHDWmo9fabyMuSBbwA5k0DbGnrmNeI1iezoExSyi5A",
+      "enfoque": "50% 60%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "Cada tratamiento empieza",
+        "con una *evaluación*."
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/drive-1Ejmo4WU_9890r-koTf_6f1fEPQcvlbeI-1-02-56-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9kcml2ZS0xRWptbzRXVV85ODkwci1rb1RmXzZmMWZFUFFjdmxiZUktMS0wMi01Ni0uanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDU3NywiZXhwIjoxODIzMDg2NTc3fQ.s8-nSrR9KMiYpn92vSsCzEr2s-7D6fe0G1Smlt95VRpyWUGJujSPmUwREXhDlp--LzaCOfU628Ym3Wd7oEIp3A",
+      "enfoque": "50% 55%"
+    },
+    {
+      "tipo": "cierre",
+      "dur": 170,
+      "cta": "WhatsApp: 787-458-1031",
+      "url": "Ave. Luis Muñoz Marín #5, Hormigueros",
+      "sub": "Si quieres saber cuál te toca a ti, escríbenos",
+      "nota": "Frente al CDT Hospital La Concepción · L–V 8:00 a.m.–5:00 p.m."
+    }
+  ],
+  "cliente": {
+    "fondo": "#F7F5F0",
+    "texto": "#0B2550",
+    "acento": "#1A9BBA",
+    "fuente": "Montserrat",
+    "musica": "medspa-musica.mp3",
+    "nombre": "Med Spa Infusion",
+    "acento2": "#B8862A",
+    "estilos": [
+      "editorial",
+      "minimal"
+    ],
+    "logoUrl": "clientes/med-spa-infusion/logo.png",
+    "subtitulo": "Hormigueros · desde hace 26 años",
+    "fuenteAcento": "Playfair Display"
+  }
+}

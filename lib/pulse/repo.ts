@@ -112,6 +112,12 @@ export async function leerMiembrosBoard(boardId: string): Promise<string[]> {
   return (await d.select({ userId: pulseBoardMembers.userId }).from(pulseBoardMembers).where(eq(pulseBoardMembers.boardId, boardId))).map((r) => r.userId);
 }
 
+export async function boardEsPrivado(boardId: string): Promise<boolean | null> {
+  const d = await db();
+  const [b] = await d.select({ privado: pulseBoards.privado }).from(pulseBoards).where(eq(pulseBoards.id, boardId));
+  return b ? b.privado : null;
+}
+
 export async function guardarAccesoBoard(boardId: string, p: { privado: boolean; miembros: string[] }): Promise<void> {
   const d = await db();
   await d.update(pulseBoards).set({ privado: p.privado }).where(eq(pulseBoards.id, boardId));

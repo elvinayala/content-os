@@ -1,0 +1,42 @@
+{
+  "id": "lu-bienvenida-cafe-ejemplo",
+  "marca": "level-up",
+  "formato": "9:16",
+  "titulo": "Bienvenida · Café Ejemplo",
+  "angulo": "Bienvenida personalizada a cada cliente nuevo de Level Up (plantilla de lote)",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "lineas": [
+        "Te damos la bienvenida,",
+        "*Ana (ejemplo)*"
+      ],
+      "logo": true
+    },
+    {
+      "tipo": "dato",
+      "dur": 110,
+      "grande": "Café Ejemplo",
+      "texto": "ya es parte de Level Up Media · Caguas"
+    },
+    {
+      "tipo": "pasos",
+      "dur": 210,
+      "titulo": "Lo que viene",
+      "pasos": [
+        "Onboarding con Jessica",
+        "Tu estrategia",
+        "Tus creativos",
+        "Tus campañas al aire"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 120,
+      "cta": "Nos vemos en el onboarding",
+      "sub": "Tu equipo de Level Up"
+    }
+  ],
+  "estilo": "impacto"
+}
