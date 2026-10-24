@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: e26a1275-d67c-452e-b898-af4533d0dd8e
-  modified: 2026-10-13T14:48:59.528Z
+  modified: 2026-10-24T18:17:17.303Z
 ---
 
 Auditorías interactivas tipo Content Capital (Ramiro) construidas el 12/sep/2026 en
@@ -111,3 +111,14 @@ Shadow NO tiene pixel de Meta (los `fbq` del quiz no disparan nada).
 engines" está APAGADO en el hub (decidir si indexarlo), y el copy de `/ia` y del funnel de AIB dice "recuperar clientes… en los primeros
 21 días" (el plazo real es 15 días + optimización 16-45, ver [[aib-autoflow-plazos]]) — corregir con el OK de Elvin.
 
+**1000X — quiz "Diagnóstico de Trader" (24/oct/2026, en preparación, NO está en vivo):** Elvin eligió: leads a **Pulse Leads, marca `1000x` aislada**
+(Pipedrive descartado), CTA final **ninguno por ahora** (botones ocultos), dominio **`x1000trade.com`** (GoDaddy; tiene correo Microsoft 365: no tocar
+MX/TXT/autodiscover, solo `www` CNAME → us-east-shard-3.myclickfunnels.com + TXT de verificación de CF). Código listo y probado (478 tests, tsc
+limpio): `lib/leads/{reglas,repo,cables,timelines}.ts`, `app/api/auditoria/route.ts` (rama `1000x`), `demos/auditorias/1000x/{index,cf-snippet}.html`,
+`demos/elvinayala/og/og-1000x.png`. **Funnel en CF hecho:** "1000X - Diagnóstico de Trader" (id `YQZQxR`), página `/diagnostico-trader`
+con `cf-snippet.html` pegado (hash verificado) y Sharing image; ruta del funnel `/diagnostico` (hoy en www.elvinayala.com/diagnostico).
+**Falta (de Elvin):** el deploy a Vercel (el clasificador lo bloqueó; sin deploy los leads de 1000X reciben 503 y se pierden); en GoDaddy
+guardar `www` CNAME → us-east-shard-3.myclickfunnels.com y agregar TXT `@` `clickfunnels-domain-verification=jRldZm`; luego en CF
+verificar www.x1000trade.com y ponerlo como Domain del funnel. También: usuario de Pulse para 1000X (falta su correo), prueba e2e con lead
+PRUEBA y borrarlo. Ojo legal: 1000X tiene la duda CFTC/NFA con abogado (ver `docs/contexto/consentimientos.md`) y sus páginas /terminos y /privacidad no están
+publicadas (404 en 1000x-trading.vercel.app). CF admin: `https://accounts.myclickfunnels.com/` (sesión ya abierta en Chrome).
