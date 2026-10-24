@@ -26,10 +26,18 @@ function esRutaContenido(pathname: string): boolean {
   );
 }
 
+const RUTAS_LEGALES = ["/terminos", "/privacidad", "/reembolsos", "/cookies", "/accesibilidad"];
+function esRutaLegal(pathname: string): boolean {
+  return RUTAS_LEGALES.some((r) => pathname === r || pathname.startsWith(`${r}/`));
+}
+
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   // Dominio bonito de Pulse (pulse-eamarket.vercel.app): la raíz va directo al CRM.
   const host = request.headers.get("host") ?? "";
+  // Páginas legales (24/oct/2026): públicas y en TODOS los dominios (app., ritmo., leads., formularios., onboarding),
+  // antes de las reglas por dominio que mandan todo lo demás a su app (en formularios.* /terminos sería un slug).
+  if (esRutaLegal(pathname)) return NextResponse.next();
   // Dominios de marca del onboarding de Level Up (levelupmedia.vercel.app, bienvenida-levelup…):
   // ahí SOLO existe el formulario. La raíz lo muestra con la URL limpia y cualquier otra ruta
   // (links con basura pegada, /ceo, /pulse…) vuelve a la raíz: nunca un login ni nada interno.

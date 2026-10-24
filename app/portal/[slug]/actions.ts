@@ -67,3 +67,21 @@ export async function resincronizarLlamadasAction(slug: string) {
   revalidar(slug);
   return { ok: true as const, actualizadas, pendientes: pendientes.length };
 }
+
+// Antes de la llamada de prueba (24/oct/2026): quien llama marcó que entiende que habla con IA y que se graba y se
+// transcribe. Se registra desde el servidor (IP, navegador, hora) junto a quién miraba: el prospecto o el closer.
+export async function consentirGrabacionAction(slug: string, acepto: boolean) {
+  const r = await portalAutorizado(slug);
+  if ("error" in r) return { ok: false as const, error: r.error };
+  if (!acepto) return { ok: false as const, error: "Marca la casilla para empezar la llamada." };
+  const { registrarConsentimiento } = await import("@/lib/legal/consentimiento");
+  const { CASILLAS, LEGAL } = await import("@/lib/legal/versiones");
+  await registrarConsentimiento({
+    persona: `portal:${slug}:${r.quien}`,
+    tipo: "grabacion_llamada_ia",
+    version: LEGAL.privacidad.version,
+    textoCasilla: CASILLAS.grabacionLlamada,
+    origen: `/portal/${slug}`,
+  });
+  return { ok: true as const };
+}

@@ -627,10 +627,12 @@ export async function altaEmpleadoAction(p: { nombre: string; email: string; emp
 }
 
 /** Bienvenida: la persona llena su propia ficha (obligatorio antes de usar Ritmo). */
-export async function completarFichaAction(p: { telefono: string; telefonoAlterno: string; ciudad: string; pais: string; documentoTipo: string; documentoNumero: string; contactoEmergencia: string }) {
+export async function completarFichaAction(p: { telefono: string; telefonoAlterno: string; ciudad: string; pais: string; documentoTipo: string; documentoNumero: string; contactoEmergencia: string; leiAviso?: boolean }) {
   return envolver(async () => {
     const u = await requiereUsuario();
     if (!(await fichas.leerFicha(u.id))) throw new Error("No tienes ficha");
+    // Aviso de privacidad del equipo (24/oct/2026): casilla obligatoria, sin marcar por defecto; se registra en el servidor.
+    if (!p.leiAviso) throw new Error("Marca que leíste el aviso de privacidad del equipo");
     const t = (x: string, n = 120) => x?.trim().slice(0, n) || "";
     const d = { telefono: t(p.telefono, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60) };
     const falta = Object.entries(d).find(([, v]) => !v);
@@ -639,6 +641,9 @@ export async function completarFichaAction(p: { telefono: string; telefonoAltern
     if (!(await fichas.leerFicha(u.id))?.fotoPath) throw new Error("Sube tu foto");
     if (!(await fichas.contarArchivos(u.id, "identificacion"))) throw new Error("Sube una foto de tu identificación");
     await fichas.completarFichaPropia(u.id, { ...d, telefonoAlterno: t(p.telefonoAlterno, 40) || null, contactoEmergencia: t(p.contactoEmergencia, 160) || null });
+    const { registrarConsentimiento } = await import("@/lib/legal/consentimiento");
+    const { CASILLAS, LEGAL } = await import("@/lib/legal/versiones");
+    await registrarConsentimiento({ persona: u.email, tipo: "privacidad_empleado", version: LEGAL.privacidadEquipo.version, textoCasilla: CASILLAS.privacidadEmpleado, origen: "/ritmo/bienvenida" });
     return {};
   });
 }
