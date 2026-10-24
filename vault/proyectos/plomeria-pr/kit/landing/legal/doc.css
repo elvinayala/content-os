@@ -1,0 +1,33 @@
+/* Resuelto · páginas legales (misma marca que la landing: crema C3, azul C1, naranja C2) */
+:root{--c1:#0F3D5E;--c2:#F2621F;--c2d:#C94E14;--c3:#FBF7F0;--c4:#5C6670;--c5:#08243A;--rule:rgba(15,61,94,.12)}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;font-size:16.5px;line-height:1.6;color:var(--c5);background:var(--c3);-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--rule);background:var(--c3)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:18px}
+.logo{display:inline-flex;align-items:center;gap:8px;font-family:'Sora','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:20px;color:var(--c1);text-decoration:none}
+.logo svg{width:26px;height:26px}
+header a.volver{font-size:14px;font-weight:600;color:var(--c1)}
+main{padding:40px 0 64px;animation:entra .22s ease-out both}
+h1,h2,h3{font-family:'Sora','Helvetica Neue',Arial,sans-serif;color:var(--c1);line-height:1.2;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,38px);margin:0 0 8px}
+h2{font-size:21px;margin:36px 0 10px;scroll-margin-top:20px}
+h3{font-size:17px;margin:22px 0 6px}
+p,li{margin:0 0 12px}
+ul{padding-left:22px}
+.meta{font-size:14px;color:var(--c4);margin-bottom:24px}
+.resumen{background:#fff;border:1px solid var(--rule);border-radius:16px;padding:16px 20px;margin:20px 0}
+.pend{background:rgba(242,98,31,.12);color:var(--c2d);font-weight:600;padding:1px 6px;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0 16px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{color:var(--c1);font-weight:700}
+a{color:var(--c1);text-decoration:underline;text-underline-offset:3px;transition:color .15s ease}
+a:hover{color:var(--c2d)}
+:focus-visible{outline:2px solid var(--c2);outline-offset:3px;border-radius:4px}
+button.linklike{font:inherit;color:var(--c1);background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+button.linklike:hover{color:var(--c2d)}
+footer{border-top:1px solid var(--rule);padding:24px 0 48px;font-size:14px;color:var(--c4)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){main{animation:none}a,button.linklike{transition:none}}
+@media (max-width:560px){table,thead,tbody,tr,th,td{font-size:13.5px}}

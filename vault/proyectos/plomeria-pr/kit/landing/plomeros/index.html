@@ -188,9 +188,11 @@ footer a:hover{color:var(--c7)}
   .logo .tag{display:none}
 }
 </style>
+<link rel="stylesheet" href="../legal/ui.css">
 <!-- Meta Pixel · Resuelto -->
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+try{if(localStorage.getItem('resuelto_cookies')==='no')fbq('consent','revoke');}catch(e){} // rechazó cookies en el aviso
 fbq('init','28140823722265213');fbq('track','PageView');
 // Lead al enviar cualquier formulario · Contact al tocar un botón de WhatsApp
 document.addEventListener('submit',function(){fbq('track','Lead');},true);
@@ -198,7 +200,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href*="w
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=28140823722265213&ev=PageView&noscript=1"/></noscript>
 </head>
-<body>
+<body class="entra">
 <!-- ▸ CONFIGURA: WhatsApp de reclutamiento y webhook del formulario -->
 <script>
 window.RESUELTO_P = {
@@ -453,9 +455,16 @@ window.RESUELTO_P = {
           <option>Fines de semana y emergencias</option>
         </select>
       </div>
+      <fieldset class="ck" data-keep>
+        <legend class="sr">Consentimientos</legend>
+        <label><input type="checkbox" data-consent="terminos" required><span>Acepto los <a href="../terminos/" target="_blank" rel="noopener">Términos y condiciones</a>.</span></label>
+        <label><input type="checkbox" data-consent="privacidad" required><span>Acepto la <a href="../privacidad/" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
+        <label><input type="checkbox" data-consent="marketing_whatsapp_sms_llamadas"><span><span class="opc">Opcional:</span> acepto recibir ofertas y novedades de Resuelto por WhatsApp, SMS o llamadas (incluidas automatizadas o con voz artificial o de IA) al número que di. No es condición para aplicar. Responde STOP para salir.</span></label>
+      </fieldset>
       <button class="btn" type="submit">Enviar mi aplicación</button>
-      <p class="legal">Al enviar autorizas que verifiquemos tu licencia y colegiación. No compartimos tus datos con nadie más.</p>
-      <div class="ok" id="ok">Aplicación recibida. Te escribimos por WhatsApp en menos de 48 horas.</div>
+      <p class="legal">Al enviar autorizas que verifiquemos tu licencia y colegiación. Usamos tus datos solo para evaluar tu aplicación y contactarte; no los vendemos. Detalles en la <a href="../privacidad/" style="text-decoration:underline">Política de privacidad</a>.</p>
+      <div class="ok" id="ok" role="status">Aplicación recibida. Te escribimos por WhatsApp en menos de 48 horas.</div>
+      <div class="form-err" role="alert" hidden></div>
     </form>
   </div>
 </section>
@@ -481,8 +490,9 @@ window.RESUELTO_P = {
 <footer>
   <div class="wrap">
     <a class="logo" href="#"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#fff"/><path d="M20 35 L29 44 L46 26" stroke="#F2621F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>resuelto</a>
-    <div>Resuelto PR Home Services LLC · Puerto Rico</div>
+    <div>© 2026 Resuelto · [PENDIENTE ELVIN: nombre legal de la entidad] · Puerto Rico</div>
     <div><a data-sitio href="#">Página del servicio</a> · <a href="../contratistas/">Contratistas</a> · <a data-wa href="#">WhatsApp</a> · <a href="mailto:plomeros@resueltopr.com">plomeros@resueltopr.com</a></div>
+    <div class="legal-links" style="flex-basis:100%;font-size:13px"><a href="../terminos/">Términos y condiciones</a> · <a href="../privacidad/">Privacidad</a> · <button type="button" data-cookies>Cookies</button></div>
   </div>
 </footer>
 
@@ -491,12 +501,13 @@ window.RESUELTO_P = {
   Preguntar
 </a>
 
+<script src="../legal/consentimiento.js"></script>
 <script>
 (function(){
   var cfg = window.RESUELTO_P || {};
   // Mientras Meta revisa el WhatsApp (24/sep/2026): cfg.chat manda los botones a Messenger. Quitar chat = vuelve a WhatsApp.
   var wa = cfg.chat ? cfg.chat : 'https://wa.me/' + (cfg.whatsapp||'') + '?text=' + encodeURIComponent(cfg.saludo||'Hola');
-  if(cfg.chat){var tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nd;while((nd=tw.nextNode())){if(/WhatsApp/.test(nd.nodeValue))nd.nodeValue=nd.nodeValue.replace(/WhatsApp/g,'Messenger');}document.querySelectorAll('[aria-label*="WhatsApp"]').forEach(function(x){x.setAttribute('aria-label',x.getAttribute('aria-label').replace(/WhatsApp/g,'Messenger'));});}
+  if(cfg.chat){var tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nd;while((nd=tw.nextNode())){if(nd.parentNode.closest('[data-keep]'))continue;if(/WhatsApp/.test(nd.nodeValue))nd.nodeValue=nd.nodeValue.replace(/WhatsApp/g,'Messenger');}document.querySelectorAll('[aria-label*="WhatsApp"]').forEach(function(x){x.setAttribute('aria-label',x.getAttribute('aria-label').replace(/WhatsApp/g,'Messenger'));});}
   document.querySelectorAll('[data-wa]').forEach(function(a){ a.href=wa; a.target='_blank'; a.rel='noopener'; });
   document.querySelectorAll('[data-sitio]').forEach(function(a){ a.href = cfg.urlSitio || '../index.html'; });
 
@@ -533,6 +544,7 @@ window.RESUELTO_P = {
       document.getElementById('ok').style.display='block';
       f.querySelectorAll('input,select,button').forEach(function(el){ el.disabled=true; });
     };
+    if (window.ResueltoLegal) { ResueltoLegal.enviar(f, cfg.webhook, data, done); return; } // consentimientos + Enviando… + error
     if (cfg.webhook) { fetch(cfg.webhook, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)}).then(done).catch(done); }
     else { done(); }
   });
