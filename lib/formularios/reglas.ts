@@ -3,6 +3,8 @@
 // Puro (sin server-only): lo usan la página pública, el editor y el servidor. Tests en
 // tests/formularios.test.mjs.
 
+import { type Casilla, casillasDe, type OpcionesLegales, type TipoOpcional } from "../consentimientos/reglas.ts";
+
 export type TipoPregunta = "texto" | "largo" | "email" | "telefono" | "numero" | "opcion" | "multiple" | "url" | "redes" | "si-no" | "escala";
 
 export interface Pregunta {
@@ -47,6 +49,8 @@ export interface ConfigFormulario {
   parciales?: boolean;
   /** Paso 2: al terminar se abre este evento de Calendly con todo pre-llenado (en vez del botón final). */
   calendly?: { url: string };
+  /** Casillas legales de la bienvenida (términos y privacidad siempre; marketing opcional). Ver casillasFormulario. */
+  legal?: OpcionesLegales;
 }
 
 export type Respuestas = Record<string, string | string[] | Record<string, string> | undefined>;
@@ -322,4 +326,26 @@ export function resumenRespuestas(preguntas: Pregunta[], r: Respuestas): string 
     .filter((p) => visible(p, r) && texto(r[p.id]))
     .map((p) => `• ${p.titulo.replace(/^[^\p{L}¿]+/u, "").replace(/^¿|\?$/g, "")}: ${p.etiquetas?.[texto(r[p.id])] ?? texto(r[p.id])}`)
     .join("\n");
+}
+
+// ---------- Casillas legales (24/oct/2026, skill legal-sitio-web) ----------
+
+/**
+ * Marketing que se ofrece (desmarcado) si el formulario no dice nada: las agendas de closers meten a la
+ * persona en ActiveCampaign y el setter le escribe por WhatsApp.
+ * [PENDIENTE ELVIN] decidir en qué formularios se ofrece cada casilla de marketing (Pulse → Formularios).
+ */
+const MARKETING_POR_ACCION: Record<string, TipoOpcional[]> = {
+  "leads-closers-lu": ["marketing_sms", "marketing_email"],
+};
+
+/** Las casillas que lleva un formulario en su bienvenida (las calcula el servidor; el navegador solo las muestra). */
+export function casillasFormulario(f: { marca?: string | null; accion?: string | null; config: ConfigFormulario }): Casilla[] {
+  // Todo formulario recoge datos de alguien: términos y privacidad nunca se apagan aquí.
+  return casillasDe({ marca: f.marca, marketing: marketingFormulario(f) });
+}
+
+/** Las casillas de marketing que ofrece el formulario: las que diga su config o, si no dice, las de su acción. */
+export function marketingFormulario(f: { accion?: string | null; config: ConfigFormulario }): TipoOpcional[] {
+  return f.config.legal?.marketing ?? MARKETING_POR_ACCION[f.accion ?? ""] ?? [];
 }

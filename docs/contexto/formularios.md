@@ -34,3 +34,5 @@ formulario) y abre expediente a Max; si falla queda marcada "No creó la ficha".
   agendó" a la hora; al agendar, el webhook de Calendly lo mueve a «Llamada agendada» y lo pasa al closer
   (`forzarDueno`). ⚠️ Calendly NO pre-marca opciones que en su configuración terminan en espacio ("En un mes ",
   "Punto equilibrio ", "5% de la facturacion total "…): hay que quitarles el espacio en Calendly.
+- **Casillas legales** (24/oct/2026): términos y privacidad obligatorios en la bienvenida de cada `/f/`, marketing
+  opcional, y cada aceptación en `legal_consentimientos`. Detalle en `docs/contexto/consentimientos.md`.

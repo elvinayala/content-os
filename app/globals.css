@@ -1019,6 +1019,14 @@
 }
 .formulario .lu-input::placeholder { color: color-mix(in srgb, var(--f-texto) 25%, transparent); }
 .formulario .lu-input:focus { border-bottom-color: var(--f-acento); }
+/* Foco visible con teclado en botones, opciones y enlaces (WCAG 2.4.7). */
+.formulario .lu-boton:focus-visible,
+.formulario .lu-opcion:focus-visible,
+.formulario a:focus-visible,
+.formulario button:focus-visible {
+  outline: 2px solid var(--f-acento);
+  outline-offset: 3px;
+}
 .formulario .lu-boton {
   display: inline-flex;
   align-items: center;

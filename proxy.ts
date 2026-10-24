@@ -26,6 +26,10 @@ function esRutaContenido(pathname: string): boolean {
   );
 }
 
+// Páginas legales (24/oct/2026): los formularios las enlazan en sus casillas y en el pie, así que también
+// tienen que abrir en los dominios de marca, donde todo lo demás vuelve a la raíz.
+const LEGALES = /^\/(terminos|privacidad|cookies|reembolsos|accesibilidad)\/?$/;
+
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   // Dominio bonito de Pulse (pulse-eamarket.vercel.app): la raíz va directo al CRM.
@@ -35,14 +39,14 @@ export default async function proxy(request: NextRequest) {
   // (links con basura pegada, /ceo, /pulse…) vuelve a la raíz: nunca un login ni nada interno.
   if (host === "levelupmedia.vercel.app" || host.startsWith("bienvenida-levelup")) {
     if (pathname === "/") return NextResponse.rewrite(new URL("/onboarding/level-up", request.url));
-    if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
+    if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image") || LEGALES.test(pathname)) return NextResponse.next();
     return NextResponse.redirect(new URL("/", request.url));
   }
   // Formularios de Level Up (formularios.levelupmediapr.net, 15/oct): enlace profesional para encuestas y formularios
   // de Pulse. Ahí SOLO existen los formularios: /<slug> muestra /f/<slug>; la raíz, el onboarding; todo lo demás, a la raíz.
   if (host.startsWith("formularios.")) {
     if (pathname === "/") return NextResponse.rewrite(new URL("/f/onboarding-level-up", request.url));
-    if (pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname === "/favicon.ico") return NextResponse.next();
+    if (pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname === "/favicon.ico" || LEGALES.test(pathname)) return NextResponse.next();
     const slug = pathname.slice(1);
     if (/^[a-z0-9-]{2,80}$/.test(slug)) return NextResponse.rewrite(new URL(`/f/${slug}${request.nextUrl.search}`, request.url));
     return NextResponse.redirect(new URL("/", request.url));
