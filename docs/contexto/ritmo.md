@@ -277,6 +277,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   `tests/registro-ventas.test.mjs`); hasta 45 días atrás. **Con ventas registradas en el mes, la Arena cuenta con ellas en vez de la
   hoja** (`aTransacciones`: nueva/referido = venta nueva; neto − pasarela; quien agendó = chatter si lo es, si no setter). La dirección
   también registra; el director lo ve. El resumen de las 8:30 PM todavía no lee este registro.
+  **A la hoja de tesorería (24/oct, Elvin: "que se automatice su hoja de Excel de ventas con Arena")**: tras cada registro
+  (`after()` en `registrarVentaAction` → `copiarPendientesAHoja`), la venta se añade como fila en la pestaña del mes por el mismo
+  Apps Script (`scripts/drive/ventas-hoy.gs`, acciones `agregar`/`quitar`; columnas por nombre con `COLUMNAS_HOJA` de
+  `registro-reglas.ts`, que viajan al script; columna "ID Ritmo" al final = idempotente; borrar en Ritmo quita SOLO esa fila).
+  `hoja_fila`/`hoja_error` en la tabla; lo que falla se reintenta en el próximo registro; la lista muestra "✓ en tu hoja". Inerte
+  hasta `VENTAS_SCRIPT_URL` + `VENTAS_SCRIPT_SECRETO`; si la hoja viva de María no es "COPIA RESPALDO", poner su id en
+  `HOJAS_ESCRIBIR` del script.
     **Ranking de ventas** (30/sep, Elvin; sección `#ranking` de la Arena, solo director/dirección: Nahuel, Aure, Elvin): promedio por
   día con diario vs. `METAS_DIARIAS` — setter 125 llamadas (rojo < 100), 30 conectadas, 3–5 agendas; chatter 20–30 conversaciones
   (mín. 15), 5–10 pases, 3–5 agendas — y close rate de closers (`CLOSE_RATE`: < 20 % rojo, 20–30 amarillo, 30 súper, 40 élite =
@@ -308,6 +315,10 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   pregunte directo si están trabajando o necesitan ayuda para entrar. Y **no se marca la salida sin los KPIs del día**
   (`faltanEnSalida`, puro + test): cada KPI manual del puesto necesita un número (0 vale) y el detalle si es > 0; lo
   reportado en una salida anterior de hoy cuenta. El almuerzo no pide nada.
+- **Salida sin confusión con el 0** (24/oct, Ángela Morales no pudo marcar salida del 13 al 19/oct y ponía 1 en lo que era 0):
+  las casillas de KPI vacías ya no muestran un "0" gris de ejemplo; el error queda DENTRO del formulario con las casillas que
+  faltan en rojo; botón "Lo que dejé vacío fue 0"; un número fuera de rango (> 500) se dice en vez de descartarse callado; cada
+  entrada/salida/almuerzo que falla deja `ponche-fallido` (acción + error) en `desempeno_eventos` para poder ayudar.
 - **Claves sin depender de Elvin y ponche sin la red** (30/sep, Elvin: "Yaileen puede hacer ajustes… la app se está haciendo
   dependiente de mí"): **Cambiar mi clave** (`/ritmo/clave`, llave del encabezado, `cambiarMiClaveAction`: clave actual + nueva,
   cierra las otras sesiones) para todos; y en Ajustes, si la persona ya tiene clave, **"Olvidó su clave: link para una nueva"**
