@@ -167,7 +167,7 @@ export default async function HoyPage() {
             </Link>
           ) : null}
 
-          {!estado && !vende && !esDireccion ? <EstadoVacio icono={UserCog} tipo="permiso" titulo="Todavía no tienes perfil en Ritmo" className="panel" compacto>Pídele a Carilin que te lo active (puesto, líder y horario) para poder marcar tu entrada.</EstadoVacio> : null}
+          {!estado && !vende && !esDireccion ? <EstadoVacio icono={UserCog} tipo="permiso" titulo="Todavía no tienes perfil en Ritmo" className="panel" compacto>Pídele a Yaileen que te lo active (puesto, líder y horario) para poder marcar tu entrada.</EstadoVacio> : null}
 
           {yo ? (
             <Link href={`/ritmo/equipo/${u.id}`} className="panel group flex w-full items-center gap-4 p-4 transition hover:border-primary/40">

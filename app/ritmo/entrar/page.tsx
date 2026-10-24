@@ -44,7 +44,7 @@ export default async function EntrarRitmo({ searchParams }: { searchParams: Prom
           {error ? <p className="text-sm text-red-400">{ERRORES[error] ?? "No se pudo entrar."}</p> : null}
           <Button type="submit" className="mt-2 h-12 rounded-full text-base font-semibold">Entrar</Button>
         </form>
-        <p className="mt-6 text-center text-xs text-muted-foreground">Es la misma cuenta de Pulse. Si no tienes clave, pídesela a Carilin.</p>
+        <p className="mt-6 text-center text-xs text-muted-foreground">Es la misma cuenta de Pulse. Si no tienes clave, pídesela a Yaileen.</p>
         <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
           Ritmo mide asistencia y resultados sin GPS, capturas ni teclado.{" "}
           <a href="/privacidad/equipo" target="_blank" rel="noopener" className="underline underline-offset-4 transition-colors hover:text-foreground">Lee qué datos guarda y quién los ve</a>

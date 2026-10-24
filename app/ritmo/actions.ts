@@ -56,7 +56,7 @@ export async function entrarAction(huella?: string | null, pista?: PistaEquipo |
     const u = await requiereUsuario();
     // La dirección (admin/editoras) puede ponchar sin perfil: es opcional y no cuenta en ningún reporte.
     const direccion = u.rol === "admin" || u.rol === "editor";
-    if (!direccion && !(await datos.perfilDe(u.id))?.activo) throw new Error("No tienes perfil de ponche: pídeselo a Carilin");
+    if (!direccion && !(await datos.perfilDe(u.id))?.activo) throw new Error("No tienes perfil de ponche: pídeselo a Yaileen");
     const { equipoId, redNueva } = await seguridad.verificarParaPonchar(u, huella, pista);
     const p = await datos.entrar(u.id, { ...(await contexto()), equipoId });
     refresh();
