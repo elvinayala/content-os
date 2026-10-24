@@ -26,7 +26,7 @@ export default function CookiesPage() {
         titulo="Política de cookies"
         version={D.version}
         fecha={D.fecha}
-        resumen={<>Solo usamos cookies necesarias para la sesión y la seguridad. No usamos cookies de publicidad ni de analítica, ni Meta Pixel, ni Google Analytics.</>}
+        resumen={<>Solo usamos cookies necesarias para la sesión y la seguridad. No ponemos cookies de publicidad ni de analítica, ni Meta Pixel, ni Google Analytics.</>}
       >
         <Seccion titulo="1. Cookies que usamos">
           <div className="overflow-x-auto rounded-xl border border-border">
@@ -53,7 +53,12 @@ export default function CookiesPage() {
           </div>
           <p>
             Todas son &quot;esenciales&quot;: sin ellas no puedes entrar. Algunas pantallas también guardan preferencias en tu
-            navegador (por ejemplo, una vista o un filtro); no salen de tu equipo.
+            navegador (por ejemplo, una vista o un filtro) y los formularios guardan ahí lo que vas llenando, para que sigas
+            donde ibas si cierras la pestaña; eso no sale de tu equipo.
+          </p>
+          <p>
+            En los formularios que te dejan agendar una cita, el calendario es de Calendly: ese recuadro pone sus propias cookies
+            y se rige por la política de privacidad de Calendly.
           </p>
         </Seccion>
 
