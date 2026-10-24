@@ -106,7 +106,14 @@ export function Preguntar({ inicial }: { inicial: string }) {
                   <Loader2 className="size-4 animate-spin" /> Buscando en el CRM… puede tardar unos segundos
                 </p>
               )}
-              {t.error && <p className="text-sm text-destructive">{t.error}</p>}
+              {t.error && (
+                <div className="flex flex-wrap items-center gap-3">
+                  <p className="text-sm text-destructive">{t.error}</p>
+                  <Button type="button" size="sm" variant="outline" disabled={cargando} onClick={() => void preguntar(t.pregunta)}>
+                    Reintentar
+                  </Button>
+                </div>
+              )}
               {t.r && (
                 <>
                   <p className="whitespace-pre-line text-sm leading-relaxed">{limpio(t.r.respuesta)}</p>
@@ -114,7 +121,7 @@ export function Preguntar({ inicial }: { inicial: string }) {
                     <ul className="-mx-2 mt-3 divide-y">
                       {t.r.items.map((it) => (
                         <li key={it.id}>
-                          <Link href={`/pulse/${it.slug}?item=${it.id}`} className="group flex items-center gap-3 rounded-md px-2 py-2 hover:bg-muted/60">
+                          <Link href={`/pulse/${it.slug}?item=${it.id}`} className="group flex items-center gap-3 rounded-md px-2 py-2 outline-none transition-colors hover:bg-muted/60 focus-visible:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring">
                             <span className="min-w-0 flex-1">
                               <span className="block truncate text-sm font-medium">{it.nombre}</span>
                               <span className="block truncate text-xs text-muted-foreground">

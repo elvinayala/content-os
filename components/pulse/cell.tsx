@@ -146,7 +146,7 @@ function CellTextoLargo({ item, column, vertical }: CellProps) {
         <Textarea autoFocus value={borrador} onChange={(e) => setBorrador(e.target.value)} rows={8} className="text-sm" placeholder="Escribe aquí…" />
         <div className="mt-2 flex justify-end gap-2 text-xs text-muted-foreground">
           <span className="mr-auto self-center">Se guarda al cerrar</span>
-          <button type="button" className="rounded-md bg-primary px-3 py-1 text-primary-foreground" onClick={guardar}>
+          <button type="button" className="rounded-md bg-primary px-3 py-1 text-primary-foreground transition-colors hover:bg-primary/90" onClick={guardar}>
             Guardar
           </button>
         </div>
@@ -495,7 +495,7 @@ function CellLink({ item, column, vertical }: CellProps) {
             <button type="button" className="text-xs text-muted-foreground hover:text-destructive" onClick={() => { setUrl(""); setText(""); }}>
               Quitar
             </button>
-            <button type="button" className="rounded-md bg-primary px-3 py-1 text-xs text-primary-foreground" onClick={guardar}>
+            <button type="button" className="rounded-md bg-primary px-3 py-1 text-xs text-primary-foreground transition-colors hover:bg-primary/90" onClick={guardar}>
               Guardar
             </button>
           </div>

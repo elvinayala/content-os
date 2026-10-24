@@ -21,7 +21,7 @@ CREATE INDEX "legal_consentimientos_telefono" ON "legal_consentimientos" USING b
 CREATE UNIQUE INDEX "legal_consentimientos_unico" ON "legal_consentimientos" USING btree ("referencia","tipo","accion","version_documento");--> statement-breakpoint
 -- Registro de consentimientos (24/oct/2026, skill legal-sitio-web punto 5): SOLO DE AGREGAR.
 -- Revocar = fila nueva con accion 'revoco'. Se conserva mínimo 5 años (TCPA: 4 años para demandar).
-ALTER TABLE "legal_consentimientos" ADD CONSTRAINT "legal_consentimientos_tipo" CHECK ("tipo" IN ('terminos', 'privacidad', 'marketing_sms', 'marketing_email', 'llamadas_ia', 'cookies'));--> statement-breakpoint
+ALTER TABLE "legal_consentimientos" ADD CONSTRAINT "legal_consentimientos_tipo" CHECK ("tipo" IN ('terminos', 'privacidad', 'marketing_sms', 'marketing_email', 'llamadas_ia', 'cookies', 'privacidad_equipo', 'avisos_push', 'grabacion_ia'));--> statement-breakpoint
 ALTER TABLE "legal_consentimientos" ADD CONSTRAINT "legal_consentimientos_accion" CHECK ("accion" IN ('acepto', 'revoco'));--> statement-breakpoint
 -- La hora la pone SIEMPRE la base (nunca la del navegador ni la que mande el código).
 CREATE OR REPLACE FUNCTION legal_consentimientos_hora() RETURNS trigger LANGUAGE plpgsql AS $$

@@ -47,7 +47,7 @@ export function BotonActualizarLlamadas({ slug }: { slug: string }) {
         })
       }
     >
-      <RefreshCw className={"size-4" + (pendiente ? " animate-spin" : "")} /> Actualizar
+      <RefreshCw className={"size-4" + (pendiente ? " animate-spin" : "")} /> {pendiente ? "Actualizando…" : "Actualizar"}
     </Button>
   );
 }
@@ -65,7 +65,7 @@ export function MoverLead({ slug, leadId, etapa }: { slug: string; leadId: strin
         })
       }
       aria-label="Mover de etapa"
-      className="h-6 max-w-full rounded border border-border bg-background px-1 text-[11px] text-muted-foreground"
+      className="h-6 max-w-full rounded border border-border bg-background px-1 text-[11px] text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground disabled:opacity-50"
     >
       {ETAPAS_LEAD.map((e) => (
         <option key={e.etapa} value={e.etapa}>

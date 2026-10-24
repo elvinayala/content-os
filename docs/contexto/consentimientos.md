@@ -1,12 +1,19 @@
 ## Consentimientos y casillas legales (24/oct/2026)
 
 Elvin: "No quiero que mi sitio web sea demandado" → skill `legal-sitio-web` (puntos 4 y 5). Auditoría de la fase 1 en
-las notas de la sesión (`legal-formularios-fase1.md`). Las **páginas** `/terminos`, `/privacidad`, `/cookies`,
-`/reembolsos` y `/accesibilidad` las hace otra sesión; aquí solo se enlazan (`RUTAS_LEGALES`).
+las notas de la sesión (`legal-formularios-fase1.md`). Las **páginas** `/terminos`, `/privacidad`, `/privacidad/equipo`,
+`/cookies`, `/reembolsos` y `/accesibilidad` viven en `app/(legal)/`; su versión, fecha, ruta y el texto de las casillas
+salen de UNA fuente, `lib/legal/versiones.ts` (`RUTAS_LEGALES`, `VERSION_DOCUMENTOS` y la versión de cada casilla se
+derivan de ahí). Al cambiar el texto de una página, sube su versión allí.
+- **Un solo registro** (unión del 24/oct/2026): `lib/legal/consentimiento.ts` (`registrarConsentimiento`/`aceptoVersion`,
+  usados por Ritmo, la app de clientes LU, el Portal AutoFlow y los avisos push) escribe y lee `legal_consentimientos`.
+  Mapeo: `terminos_app`→`terminos`, `privacidad_app`→`privacidad`, `privacidad_empleado`→`privacidad_equipo`,
+  `avisos_push`→`avisos_push`, `grabacion_llamada_ia`→`grabacion_ia` (aviso de grabación, distinto de `llamadas_ia`,
+  que es el permiso TCPA). Ahí `persona` es el correo o `cliente:<itemId>` / `portal:<slug>:<quien>`, sin `referencia`.
 
 - **Reglas puras** `lib/consentimientos/reglas.ts` (tests `tests/consentimientos.test.mjs`): tipos (`terminos`,
   `privacidad` obligatorias; `marketing_sms`, `marketing_email`, `llamadas_ia` opcionales; `cookies`), el texto exacto de
-  cada casilla (`casillaDe`, con el nombre de la marca), `VERSION_DOCUMENTOS` y `ENTIDAD_LEGAL` ([PENDIENTE ELVIN]),
+  cada casilla (`casillaDe`, con el nombre de la marca), `VERSION_DOCUMENTOS` y `ENTIDAD_LEGAL` (de `lib/legal/versiones.ts`),
   normalización de la persona (e-mail → teléfono E.164 → `ref:<referencia>`) y `filasAceptacion`. El servidor guarda
   SU texto de la casilla, nunca el que mande el navegador (`aceptadasValidas` solo acepta tipos ofrecidos).
 - **Tabla** `legal_consentimientos` (`lib/consentimientos/schema.ts`, migración `drizzle/0045_consentimientos.sql`,

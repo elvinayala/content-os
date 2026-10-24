@@ -5,6 +5,7 @@ import type { EstadoAsistente } from "@/lib/types";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 
 export const metadata = { title: "Asistente · Bori" };
 export const dynamic = "force-dynamic";
@@ -23,7 +24,7 @@ export default async function AsistentePage() {
     <>
       <PageHeader
         titulo="Asistente personal"
-        descripcion="El agente que controlás por Telegram/WhatsApp — ejecuta acciones."
+        descripcion="El agente que controlas por Telegram/WhatsApp — ejecuta acciones."
       >
         <Badge
           variant="outline"
@@ -35,6 +36,15 @@ export default async function AsistentePage() {
 
       <main className="flex-1 space-y-6 p-4 sm:p-6">
         {/* Asistentes configurados */}
+        {asistentes.length === 0 ? (
+          <Card className="bg-gradient-to-b from-card to-background/40">
+            <EstadoVacio icono={Bot} titulo="Todavía no hay asistentes personales">
+              {telegramListo
+                ? "Telegram ya está conectado: cuando configures un asistente, aparece aquí con sus acciones."
+                : "Primero conecta Telegram (abajo te explicamos cómo); después el asistente aparece aquí."}
+            </EstadoVacio>
+          </Card>
+        ) : null}
         <div className="grid gap-4 lg:grid-cols-2">
           {asistentes.map((a) => {
             const est = ESTADO[a.estado];

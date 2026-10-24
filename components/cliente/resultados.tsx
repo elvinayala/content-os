@@ -83,10 +83,10 @@ export async function SemanaNumeros({ cuenta }: { cuenta: string | null }) {
   const t = r.totales;
   if (r.estado !== "ok" || !t?.inversion) return null;
   return (
-    <a href="/cliente/resultados" className="panel group flex flex-col gap-3 p-5">
+    <a href="/cliente/resultados" className="panel group entra-suave flex flex-col gap-3 p-5 transition-colors hover:border-primary/40">
       <div className="flex items-center justify-between">
         <p className="ceja">Tu semana en números</p>
-        <span className="text-xs text-primary">Ver resultados →</span>
+        <span className="text-xs text-primary transition-opacity group-hover:opacity-80">Ver resultados →</span>
       </div>
       <div className="grid grid-cols-3 gap-2">
         <div>

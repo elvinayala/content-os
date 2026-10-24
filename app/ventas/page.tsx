@@ -69,6 +69,10 @@ export default async function EntradaVentas({ searchParams }: { searchParams: Pr
             <p className="inline-flex items-center gap-1.5">
               <Lock className="size-3" /> Conexión segura · solo para el equipo de EA Market
             </p>
+            <p className="leading-relaxed">
+              Los datos de los leads son confidenciales y los accesos quedan registrados.{" "}
+              <a href="/privacidad/equipo" target="_blank" rel="noopener" className="underline underline-offset-4 transition-colors hover:text-foreground">Aviso de privacidad del equipo</a>
+            </p>
           </div>
         </div>
 

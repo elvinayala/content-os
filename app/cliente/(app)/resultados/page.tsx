@@ -1,7 +1,11 @@
+import { BarChart3, CloudOff, Link2, RotateCw } from "lucide-react";
 import Link from "next/link";
 
 import { Anuncio, Dato, GraficoDiario, detalleResultados, dinero, entero } from "@/components/cliente/resultados";
 import { BotonSlack } from "@/components/cliente/piezas";
+import { TextoPendiente } from "@/components/cliente/pendiente";
+import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { fichaCliente } from "@/lib/clientes-app/datos";
 import { resultadosCliente } from "@/lib/clientes-app/resultados";
 import { PERIODOS, type Periodo } from "@/lib/clientes-app/resultados-reglas";
@@ -28,22 +32,40 @@ export default async function ResultadosPage({ searchParams }: { searchParams: P
         </div>
         <nav className="flex rounded-full border border-border bg-card p-1 text-xs">
           {PERIODOS.map((x) => (
-            <Link key={x.id} href={`/cliente/resultados?p=${x.id}`} className={cn("rounded-full px-3 py-1.5 transition", x.id === periodo ? "bg-primary font-semibold text-primary-foreground" : "text-muted-foreground")}>
-              {x.nombre}
+            <Link key={x.id} href={`/cliente/resultados?p=${x.id}`} aria-current={x.id === periodo ? "page" : undefined} className={cn("rounded-full px-3 py-1.5 transition-colors", x.id === periodo ? "bg-primary font-semibold text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground")}>
+              <TextoPendiente>{x.nombre}</TextoPendiente>
             </Link>
           ))}
         </nav>
       </header>
 
       {r.estado === "sin-cuenta" ? (
-        <p className="panel p-5 text-sm text-muted-foreground">Todavía no conectamos tu cuenta publicitaria a la app. En cuanto tus campañas estén activas, aquí vas a ver tu inversión, tus resultados y lo que te cuesta cada uno.</p>
+        <EstadoVacio className="panel" icono={Link2} titulo="Tu cuenta publicitaria todavía no está conectada">
+          En cuanto tus campañas estén activas, aquí vas a ver tu inversión, tus resultados y lo que te cuesta cada uno.
+        </EstadoVacio>
       ) : r.estado === "no-disponible" || !t ? (
-        <p className="panel p-5 text-sm text-muted-foreground">Tus resultados no están disponibles en este momento. Vuelve a intentar en un rato; si sigue igual, escríbenos por Slack.</p>
+        <EstadoVacio
+          className="panel"
+          tipo="error"
+          icono={CloudOff}
+          titulo="No pudimos traer tus resultados ahora"
+          accion={
+            <Button asChild variant="outline" className="rounded-full">
+              <a href={`/cliente/resultados?p=${periodo}`}>
+                <RotateCw /> Reintentar
+              </a>
+            </Button>
+          }
+        >
+          Suele ser algo pasajero. Vuelve a intentar en un rato; si sigue igual, escríbenos por Slack.
+        </EstadoVacio>
       ) : !t.inversion ? (
-        <p className="panel p-5 text-sm text-muted-foreground">No hubo inversión en este periodo. Cuando tus anuncios estén corriendo, aquí vas a ver los números.</p>
+        <EstadoVacio className="panel" icono={BarChart3} titulo="No hubo inversión en este periodo">
+          Cuando tus anuncios estén corriendo, aquí vas a ver los números. Prueba otro periodo arriba.
+        </EstadoVacio>
       ) : (
         <>
-          <section className="grid grid-cols-2 gap-3">
+          <section className="entra-suave grid grid-cols-2 gap-3">
             <Dato titulo="Resultados" valor={entero(t.resultados)} detalle={detalleResultados(t)} destacado />
             <Dato titulo="Costo por resultado" valor={dinero(t.costoResultado, r.moneda)} />
             <Dato titulo="Inversión" valor={dinero(t.inversion, r.moneda)} />

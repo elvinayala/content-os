@@ -1,11 +1,12 @@
 "use client";
 
-import { Check, ChevronDown, Loader2, RotateCcw, Send, ShieldCheck, X } from "lucide-react";
+import { Check, ChevronDown, ClipboardCheck, Loader2, RotateCcw, SearchX, Send, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { cerrarCasoAction, marcarAccionAction, pedirOptimizacionAction } from "@/app/ritmo/cuentas-actions";
 import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { Textarea } from "@/components/ui/textarea";
 import type { CasoCuenta } from "@/lib/desempeno/optimizaciones";
 import { ETIQUETA_CUENTA, progreso, type Accion, type RolCuentas, type cumplimiento } from "@/lib/desempeno/optimizaciones-reglas";
@@ -254,7 +255,24 @@ export function Cuentas({ casos, rol, yo, vistaPrevia, resumen }: { casos: CasoC
           ))}
         </div>
       ) : (
-        <div className="panel p-8 text-center text-sm text-muted-foreground">{ver === "abiertas" ? "Nada pendiente. 🎉" : "Todavía no hay cuentas cerradas."}</div>
+        <div className="panel">
+          {estratega ? (
+            <EstadoVacio
+              icono={SearchX}
+              tipo="filtro"
+              titulo={ver === "abiertas" ? "Ese estratega no tiene cuentas pendientes" : "Ese estratega no tiene cuentas cerradas"}
+              accion={
+                <Button variant="outline" className="rounded-full" onClick={() => setEstratega("")}>
+                  Ver todos los estrategas
+                </Button>
+              }
+            />
+          ) : (
+            <EstadoVacio icono={ClipboardCheck} titulo={ver === "abiertas" ? "Nada pendiente 🎉" : "Todavía no hay cuentas cerradas"}>
+              {ver === "abiertas" ? "Cuando Max revise las cuentas y algo necesite optimizarse, el caso aparece aquí." : "Las cuentas que se cierren después de optimizarlas quedan aquí de historial."}
+            </EstadoVacio>
+          )}
+        </div>
       )}
     </div>
   );

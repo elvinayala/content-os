@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, CalendarPlus, CheckSquare, MessageCircle, StickyNote, Trash2, Trophy, UserCheck } from "lucide-react";
+import { ArrowLeft, CalendarPlus, CheckSquare, Loader2, MessageCircle, StickyNote, Trash2, Trophy, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -61,13 +61,16 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
   const [texto, setTexto] = useState("");
   const [act, setAct] = useState({ tipo: "llamada", asunto: "Llamar", venceAt: manana10() });
   const [perdido, setPerdido] = useState(false);
+  // Qué botón disparó la acción en curso (para el "Enviando…" en el botón correcto; `pend` es compartido).
+  const [accion, setAccion] = useState<"enviar" | "programar" | null>(null);
   const [f, setF] = useState({ nombre: t.nombre, negocio: t.negocio ?? "", telefono: t.telefono ?? "", email: t.email ?? "", valor: String(t.valor) });
 
   useEffect(() => {
     if (t.noLeidos > 0) void marcarLeidoAction(t.id);
   }, [t.id, t.noLeidos]);
 
-  const correr = (fn: () => Promise<{ ok: boolean; error?: string }>, ok?: string, despues?: () => void) =>
+  const correr = (fn: () => Promise<{ ok: boolean; error?: string }>, ok?: string, despues?: () => void, quien: "enviar" | "programar" | null = null) => {
+    setAccion(quien);
     start(async () => {
       const r = await fn();
       if (!r.ok) return void toast.error(r.error ?? "No se pudo");
@@ -75,6 +78,7 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
       despues?.();
       router.refresh();
     });
+  };
 
   const guardarCampo = (k: keyof typeof f) => {
     const actual = k === "valor" ? String(t.valor) : ((t as unknown as Record<string, string | null>)[k] ?? "");
@@ -85,8 +89,8 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
   const enviar = () => {
     const x = texto.trim();
     if (!x) return;
-    if (pestana === "whatsapp") correr(() => whatsappAction(t.id, x), "Enviado por WhatsApp", () => setTexto(""));
-    else correr(() => notaAction(t.id, x), "Nota guardada", () => setTexto(""));
+    if (pestana === "whatsapp") correr(() => whatsappAction(t.id, x), "Enviado por WhatsApp", () => setTexto(""), "enviar");
+    else correr(() => notaAction(t.id, x), "Nota guardada", () => setTexto(""), "enviar");
   };
 
   const idxEtapa = d.etapas.findIndex((e) => e.id === t.etapaId);
@@ -153,7 +157,8 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
             title={e.nombre}
             className={cn(
               "relative min-w-24 flex-1 truncate px-4 py-1.5 text-[11px] font-medium transition [clip-path:polygon(0_0,calc(100%-8px)_0,100%_50%,calc(100%-8px)_100%,0_100%,8px_50%)] first:[clip-path:polygon(0_0,calc(100%-8px)_0,100%_50%,calc(100%-8px)_100%,0_100%)]",
-              i <= idxEtapa ? "bg-[#08a742] text-white" : "bg-muted text-muted-foreground hover:bg-muted-foreground/20",
+              "disabled:cursor-not-allowed",
+              i <= idxEtapa ? "bg-[#08a742] text-white enabled:hover:bg-[#07923a]" : "bg-muted text-muted-foreground enabled:hover:bg-muted-foreground/20",
               i === idxEtapa && "font-bold",
             )}
           >
@@ -294,10 +299,11 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
                         () => actividadAction(t.id, { tipo: act.tipo, asunto: act.asunto, venceAt: `${act.venceAt}:00-04:00` }),
                         "Seguimiento programado",
                         () => setAct({ tipo: "llamada", asunto: "Llamar", venceAt: manana10() }),
+                        "programar",
                       )
                     }
                   >
-                    Programar
+                    {pend && accion === "programar" ? <><Loader2 className="animate-spin" /> Programando…</> : "Programar"}
                   </Button>
                 </div>
               ) : (
@@ -313,7 +319,7 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] text-muted-foreground">{pestana === "whatsapp" ? "Sale por Timelines desde el número de la empresa" : "Solo la ve el equipo"} · ⌘/Ctrl + Enter</span>
                     <Button size="sm" disabled={pend || !texto.trim()} onClick={enviar} className={pestana === "whatsapp" ? "bg-[#25d366] text-white hover:bg-[#1eb455]" : ""}>
-                      {pestana === "whatsapp" ? "Enviar WhatsApp" : "Guardar nota"}
+                      {pend && accion === "enviar" ? <><Loader2 className="animate-spin" /> {pestana === "whatsapp" ? "Enviando…" : "Guardando…"}</> : pestana === "whatsapp" ? "Enviar WhatsApp" : "Guardar nota"}
                     </Button>
                   </div>
                 </div>
@@ -346,7 +352,7 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
           {/* Historial: conversación de WhatsApp + notas + cambios */}
           <div className="rounded-lg border bg-muted/30 p-3">
             <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Historial</h2>
-            {!d.historial.length && <p className="text-sm text-muted-foreground">Sin movimientos todavía.</p>}
+            {!d.historial.length && <p className="text-sm text-muted-foreground">Sin movimientos todavía. Los WhatsApp, las notas y los cambios de etapa van apareciendo aquí.</p>}
             <ol className="grid gap-2">
               {d.historial.map((h) =>
                 h.tipo === "sistema" ? (

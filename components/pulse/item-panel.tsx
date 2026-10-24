@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, MessageSquare, Send, Smartphone, Trash2 } from "lucide-react";
+import { Clock, Loader2, MessageSquare, Send, Smartphone, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { comentarAction, leerActividadAction } from "@/app/pulse/(app)/[board]/actions";
@@ -218,13 +218,25 @@ function Actividades({ itemId, boardId, columns }: { itemId: string; boardId: st
     <div className="flex h-full flex-col">
       <div className="flex gap-2 border-b px-5 py-3">
         <Textarea value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Escribe un comentario… (Cmd/Ctrl+Enter para enviar)" rows={2} className="min-h-0 text-sm" onKeyDown={(e) => (e.metaKey || e.ctrlKey) && e.key === "Enter" && enviar()} />
-        <button type="button" disabled={enviando || !texto.trim()} onClick={enviar} className="flex h-9 items-center gap-1 self-end rounded-md bg-primary px-3 text-sm text-primary-foreground disabled:opacity-50">
-          <Send className="size-4" />
+        <button type="button" disabled={enviando || !texto.trim()} onClick={enviar} aria-label={enviando ? "Enviando comentario" : "Enviar comentario"} title="Enviar comentario" className="flex h-9 items-center gap-1 self-end rounded-md bg-primary px-3 text-sm text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary">
+          {enviando ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
         </button>
       </div>
       <div className="min-h-0 flex-1 overflow-auto px-5 py-3">
-        {lista === null ? <p className="text-sm text-muted-foreground">Cargando…</p> : null}
-        {lista?.length === 0 ? <p className="text-sm text-muted-foreground">Sin actividad todavía.</p> : null}
+        {lista === null ? (
+          <div className="carga-tardia flex flex-col gap-4" aria-busy="true" aria-label="Cargando actividad">
+            {[70, 50, 60].map((w, i) => (
+              <div key={i} className="flex gap-2">
+                <div className="esqueleto mt-0.5 size-6 shrink-0 rounded-full" />
+                <div className="flex flex-1 flex-col gap-1.5">
+                  <div className="esqueleto h-3 w-1/3" />
+                  <div className="esqueleto h-3.5" style={{ width: `${w}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {lista?.length === 0 ? <p className="text-sm text-muted-foreground">Sin actividad todavía. Los cambios y comentarios de este elemento van apareciendo aquí.</p> : null}
         <ol className="linea-tiempo flex flex-col gap-4">
           {lista?.map((a) => (
             <li key={a.id} className="relative flex gap-2 text-sm">

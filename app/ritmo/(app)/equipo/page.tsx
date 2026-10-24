@@ -1,4 +1,4 @@
-import { ChevronRight, Settings, Bot, Smartphone } from "lucide-react";
+import { ChevronRight, Settings, Bot, Smartphone, Users, SearchX } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -9,6 +9,8 @@ import { TarjetaLista, type PersonaLista } from "@/components/ritmo/tarjeta-list
 import { GraficaPersona } from "@/components/ritmo/grafica-persona";
 import { reporteDeHoy } from "@/lib/desempeno/reporte-dia-datos";
 import { UserAvatar } from "@/components/pulse/user-avatar";
+import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { armarPanel, modoScore, type FilaPersona, type Panel } from "@/lib/desempeno/datos";
 import { DEPARTAMENTOS, fechaPR, puedeAprobar, puestoPorId, sumarDias, type Color } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -117,16 +119,22 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
       ) : null}
 
       {!panel.filas.length ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          {gestor ? (
-            <>
-              Todavía no hay nadie en Desempeño.{" "}
-              <Link href="/ritmo/ajustes" className="font-medium text-primary underline-offset-4 hover:underline">Crea los perfiles</Link> (puesto, líder y horario).
-            </>
-          ) : (
-            "Todavía no tienes gente a cargo en Desempeño."
-          )}
-        </div>
+        <EstadoVacio
+          icono={Users}
+          titulo={gestor ? "Todavía no hay nadie en Desempeño" : "Todavía no tienes gente a cargo"}
+          className="rounded-2xl border border-dashed border-border"
+          accion={
+            gestor ? (
+              <Button asChild className="rounded-full">
+                <Link href="/ritmo/ajustes">Crear los perfiles</Link>
+              </Button>
+            ) : null
+          }
+        >
+          {gestor
+            ? "Cada persona necesita su perfil (puesto, líder y horario) para que Ritmo mida su asistencia y sus resultados."
+            : "Cuando RR.HH. te asigne gente en Desempeño, aquí vas a ver su asistencia, tareas y resultados del día."}
+        </EstadoVacio>
       ) : (
         <>
           {filas.length ? (
@@ -159,7 +167,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
 
           {reporte ? (
             <details className={cn("panel group px-4 py-3", reporte.normal ? "border-emerald-400/25" : "border-amber-400/30")} open={!reporte.normal}>
-              <summary className="flex cursor-pointer list-none items-center gap-2 text-sm">
+              <summary className="flex cursor-pointer list-none items-center gap-2 rounded-md text-sm transition-opacity hover:opacity-80">
                 <span className={cn("size-2 rounded-full", reporte.normal ? "bg-emerald-400" : "bg-amber-400")} />
                 <b>Reporte de hoy</b>
                 <span className="text-muted-foreground">· {reporte.normal ? "todo en normalidad" : `${reporte.alertas.length} ${reporte.alertas.length === 1 ? "cosa" : "cosas"} para verificar`} · {reporte.resumen}</span>
@@ -185,6 +193,22 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
           ) : null}
 
           <Correcciones lista={correcciones} />
+
+          {!filas.length ? (
+            <EstadoVacio
+              icono={SearchX}
+              tipo="filtro"
+              titulo="Nadie con ese filtro"
+              className="panel"
+              accion={
+                <Button asChild variant="outline" className="rounded-full">
+                  <Link href={url({ e: null, d: null })}>Ver a todo el equipo</Link>
+                </Button>
+              }
+            >
+              No hay personas de esa empresa o departamento en Desempeño.
+            </EstadoVacio>
+          ) : null}
 
           {(depto ? [depto] : deptos).map((dep) => {
             const gente = filas.filter((f) => f.departamento === dep);

@@ -372,7 +372,7 @@ function ChatCafe({ agentes, cafe, onCerrar }: { agentes: AgenteOficina[]; cafe:
         </div>
         <div className="flex gap-2">
           <textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={2000} placeholder={ag ? `Escríbele a ${ag.nombre}…` : "Escribe…"} className="flex-1 resize-none rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm outline-none focus:border-white/30" />
-          <button type="button" onClick={enviar} disabled={enviando || !texto.trim() || !para} className="grid w-12 place-items-center rounded-xl bg-[color:var(--coral)] text-background disabled:opacity-40" aria-label="Enviar">
+          <button type="button" onClick={enviar} disabled={enviando || !texto.trim() || !para} className="grid w-12 place-items-center rounded-xl bg-[color:var(--coral)] text-background hover:bg-[color:var(--coral)]/90 disabled:opacity-40" aria-label="Enviar">
             {enviando ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
           </button>
         </div>

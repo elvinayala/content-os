@@ -1,4 +1,4 @@
-import { CalendarHeart, MapPin, Phone } from "lucide-react";
+import { CalendarHeart, IdCard, MapPin, Phone, SearchX } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
@@ -6,6 +6,8 @@ import { diasYHoras } from "@/lib/desempeno/rrhh";
 import { AvatarRitmo } from "@/components/ritmo/avatar";
 import { CrearFicha } from "@/components/ritmo/crear-ficha";
 import { NuevoEmpleado } from "@/components/ritmo/nuevo-empleado";
+import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { EmpresaBadge, FiltroEmpresa } from "@/components/ritmo/piezas";
 import { estaBloqueado } from "@/lib/desempeno/acceso";
 import { conteoDocumentos, fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
@@ -83,7 +85,23 @@ export default async function PersonasPage({ searchParams }: { searchParams: Pro
           ))}
         </div>
       ) : (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">Todavía no hay fichas. Créalas abajo para cada empleado de operaciones con sueldo fijo.</p>
+        <EstadoVacio
+          icono={empresa ? SearchX : IdCard}
+          tipo={empresa ? "filtro" : "inicio"}
+          titulo={empresa ? "Nadie de esa empresa tiene ficha" : "Todavía no hay fichas"}
+          className="rounded-2xl border border-dashed border-border"
+          accion={
+            empresa ? (
+              <Button asChild variant="outline" className="rounded-full">
+                <Link href="/ritmo/personas">Ver todas las empresas</Link>
+              </Button>
+            ) : null
+          }
+        >
+          {sin.length
+            ? "Créalas abajo, en «Sin ficha», para cada empleado de operaciones con sueldo fijo."
+            : "Usa «Nuevo empleado» para crear la ficha de cada empleado de operaciones con sueldo fijo."}
+        </EstadoVacio>
       )}
 
       {sin.length ? (

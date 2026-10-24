@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { crearBoardAction } from "@/app/pulse/(app)/actions";
 import { BotonBuscar } from "@/components/pulse/boton-buscar";
+import { BotonEnviar } from "@/components/pulse/boton-enviar";
 import { ColorPicker } from "@/components/pulse/color-picker";
 import { IconoTablero } from "@/components/pulse/icono-tablero";
 import { NumeroInicio } from "@/components/pulse/numero-inicio";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { puedeFormularios } from "@/lib/formularios/reglas";
 import { marcasConAcceso } from "@/lib/leads/repo";
@@ -99,7 +101,7 @@ export default async function PulseInicio() {
                   <Label>Color</Label>
                   <ColorPicker name="color" defaultValue="bright_blue" />
                 </div>
-                <Button type="submit">Crear</Button>
+                <BotonEnviar pendiente="Creando…">Crear</BotonEnviar>
               </form>
             </DialogContent>
           </Dialog>
@@ -159,7 +161,7 @@ export default async function PulseInicio() {
                     const T = TIPOS[p.tipo];
                     return (
                       <li key={`${p.itemId}-${p.tipo}`}>
-                        <Link href={`/pulse/${p.boardSlug}?item=${p.itemId}`} className="group flex items-center gap-3 px-5 py-3 transition hover:bg-[var(--pulse-hover)]">
+                        <Link href={`/pulse/${p.boardSlug}?item=${p.itemId}`} className="group flex items-center gap-3 px-5 py-3 outline-none transition hover:bg-[var(--pulse-hover)] focus-visible:bg-[var(--pulse-hover)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset">
                           <span className="grid size-8 shrink-0 place-items-center rounded-full" style={{ background: `color-mix(in srgb, ${T.tono} 12%, white)`, color: T.tono }}>
                             <T.icono className="size-4" />
                           </span>
@@ -169,14 +171,16 @@ export default async function PulseInicio() {
                               {[p.empresa, T.nombre.toLowerCase()].filter(Boolean).join(" · ")}
                             </span>
                           </span>
-                          <ArrowRight className="size-4 text-muted-foreground opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+                          <ArrowRight className="size-4 text-muted-foreground opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100 group-focus-visible:opacity-100" />
                         </Link>
                       </li>
                     );
                   })}
                 </ul>
               ) : (
-                <p className="px-5 py-8 text-center text-sm text-muted-foreground">Nada pendiente hoy. Buen trabajo. 🎉</p>
+                <EstadoVacio compacto icono={CalendarCheck} titulo="Nada pendiente hoy">
+                  Buen trabajo. Cuando un seguimiento, un reporte o un onboarding te toque, aparece aquí.
+                </EstadoVacio>
               )}
             </Panel>
 
@@ -207,7 +211,9 @@ export default async function PulseInicio() {
                   ))}
                 </ul>
               ) : (
-                <p className="px-5 py-8 text-center text-sm text-muted-foreground">Todavía no hay movimiento.</p>
+                <EstadoVacio compacto icono={Activity} titulo="Todavía no hay movimiento">
+                  Cuando alguien cree, mueva o comente un elemento en tus tableros, lo ves aquí.
+                </EstadoVacio>
               )}
             </Panel>
           </div>
@@ -215,10 +221,15 @@ export default async function PulseInicio() {
           <div className="flex min-w-0 flex-col gap-6">
             {/* Tableros */}
             <Panel titulo="Espacios de trabajo">
+              {!boards.length ? (
+                <EstadoVacio compacto icono={Kanban} titulo="Todavía no tienes espacios de trabajo">
+                  Cuando te den acceso a un tablero, aparece aquí.
+                </EstadoVacio>
+              ) : null}
               <ul className="flex flex-col px-2 pb-2">
                 {boards.map((b) => (
                   <li key={b.id}>
-                    <Link href={`/pulse/${b.slug}`} className="group flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-[var(--pulse-hover)]">
+                    <Link href={`/pulse/${b.slug}`} className="group flex items-center gap-3 rounded-lg px-3 py-2 outline-none transition hover:bg-[var(--pulse-hover)] focus-visible:bg-[var(--pulse-hover)] focus-visible:ring-2 focus-visible:ring-ring">
                       <IconoTablero nombre={b.nombre} color={b.color} tam="md" />
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-1.5 truncate text-sm font-medium">
@@ -229,7 +240,7 @@ export default async function PulseInicio() {
                           {b.items.toLocaleString("en-US")} · {hace(b.actualizadoEl)}
                         </span>
                       </span>
-                      <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
+                      <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100" />
                     </Link>
                   </li>
                 ))}

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { EnlacesLegales } from "@/components/legal/documento";
 import { RegistrarApp } from "@/components/ritmo/app-movil";
 import { NavRitmo } from "@/components/ritmo/nav";
 import { vacantesNuevas } from "@/lib/desempeno/carreras";
@@ -47,7 +48,10 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
     <>
       <RegistrarApp />
       <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} cuentas={!!cuentas} pulse={pulse} slack={slack} empresa={verEmpresa} />
-      <main className="entrada mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
+      <main className="entrada mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">
+        {children}
+        <EnlacesLegales que={["privacidadEquipo", "cookies"]} className="mt-14" />
+      </main>
       <footer className="estado-linea mx-auto hidden w-full max-w-6xl items-center gap-3 px-6 pb-8 md:flex">
         <span>Ritmo</span>
         <span className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />

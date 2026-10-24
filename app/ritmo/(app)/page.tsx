@@ -1,9 +1,10 @@
-import { Bot, Briefcase, Building2, CalendarDays, ChevronRight, HeartPulse, Inbox, ListOrdered, Newspaper, Plane, ShieldCheck, Trophy, Users, UsersRound, Wrench } from "lucide-react";
+import { Bot, Briefcase, Building2, CalendarDays, ChevronRight, HeartPulse, Inbox, ListOrdered, Newspaper, Plane, ShieldCheck, Trophy, UserCog, Users, UsersRound, Wrench } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
 import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { Animo } from "@/components/ritmo/bienestar";
 import { Noticia } from "@/components/ritmo/noticias";
 import { MiMarcador } from "@/components/ritmo/arena-marcador";
@@ -101,12 +102,12 @@ export default async function HoyPage() {
   const avisos = (
     <>
       {faltan.length ? (
-        <Link href="/ritmo/bienvenida" className="rounded-2xl border border-amber-300/50 bg-amber-300/10 px-4 py-3 text-sm">
+        <Link href="/ritmo/bienvenida" className="rounded-2xl border border-amber-300/50 bg-amber-300/10 px-4 py-3 text-sm transition-colors hover:border-amber-300/70 hover:bg-amber-300/15">
           📋 <b>Completa tu ficha hoy.</b> Te falta: <b>{listaHumana(faltan)}</b>. Toca aquí para llenarla.
         </Link>
       ) : null}
       {vac ? (
-        <Link href={`/ritmo/personas/${u.id}`} className="rounded-2xl border border-[color:var(--coral)]/40 bg-[color:var(--coral)]/10 px-4 py-3 text-sm">
+        <Link href={`/ritmo/personas/${u.id}`} className="rounded-2xl border border-[color:var(--coral)]/40 bg-[color:var(--coral)]/10 px-4 py-3 text-sm transition-colors hover:border-[color:var(--coral)]/60 hover:bg-[color:var(--coral)]/15">
           🌴 <b>Ya cumpliste 12 meses.</b> Tienes <b>{diasYHoras(vac, ficha?.saldos?.horasDia ?? 8)}</b> de vacaciones para solicitar. Coordínalo con RR.HH.
         </Link>
       ) : null}
@@ -166,7 +167,7 @@ export default async function HoyPage() {
             </Link>
           ) : null}
 
-          {!estado && !vende && !esDireccion ? <div className="panel p-5 text-center text-sm text-muted-foreground">Todavía no tienes perfil en Ritmo. Pídele a Carilin que te lo active (puesto, líder y horario).</div> : null}
+          {!estado && !vende && !esDireccion ? <EstadoVacio icono={UserCog} tipo="permiso" titulo="Todavía no tienes perfil en Ritmo" className="panel" compacto>Pídele a Carilin que te lo active (puesto, líder y horario) para poder marcar tu entrada.</EstadoVacio> : null}
 
           {yo ? (
             <Link href={`/ritmo/equipo/${u.id}`} className="panel group flex w-full items-center gap-4 p-4 transition hover:border-primary/40">

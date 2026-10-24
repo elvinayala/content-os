@@ -1,7 +1,8 @@
-// Mientras carga cualquier pantalla de Pulse: esqueletos suaves en vez de una pantalla en blanco.
+// Mientras carga cualquier pantalla de Pulse: esqueletos suaves en vez de una pantalla en blanco
+// (`carga-tardia`: no aparecen si la pantalla llega en < 150 ms, así no parpadea).
 export default function CargandoPulse() {
   return (
-    <div className="fondo-malla min-h-svh">
+    <div className="carga-tardia fondo-malla min-h-svh" aria-busy="true">
       <div className="vidrio sticky top-0 z-20 flex h-14 items-center gap-3 border-b px-4">
         <div className="esqueleto h-5 w-5" />
         <div className="esqueleto h-4 w-32" />

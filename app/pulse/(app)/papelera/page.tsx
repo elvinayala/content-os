@@ -1,7 +1,8 @@
-import { CheckCircle2, Cloud, HardDrive, Laptop, ShieldCheck, TriangleAlert } from "lucide-react";
+import { CheckCircle2, Cloud, HardDrive, Laptop, ShieldCheck, Trash2, TriangleAlert } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { BotonRestaurar } from "@/components/pulse/boton-restaurar";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usuarioActual } from "@/lib/pulse/auth";
 import { listarLotes } from "@/lib/pulse/papelera";
@@ -101,7 +102,9 @@ export default async function PapeleraPage() {
               ))}
             </ul>
           ) : (
-            <p className="px-5 pb-8 text-center text-sm text-muted-foreground">La papelera está vacía.</p>
+            <EstadoVacio compacto icono={Trash2} titulo="La papelera está vacía" className="pb-8">
+              No se ha borrado nada en los últimos {DIAS_PAPELERA} días. Cuando alguien borre algo, aparece aquí y lo puedes restaurar.
+            </EstadoVacio>
           )}
         </section>
       </main>

@@ -1,6 +1,9 @@
+import { Newspaper, SearchX } from "lucide-react";
 import Link from "next/link";
 
 import { Noticia, NuevaNoticia } from "@/components/ritmo/noticias";
+import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { noticiasPara, personasParaLogro } from "@/lib/desempeno/noticias";
 import { CATEGORIAS_NOTICIA } from "@/lib/desempeno/noticias-tipos";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -45,8 +48,25 @@ export default async function NoticiasPage({ searchParams }: { searchParams: Pro
           ))}
         </div>
       ) : (
-        <div className="panel p-10 text-center text-sm text-muted-foreground">
-          {u.maestro ? "Todavía no hay publicaciones. Usa “Publicar” para compartir la primera." : "Todavía no hay publicaciones. Aquí vas a ver lo nuevo de la empresa."}
+        <div className="panel">
+          {c && todas.length ? (
+            <EstadoVacio
+              icono={SearchX}
+              tipo="filtro"
+              titulo={`Nada en ${CATEGORIAS_NOTICIA.find((k) => k.id === c)?.nombre ?? "esta categoría"} todavía`}
+              accion={
+                <Button asChild variant="outline" className="rounded-full">
+                  <Link href="/ritmo/noticias">Ver todas</Link>
+                </Button>
+              }
+            >
+              Hay otras publicaciones en las demás categorías.
+            </EstadoVacio>
+          ) : (
+            <EstadoVacio icono={Newspaper} titulo="Todavía no hay publicaciones">
+              {u.maestro ? "Usa «Publicar» para compartir la primera: un logro, una noticia o un comunicado." : "Aquí vas a ver los logros del equipo, las noticias y los comunicados de la empresa."}
+            </EstadoVacio>
+          )}
         </div>
       )}
     </div>

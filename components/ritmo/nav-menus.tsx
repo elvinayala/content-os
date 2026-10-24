@@ -20,7 +20,7 @@ export function MenuMas({ items }: { items: ItemMenu[] }) {
   const grupos = [...new Set(items.map((i) => i.grupo))];
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={cn("relative flex items-center gap-1 rounded-full px-3.5 py-1.5 text-sm transition outline-none", activo ? "tab-activa bg-primary/10 text-primary" : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground data-[state=open]:bg-white/[0.06] data-[state=open]:text-foreground")}>
+      <DropdownMenuTrigger className={cn("relative flex items-center gap-1 rounded-full px-3.5 py-1.5 text-sm transition outline-none focus-visible:ring-2 focus-visible:ring-ring/60", activo ? "tab-activa bg-primary/10 text-primary" : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground data-[state=open]:bg-white/[0.06] data-[state=open]:text-foreground")}>
         {activo ? items.find((i) => i.activo)!.nombre : "Más"}
         <ChevronDown className="size-3.5 opacity-70" />
         {aviso ? <span className="absolute top-1 right-1.5 size-1.5 rounded-full bg-[color:var(--coral)]" /> : null}
@@ -53,7 +53,7 @@ export function MenuApps({ pulse, slack }: { pulse: { href: string; nombre: stri
   if (!pulse && !slack.length) return null;
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger title="Apps" className="hidden items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition outline-none hover:text-foreground data-[state=open]:text-foreground sm:flex">
+      <DropdownMenuTrigger title="Apps" className="hidden items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60 data-[state=open]:text-foreground sm:flex">
         <LayoutGrid className="size-3.5" /> Apps <ChevronDown className="size-3 opacity-70" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8} className="ritmo w-52 rounded-2xl border-white/10 bg-[#0c111b]/95 p-1.5 backdrop-blur-xl">

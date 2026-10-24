@@ -5,33 +5,36 @@
 // Puro (sin server-only ni imports "@/"): lo cargan la página, el servidor, drizzle-kit y los tests
 // (tests/consentimientos.test.mjs).
 
-export const TIPOS_CONSENTIMIENTO = ["terminos", "privacidad", "marketing_sms", "marketing_email", "llamadas_ia", "cookies"] as const;
+import { CASILLAS, ENTIDAD, LEGAL } from "../legal/versiones.ts";
+
+// Las tres últimas vienen de lib/legal/consentimiento.ts (Ritmo, app LU, Portal AutoFlow): aviso de privacidad
+// del equipo, avisos push de la app de clientes y "hablas con una IA y la llamada se graba" del Portal. Son
+// avisos distintos de `privacidad` y de `llamadas_ia` (permiso TCPA para recibir llamadas), por eso van aparte.
+export const TIPOS_CONSENTIMIENTO = ["terminos", "privacidad", "marketing_sms", "marketing_email", "llamadas_ia", "cookies", "privacidad_equipo", "avisos_push", "grabacion_ia"] as const;
 export type TipoConsentimiento = (typeof TIPOS_CONSENTIMIENTO)[number];
 /** Las que una persona puede dejar sin marcar (nunca condición para enviar ni para comprar: TCPA). */
 export const TIPOS_OPCIONALES = ["marketing_sms", "marketing_email", "llamadas_ia"] as const;
 export type TipoOpcional = (typeof TIPOS_OPCIONALES)[number];
 
-/**
- * Páginas legales públicas. Las escribe y publica OTRA sesión (dueña de /terminos, /privacidad, /cookies,
- * /reembolsos y /accesibilidad); aquí solo se enlazan.
- */
+/** Páginas legales públicas (app/(legal)/). Una sola fuente: lib/legal/versiones.ts. */
 export const RUTAS_LEGALES = {
-  terminos: "/terminos",
-  privacidad: "/privacidad",
-  cookies: "/cookies",
-  reembolsos: "/reembolsos",
-  accesibilidad: "/accesibilidad",
+  terminos: LEGAL.terminos.ruta,
+  privacidad: LEGAL.privacidad.ruta,
+  privacidadEquipo: LEGAL.privacidadEquipo.ruta,
+  cookies: LEGAL.cookies.ruta,
+  reembolsos: LEGAL.reembolsos.ruta,
+  accesibilidad: LEGAL.accesibilidad.ruta,
 } as const;
 
 /**
- * Versión de los documentos que vio la persona (va en cada fila del registro).
- * [PENDIENTE ELVIN] Cuando se publiquen las páginas legales (con su abogado), poner aquí su fecha de
- * versión; si una página cambia, sube la versión y las aceptaciones nuevas quedan con la nueva.
+ * Versión de los documentos que vio la persona (va en cada fila del registro). Sale de lib/legal/versiones.ts:
+ * si una página cambia, se sube su versión allí y las aceptaciones nuevas quedan con la nueva. Cada casilla
+ * guarda la versión de SU documento (`Casilla.version`); esta queda como valor por defecto.
  */
-export const VERSION_DOCUMENTOS = "2026-10-24-borrador";
+export const VERSION_DOCUMENTOS: string = LEGAL.terminos.version;
 
 /** Entidad legal que firma los documentos. [PENDIENTE ELVIN] confirmar que EA Market LLC cubre todas las marcas. */
-export const ENTIDAD_LEGAL = "EA Market LLC";
+export const ENTIDAD_LEGAL = ENTIDAD;
 
 /** Nombre comercial que la persona reconoce en la casilla de marketing, según la marca del formulario. */
 export function nombreMarca(marca: string | null | undefined): string {
@@ -52,6 +55,8 @@ export interface Casilla {
   texto: string;
   /** Parte del texto que es enlace a la página legal (debe aparecer tal cual dentro de `texto`). */
   enlace?: { texto: string; href: string };
+  /** Versión del documento que acepta (lib/legal/versiones.ts); si falta, VERSION_DOCUMENTOS. */
+  version?: string;
 }
 
 /** Qué casillas lleva un formulario (o el portal, o la app). Términos y privacidad siempre van. */
@@ -66,9 +71,9 @@ export function casillaDe(tipo: TipoConsentimiento, marca?: string | null): Casi
   const quien = nombreMarca(marca);
   switch (tipo) {
     case "terminos":
-      return { tipo, obligatoria: true, texto: "Acepto los Términos y condiciones.", enlace: { texto: "Términos y condiciones", href: RUTAS_LEGALES.terminos } };
+      return { tipo, obligatoria: true, texto: CASILLAS.terminosApp, enlace: { texto: "Términos y condiciones", href: RUTAS_LEGALES.terminos }, version: LEGAL.terminos.version };
     case "privacidad":
-      return { tipo, obligatoria: true, texto: "Acepto la Política de privacidad.", enlace: { texto: "Política de privacidad", href: RUTAS_LEGALES.privacidad } };
+      return { tipo, obligatoria: true, texto: CASILLAS.privacidadApp, enlace: { texto: "Política de privacidad", href: RUTAS_LEGALES.privacidad }, version: LEGAL.privacidad.version };
     case "marketing_sms":
       return {
         tipo,
@@ -84,7 +89,13 @@ export function casillaDe(tipo: TipoConsentimiento, marca?: string | null): Casi
         texto: `Acepto recibir llamadas de ${quien} con voz automatizada o de inteligencia artificial al número que di. No es condición de compra.`,
       };
     case "cookies":
-      return { tipo, obligatoria: false, texto: "Acepto las cookies y píxeles no esenciales.", enlace: { texto: "cookies", href: RUTAS_LEGALES.cookies } };
+      return { tipo, obligatoria: false, texto: "Acepto las cookies y píxeles no esenciales.", enlace: { texto: "cookies", href: RUTAS_LEGALES.cookies }, version: LEGAL.cookies.version };
+    case "privacidad_equipo":
+      return { tipo, obligatoria: true, texto: CASILLAS.privacidadEmpleado, enlace: { texto: "Aviso de privacidad del equipo", href: RUTAS_LEGALES.privacidadEquipo }, version: LEGAL.privacidadEquipo.version };
+    case "avisos_push":
+      return { tipo, obligatoria: false, texto: 'Botón "Activar notificaciones" en la app + permiso de notificaciones del sistema', version: LEGAL.privacidad.version };
+    case "grabacion_ia":
+      return { tipo, obligatoria: true, texto: CASILLAS.grabacionLlamada, version: LEGAL.privacidad.version };
   }
 }
 
@@ -181,7 +192,7 @@ export function filasAceptacion(v: {
       telefono,
       tipo: c.tipo,
       accion: "acepto" as const,
-      versionDocumento: v.version ?? VERSION_DOCUMENTOS,
+      versionDocumento: v.version ?? c.version ?? VERSION_DOCUMENTOS,
       textoCasilla: c.texto,
       origen: v.origen.slice(0, 300),
       referencia: v.referencia?.slice(0, 200) ?? null,

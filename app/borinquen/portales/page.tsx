@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, LayoutDashboard } from "lucide-react";
 
 import { CopiarLink } from "@/components/borinquen/portal/controles";
 import { CrearPortalBoton } from "@/components/borinquen/portal/closer-controles";
@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { urlPortal } from "@/lib/portal/acceso";
 import { listarPortales, resumenPortales } from "@/lib/portal/repo";
 import { listarDemos } from "@/lib/portal/sembrar";
@@ -46,7 +47,11 @@ export default async function PortalesPage() {
         <section className="space-y-3">
           <h2 className="label-mono text-muted-foreground">Portales</h2>
           {portales.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Todavía no hay portales. Crea uno desde un demo de la fábrica (abajo).</p>
+            <Card className="bg-gradient-to-b from-card to-background/40">
+              <EstadoVacio compacto icono={LayoutDashboard} titulo="Todavía no hay portales">
+                Crea el primero desde un demo de la fábrica (abajo): cada prospecto recibe su link para la llamada.
+              </EstadoVacio>
+            </Card>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
               {portales.map((p, i) => {

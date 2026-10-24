@@ -11,7 +11,7 @@ interface Mensaje {
 }
 
 const SALUDO =
-  "¡Wepa, Elvin! 🇵🇷 Soy Bori, tu copiloto. Preguntame cómo van tus agentes, tus leads, o pedime que arme algo.";
+  "¡Wepa, Elvin! 🇵🇷 Soy Bori, tu copiloto. Pregúntame cómo van tus agentes, tus leads, o pídeme que arme algo.";
 
 export function BoriChat() {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
@@ -48,10 +48,10 @@ export function BoriChat() {
           cuerpo.error === "jarvis-desactivado"
             ? "Bori necesita ANTHROPIC_API_KEY para conversar. Mientras tanto, el tablero anda igual."
             : cuerpo.error === "no-autorizado"
-              ? "Iniciá sesión para hablar con Bori."
+              ? "Inicia sesión para hablar con Bori."
               : cuerpo.error === "rate-limit"
-                ? "Muchas preguntas seguidas — esperá un toque."
-                : "No pude conectar con Bori.";
+                ? "Muchas preguntas seguidas — espera un momentito."
+                : "No pude conectar con Bori. Vuelve a enviar tu mensaje en un momento.";
         setMensajes(nuevos);
         setError(msg);
         return;
@@ -90,7 +90,7 @@ export function BoriChat() {
       if (!acumulado) setMensajes(nuevos);
     } catch {
       setMensajes(nuevos);
-      setError("Se cortó la conexión con Bori.");
+      setError("Se cortó la conexión con Bori. Vuelve a enviar tu mensaje.");
     } finally {
       setCargando(false);
       bajar();
@@ -138,14 +138,14 @@ export function BoriChat() {
                 enviar();
               }
             }}
-            placeholder="Preguntale a Bori…"
+            placeholder="Pregúntale a Bori…"
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
           <button
             onClick={enviar}
             disabled={cargando || !input.trim()}
             aria-label="Enviar"
-            className="grid size-8 place-items-center rounded-md bg-primary text-primary-foreground transition-opacity disabled:opacity-40"
+            className="grid size-8 place-items-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/85 disabled:opacity-40 disabled:hover:bg-primary"
           >
             <SendHorizonal className="size-4" />
           </button>

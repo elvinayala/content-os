@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { PegarLink } from "@/components/cliente/pegar-link";
+import { EnlacesLegales } from "@/components/legal/documento";
 
 export const metadata = { title: "Entrar" };
 
@@ -18,6 +19,7 @@ export default async function Acceso({ searchParams }: { searchParams: Promise<{
       </div>
       <PegarLink />
       <p className="text-xs text-muted-foreground">¿No tienes tu link? Pídeselo a tu equipo en el canal de Slack de tu negocio.</p>
+      <EnlacesLegales que={["terminos", "privacidad", "cookies"]} />
     </main>
   );
 }

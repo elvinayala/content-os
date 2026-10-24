@@ -181,7 +181,7 @@ export function PoncheManual({ pendientes, discreto }: { pendientes: number; dis
           </div>
           <DialogFooter>
             <Button onClick={enviar} disabled={cargando || motivo.trim().length < 5} className="h-11 rounded-full px-6">
-              {cargando ? <Loader2 className="animate-spin" /> : null} Enviar a RR.HH.
+              {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Enviando…" : "Enviar a RR.HH."}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -259,7 +259,7 @@ export function WifiPrincipal() {
       <div className="flex gap-2">
         <Input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del Wi-Fi (ej.: Casa_Fibra_5G)" maxLength={60} required className="h-10" />
         <Button type="submit" disabled={cargando} className="h-10 rounded-full px-5">
-          {cargando ? <Loader2 className="animate-spin" /> : null} Guardar
+          {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Guardando…" : "Guardar"}
         </Button>
       </div>
     </form>
