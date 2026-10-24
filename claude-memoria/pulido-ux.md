@@ -29,3 +29,8 @@ docs/contexto/consentimientos.md): Content OS (rama worktree-agent-af3189d862b54
 Cortex (137be7f, revisado; antes rotar AVE_SECRET), Bori (04af6b4 revisado — arrastra 45 commits de pendiente-flyers + MALLOC_ARENA_MAX=2), AIB SaaS (token de
 Supabase vencido en app/.env.supabase.local; migración 014 antes). Sin producción: ISLA Run (main local),
 La Granja, Resuelto (Netlify bloqueado). AMBC: parche aplicado al original, go-live 2/nov.
+**24/oct ~2 AM — PUBLICADAS con OK de Elvin («publica Cortex/Bori/Content OS»):** Cortex 137be7f (railway up; aviso a
+María enviado), Bori 04af6b4 (push main; MALLOC_ARENA_MAX=2 puesto; respaldo ~/Respaldos/bori/bori-pre-legal-ux-*.dump con
+pg_dump 18 de libpq), Content OS 574b93e0 (0045 aplicada en Supabase + `npx vercel --prod` desde el worktree limpio: el
+push a main NO despliega solo). Pendiente: AVE_SECRET de Cortex (el servidor usa la clave que estuvo en git; el modo auto
+bloqueó cambiarla por ssh), heybori.ai sin MX (hola@heybori.ai no recibe), AIB SaaS (supabase login + migración 014).
