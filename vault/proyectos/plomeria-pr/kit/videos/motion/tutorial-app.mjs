@@ -211,7 +211,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#071B2C;font-fam
 async function render(nombre, v, browser) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1080, height: 1920, deviceScaleFactor: 1 });
-  await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>${CSS}</style></head><body><div class="glow"></div>${v.html}</body></html>`, { waitUntil: "networkidle0" });
+  await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>${CSS}</style></head><body><div class="glow"></div>${v.html}</body></html>`, { waitUntil: "networkidle0", timeout: 120000 });
   await page.evaluate(() => document.fonts.ready);
   await page.evaluate(() => {
     for (const a of document.getAnimations()) { a.pause(); a.currentTime = 1e7; } // medir con todo ya en su sitio
