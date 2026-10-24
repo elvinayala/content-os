@@ -20,6 +20,7 @@ import {
   idNuevo,
   linkPublico,
   LOGOS,
+  marketingFormulario,
   MARCAS_FORM,
   opcionesDe,
   type Pregunta,
@@ -392,6 +393,31 @@ export function EditorFormulario({ inicial }: { inicial: FormularioEditable }) {
                 </span>
                 <Switch checked={!!f.config.parciales} onCheckedChange={(v) => setConfig({ parciales: v || undefined })} />
               </label>
+              <div className="grid gap-2 rounded-md border px-3 py-2.5">
+                <span>
+                  <span className="block text-sm font-medium">Casillas legales</span>
+                  <span className="text-xs text-muted-foreground">
+                    Términos y privacidad van siempre en la bienvenida (obligatorias). Las de marketing salen desmarcadas y son opcionales: actívalas solo si de verdad le vas a escribir o llamar con mensajes automáticos.
+                  </span>
+                </span>
+                {(
+                  [
+                    ["marketing_sms", "Marketing por SMS, WhatsApp y llamadas (incluida voz de IA)"],
+                    ["marketing_email", "Correos promocionales"],
+                  ] as const
+                ).map(([tipo, texto]) => {
+                  const actuales = marketingFormulario(f);
+                  return (
+                    <label key={tipo} className="flex items-center justify-between gap-3 text-sm">
+                      <span>{texto}</span>
+                      <Switch
+                        checked={actuales.includes(tipo)}
+                        onCheckedChange={(v) => setConfig({ legal: { ...f.config.legal, marketing: v ? [...actuales.filter((x) => x !== tipo), tipo] : actuales.filter((x) => x !== tipo) } })}
+                      />
+                    </label>
+                  );
+                })}
+              </div>
               <div className="grid gap-1.5">
                 <Label>Paso 2: agendar en Calendly (opcional)</Label>
                 <Input
