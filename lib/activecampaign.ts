@@ -4,7 +4,7 @@
 // cuenta configurada, todo es no-op para esa marca (nunca cae en la cuenta de otra).
 // v3 para contactos/tags/listas; v1 (admin/api.php) para crear campañas, que v3 no soporta.
 
-export type MarcaAC = "level-up" | "ai-borinquen" | "shadow-operator" | "1000x";
+export type MarcaAC = "level-up" | "ai-borinquen" | "shadow-operator" | "1000x" | "elvin-escalar";
 
 let marcaActual: MarcaAC = "level-up";
 function cuenta(marca: MarcaAC = marcaActual): { url: string; key: string } {
@@ -28,6 +28,7 @@ export function listaDeMarca(marca: MarcaAC): number | null {
     "ai-borinquen": process.env.AC_LISTA_AIB,
     "shadow-operator": process.env.AC_LISTA_SO,
     "1000x": process.env.AC_LISTA_1000X,
+    "elvin-escalar": process.env.AC_LISTA_ELVIN,
   }[marca];
   return v && Number(v) ? Number(v) : null;
 }
@@ -119,7 +120,7 @@ export async function upsertContacto(c: ContactoAC): Promise<{ ok: boolean; id?:
     const r = await v3<{ contact: { id: string } }>("POST", "contact/sync", { contact });
     const id = Number(r.contact.id);
     const fallos: string[] = [];
-    const tags = [`marca:${{ "level-up": "lu", "ai-borinquen": "aib", "shadow-operator": "so", "1000x": "1000x" }[c.marca]}`, ...(c.tags ?? [])];
+    const tags = [`marca:${{ "level-up": "lu", "ai-borinquen": "aib", "shadow-operator": "so", "1000x": "1000x", "elvin-escalar": "elvin" }[c.marca]}`, ...(c.tags ?? [])];
     const ponerTags = async (lista: string[]) => {
       for (const t of lista) {
         try {

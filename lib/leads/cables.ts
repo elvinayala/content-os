@@ -5,7 +5,7 @@ import { and, eq, or } from "drizzle-orm";
 import { db } from "@/lib/pulse/db";
 
 import { agendarLlamadaSistema, asegurarEtapa, cerrarTrato, embudoPorNombre, etapasDe, ingestarLead, moverTrato } from "./repo";
-import { normalizarTelefono } from "./reglas";
+import { normalizarTelefono, type Marca } from "./reglas";
 import { leadsEmbudos, leadsTratos } from "./schema";
 
 // Las fuentes que hoy escriben en Pipedrive también escriben en Leads (semana 2 de la migración,
@@ -85,13 +85,16 @@ export function leadCalendlyOnboarding(email: string, telefono: string | null) {
   });
 }
 
-/** Quiz de diagnóstico → su embudo: Level Up "Diagnóstico de Crecimiento", AIB "Diagnóstico de Automatización". */
-export function leadQuiz(v: { marca?: "level_up" | "ai_borinquen"; evento: string; nombre: string; email: string; telefono: string; negocio: string; resultado?: string | null; avatar?: string | null; utm?: string | null }) {
-  const aib = v.marca === "ai_borinquen";
+/** Quiz de diagnóstico → su embudo: Level Up "Diagnóstico de Crecimiento", AIB "Diagnóstico de Automatización", 1000X "Diagnóstico de Trader". */
+export function leadQuiz(v: { marca?: Marca; evento: string; nombre: string; email: string; telefono: string; negocio: string; resultado?: string | null; avatar?: string | null; utm?: string | null }) {
+  const marca: Marca = v.marca ?? "level_up";
+  const aib = marca === "ai_borinquen";
+  const x = marca === "1000x";
+  const que = x ? "trader" : aib ? "automatización" : "crecimiento";
   return seguro("quiz", () =>
     ingestarLead({
-      marca: aib ? "ai_borinquen" : "level_up",
-      embudo: aib ? "DIAGNÓSTICO DE AUTOMATIZACIÓN" : "LUM DIAGNÓSTICO DE CRECIMIENTO",
+      marca,
+      embudo: x ? "DIAGNÓSTICO DE TRADER" : aib ? "DIAGNÓSTICO DE AUTOMATIZACIÓN" : "LUM DIAGNÓSTICO DE CRECIMIENTO",
       nombre: v.nombre,
       email: v.email,
       telefono: v.telefono,
@@ -99,10 +102,31 @@ export function leadQuiz(v: { marca?: "level_up" | "ai_borinquen"; evento: strin
       origen: "quiz",
       agendoPor: v.utm ?? null,
       moverSiExiste: false,
-      nota: v.evento === "resultado" ? `🧭 Terminó el diagnóstico${v.resultado ? `: ${v.resultado}` : ""}` : `🧭 Empezó el diagnóstico de ${aib ? "automatización" : "crecimiento"}`,
+      nota: v.evento === "resultado" ? `🧭 Terminó el diagnóstico${v.resultado ? `: ${v.resultado}` : ""}` : `🧭 Empezó el diagnóstico de ${que}`,
       datos: { ...(v.avatar ? { avatar: v.avatar } : {}), ...(v.resultado ? { resultadoQuiz: v.resultado } : {}) },
     }),
   );
+}
+
+/**
+ * Quiz "Diagnóstico de Trader" de 1000X (Richy & Elvin Trading LLC) → Leads, marca 1000x. Es la ÚNICA puerta
+ * y no hay Pipedrive de respaldo, así que aquí el error sube (el endpoint contesta 502) en vez de tragárselo.
+ * Un lead que ya existe no se mueve de etapa; el resultado se suma como nota.
+ */
+export function leadQuiz1000x(v: { nombre: string; email: string; telefono: string; instagram: string; nota: string; utm?: string | null; datos?: Record<string, unknown> }) {
+  return ingestarLead({
+    marca: "1000x",
+    embudo: "DIAGNÓSTICO DE TRADER",
+    nombre: v.nombre,
+    email: v.email,
+    telefono: v.telefono,
+    negocio: v.instagram || null,
+    origen: "quiz",
+    agendoPor: v.utm ?? null,
+    moverSiExiste: false,
+    nota: v.nota,
+    datos: { ...(v.instagram ? { instagram: v.instagram } : {}), ...(v.datos ?? {}) },
+  });
 }
 
 export const ETAPA_SIN_AGENDAR = "Sin agendar";

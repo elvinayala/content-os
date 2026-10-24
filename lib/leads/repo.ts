@@ -7,7 +7,7 @@ import { desempenoFichas } from "@/lib/desempeno/schema";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { clave, duenoPorReparto, estadoDeEtapa, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, renombrePorAgenda, seReparte, SEMILLA, tipoAdjunto, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
+import { clave, duenoPorReparto, estadoDeEtapa, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, MARCAS_AISLADAS, normalizarTelefono, ordenEntre, rangoFecha, renombrePorAgenda, seReparte, SEMILLA, tipoAdjunto, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsNumerosEquipo, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -46,6 +46,7 @@ export interface TratoTarjeta {
 export async function accesoLeads(u: UsuarioPulse, marca: Marca): Promise<{ puede: boolean; alcance: "todos" | "mios" }> {
   // AI Borinquen solo con permiso explícito (Elvin, 27/sep: "más nadie va a tener acceso a nada de
   // Borinquen"); las editoras entran solas a Level Up, a AIB solo si tienen fila en leads_acceso.
+  // 1000X (24/oct) igual que AIB: cerrada, solo admin (Elvin) o fila en leads_acceso.
   if (u.rol === "admin" || (u.rol === "editor" && marca === "level_up")) return { puede: true, alcance: "todos" };
   const { esSoloRitmo } = await import("../pulse/auth");
   if (await esSoloRitmo(u.id)) return { puede: false, alcance: "mios" }; // empleado solo de Ritmo
@@ -61,14 +62,14 @@ export async function tienePermisoLeads(userId: string): Promise<boolean> {
 }
 
 export async function marcasConAcceso(u: UsuarioPulse): Promise<Marca[]> {
-  if (u.rol === "admin") return ["level_up", "ai_borinquen"];
+  if (u.rol === "admin") return ["level_up", "ai_borinquen", "1000x"];
   const { esSoloRitmo } = await import("../pulse/auth");
   if (await esSoloRitmo(u.id)) return [];
   const d = await db();
   const filas = await d.select().from(leadsAcceso).where(eq(leadsAcceso.userId, u.id));
   const marcas = new Set(filas.map((f) => f.marca as Marca));
   if (u.rol === "editor") marcas.add("level_up");
-  return (["level_up", "ai_borinquen"] as Marca[]).filter((m) => marcas.has(m));
+  return (["level_up", "ai_borinquen", "1000x"] as Marca[]).filter((m) => marcas.has(m));
 }
 
 export async function usuariosActivos() {
@@ -185,7 +186,7 @@ const camposTarjeta = {
   llamadaEl: sql<string | null>`${leadsTratos.datos} -> 'seguimiento' ->> 'fecha'`,
   closerLlamada: sql<string | null>`trim(${leadsTratos.datos} -> 'seguimiento' ->> 'closer')`,
   // Lis (21/oct): el mismo teléfono abierto en la otra marca → etiqueta en la tarjeta para no nombrarle la otra empresa.
-  enOtraMarca: sql<boolean>`(leads_tratos.telefono is not null and exists (select 1 from leads_tratos o where o.telefono = leads_tratos.telefono and o.marca <> leads_tratos.marca and o.estado = 'abierto'))`,
+  enOtraMarca: sql<boolean>`(leads_tratos.telefono is not null and leads_tratos.marca in ('level_up','ai_borinquen') and exists (select 1 from leads_tratos o where o.telefono = leads_tratos.telefono and o.marca <> leads_tratos.marca and o.marca in ('level_up','ai_borinquen') and o.estado = 'abierto'))`,
 };
 
 function aTarjeta(r: Record<string, unknown>): TratoTarjeta {
@@ -720,6 +721,7 @@ export async function leadPrevioDeSeguimiento(telefono: string | null, emails: s
 
 /** Busca si este contacto existe como trato abierto en la OTRA marca (para advertir de duplicados cross-brand). */
 export async function tratoEnOtraMarca(telefono: string | null, email: string | null, marcaActual: Marca): Promise<Trato | null> {
+  if (MARCAS_AISLADAS.includes(marcaActual)) return null; // 1000X no se cruza con nada (ni sabe quién es de LU/AIB)
   const laOtraMarca: Marca = marcaActual === "level_up" ? "ai_borinquen" : "level_up";
   const tel = normalizarTelefono(telefono);
   const emails = email ? [email.trim().toLowerCase()] : [];
@@ -827,10 +829,12 @@ export async function cuentasWhatsapp(marca: Marca) {
 
 // Tablero de clientes de cada marca en Pulse. Un cliente actual (cualquier grupo menos OFFBOARDED)
 // que escribe al WhatsApp NO es un lead (Elvin, 26/sep): se ignora. Los ex-clientes sí entran.
-const TABLERO_CLIENTES: Record<Marca, string> = { level_up: "level-up-media", ai_borinquen: "ai-borinquen" };
+const TABLERO_CLIENTES: Record<Marca, string | null> = { level_up: "level-up-media", ai_borinquen: "ai-borinquen", "1000x": null };
 
 /** Nombre del cliente actual con ese teléfono (compara los últimos 10 dígitos), o null. */
 export async function clienteActual(marca: Marca, telefono: string): Promise<string | null> {
+  const tablero = TABLERO_CLIENTES[marca];
+  if (!tablero) return null;
   const digitos = telefono.replace(/\D/g, "");
   if (digitos.length < 7) return null;
   const d = await db();
@@ -839,7 +843,7 @@ export async function clienteActual(marca: Marca, telefono: string): Promise<str
     join pulse_boards b on b.id = i.board_id
     join pulse_groups g on g.id = i.group_id
     join pulse_columns c on c.board_id = b.id and c.type = 'phone'
-    where b.slug = ${TABLERO_CLIENTES[marca]}
+    where b.slug = ${tablero}
       and upper(g.title) not like 'OFFBOARD%'
       and right(regexp_replace(coalesce(i.values ->> c.id::text, ''), '\\D', '', 'g'), 10) = ${digitos.slice(-10)}
     limit 1`);

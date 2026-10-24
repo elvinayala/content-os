@@ -19,7 +19,7 @@ import {
   moverTrato,
   registrarSaliente,
 } from "@/lib/leads/repo";
-import { slugDeMarca, type Marca } from "@/lib/leads/reglas";
+import { MARCAS, slugDeMarca, type Marca } from "@/lib/leads/reglas";
 import { trasNotaDeSeguimiento } from "@/lib/leads/seguimiento";
 import { leadsActividades, leadsEmbudos, leadsEtapas, leadsTratos } from "@/lib/leads/schema";
 import { EMBUDO_SEGUIMIENTO } from "@/lib/leads/seguimiento-reglas";
@@ -46,7 +46,7 @@ export async function buscarLeadsGlobalAction(q: string): Promise<{ id: string; 
       const a = await accesoLeads(u, m);
       if (!a.puede) return [];
       const filas = await buscarEnMarca(m, q.slice(0, 100), null, 8, a.alcance === "mios" ? u.id : null).catch(() => []);
-      return filas.map((f) => ({ ...f, marca: m === "level_up" ? "Level Up" : "AI Borinquen", slug: slugDeMarca(m) }));
+      return filas.map((f) => ({ ...f, marca: MARCAS[slugDeMarca(m)].nombre, slug: slugDeMarca(m) }));
     }),
   );
   return por.flat();

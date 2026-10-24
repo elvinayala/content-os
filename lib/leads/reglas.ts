@@ -1,12 +1,17 @@
 // Reglas puras de Leads (sin base ni Next): marcas, teléfonos, semillas de embudos, estados de
 // seguimiento y el lector tolerante de los avisos de Timelines.ai. Testeado en tests/leads.test.mjs.
 
-export type Marca = "level_up" | "ai_borinquen";
+export type Marca = "level_up" | "ai_borinquen" | "1000x";
 export const MARCAS: Record<string, { marca: Marca; nombre: string; slug: string }> = {
   "level-up": { marca: "level_up", nombre: "Level Up", slug: "level-up" },
   "ai-borinquen": { marca: "ai_borinquen", nombre: "AI Borinquen", slug: "ai-borinquen" },
+  // Richy & Elvin Trading LLC (24/oct/2026, Elvin: "un usuario para 1000x aparte a todo"): marca CERRADA y
+  // sin WhatsApp todavía. Solo entra quien tenga fila en leads_acceso (y Elvin, por ser admin).
+  "1000x": { marca: "1000x", nombre: "1000X", slug: "1000x" },
 };
-export const slugDeMarca = (m: Marca) => (m === "level_up" ? "level-up" : "ai-borinquen");
+export const slugDeMarca = (m: Marca) => (m === "level_up" ? "level-up" : m === "ai_borinquen" ? "ai-borinquen" : "1000x");
+/** Marcas que no se mezclan con ninguna otra: ni avisos de "también está en…", ni acceso automático de las editoras. */
+export const MARCAS_AISLADAS: Marca[] = ["1000x"];
 
 export const MOTIVOS_PERDIDA = ["No contesta", "No califica", "Precio", "Ya compró / ya tiene", "No es el momento", "Otro"] as const;
 
@@ -52,6 +57,11 @@ export const SEMILLA: Record<Marca, { nombre: string; etapas: string[]; diasEsta
     { nombre: "RECUPERACIÓN 2026", entrada: "timelines", diasEstancado: 3, etapas: ["A · Agendaron", "B · Conversaron", "C · Fríos", "Contactado", "Conversando", "Probó el agente", "Llamada agendada", "No asistio", "Seguimiento", "Retirado (día 14)"] },
     { nombre: "DIAGNÓSTICO DE AUTOMATIZACIÓN", entrada: "quiz", diasEstancado: 3, etapas: ["NEW LEAD / DIAGNÓSTICO", "CALLED 1X", "CALLED 2X", "CALLED 3X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "DON'T QUALIFIED"] },
     { nombre: "Bori · Seguimiento", etapas: ["Por contactar", "Mensaje enviado", "Respondió", "Registrado en Bori", "No interesa"] },
+  ],
+  // 1000X (Richy & Elvin Trading LLC): un solo embudo, el del quiz "Diagnóstico de Trader" (/api/auditoria
+  // marca 1000x). Etapas mínimas: Elvin las ajusta con "Editar embudo" cuando defina el proceso de venta.
+  "1000x": [
+    { nombre: "DIAGNÓSTICO DE TRADER", entrada: "quiz", diasEstancado: 3, etapas: ["NEW LEAD / DIAGNÓSTICO", "CONTACTADO", "CONVERSANDO", "SEGUIMIENTO", "CLOSED", "NO CALIFICA"] },
   ],
 };
 

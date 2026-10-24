@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { clave, estadoActividad, estancado, leerTimelines, normalizarTelefono, ordenEntre, rangoFecha, SEMILLA, telefonoLegible } from "../lib/leads/reglas.ts";
+import { clave, estadoActividad, estancado, leerTimelines, MARCAS, MARCAS_AISLADAS, normalizarTelefono, ordenEntre, rangoFecha, SEMILLA, slugDeMarca, telefonoLegible } from "../lib/leads/reglas.ts";
 
 test("teléfonos a dígitos con código de país", () => {
   assert.equal(normalizarTelefono("(787) 555-1234"), "17875551234");
@@ -102,4 +102,15 @@ test("leerNichoIA tolera texto alrededor y nulls", async () => {
   assert.deepEqual(leerNichoIA('{"negocio":"Bizcochos La Fe","nicho":"Repostería"}'), { negocio: "Bizcochos La Fe", nicho: "Repostería" });
   assert.deepEqual(leerNichoIA('{"negocio":"null","nicho":"desconocido"}'), { negocio: null, nicho: null });
   assert.deepEqual(leerNichoIA("no sé"), { negocio: null, nicho: null });
+});
+
+test("1000X es una marca aparte: slug, semilla de un embudo y aislada de las demás", () => {
+  assert.equal(MARCAS["1000x"].marca, "1000x");
+  assert.equal(slugDeMarca("1000x"), "1000x");
+  assert.equal(slugDeMarca("level_up"), "level-up");
+  assert.equal(slugDeMarca("ai_borinquen"), "ai-borinquen");
+  for (const m of Object.values(MARCAS)) assert.equal(MARCAS[slugDeMarca(m.marca)].marca, m.marca); // slug ↔ marca van y vuelven
+  assert.deepEqual(SEMILLA["1000x"].map((e) => e.nombre), ["DIAGNÓSTICO DE TRADER"]);
+  assert.equal(SEMILLA["1000x"][0].etapas[0], "NEW LEAD / DIAGNÓSTICO");
+  assert.deepEqual(MARCAS_AISLADAS, ["1000x"]);
 });

@@ -115,6 +115,23 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   Prioridad: ⭐ alta (califica DFY: salud/abogado o $10K+) · 🔥 súper ($20K+/mes) → aviso a Elvin por
   `notificarCEO` con el link de la ficha. También guarda la razón específica de por qué no cerró.
   Código: `lib/leads/seguimiento{,-reglas}.ts`, tests `tests/leads-seguimiento.test.mjs`.
+- **1000X (24/oct/2026, EN VIVO en https://www.x1000trade.com/diagnostico; prueba e2e OK y borrada)**: tercera marca `1000x` (Richy & Elvin Trading LLC), **aislada** ("un usuario para 1000x
+  aparte a todo", Elvin): como AIB, solo entra Elvin (admin) o quien tenga fila en `leads_acceso`; las editoras NO entran solas y
+  por eso tampoco manejan su equipo; no hay avisos "también en otra marca" (`MARCAS_AISLADAS`, SQL de `enOtraMarca` limitado a
+  LU/AIB) ni tablero de clientes ni Timelines (`tokenTimelines` vacío). Un embudo semilla `DIAGNÓSTICO DE TRADER` (NEW LEAD /
+  DIAGNÓSTICO · CONTACTADO · CONVERSANDO · SEGUIMIENTO · CLOSED · NO CALIFICA). El quiz de 1000X (`/api/auditoria` marca `1000x`)
+  ya NO usa Pipedrive ni ActiveCampaign: `leadQuiz1000x` (cables.ts) escribe directo y, si falla, el endpoint contesta 502 (es la
+  única copia). Guarda en `datos.consentimiento` el texto exacto de la casilla, IP y navegador. El botón final del quiz está oculto
+  mientras `CONFIG.calendly` y `CONFIG.whatsapp` estén vacíos (dice que el equipo revisa y escribe). Dominio: `x1000trade.com`
+  (GoDaddy, con correo de Microsoft 365: NO tocar MX/TXT/autodiscover; solo `www` CNAME → us-east-shard-3.myclickfunnels.com + TXT
+  `@` `clickfunnels-domain-verification=jRldZm`). Funnel de CF `YQZQxR` (página `/diagnostico-trader`, ruta del funnel `/diagnostico`).
+  **v2 (24/oct/2026, embudo de Elvin):** hero "¿Qué te está impidiendo pasar tu cuenta fondeada…?", 9 preguntas (experiencia,
+  fondeo, mayor dificultad, estrategia, ejecución, riesgo, bots, objetivo 90 días, acompañamiento), resultado con área a mejorar
+  + próximo paso, y "Solicitar mi llamada" → aplicación (disponibilidad, inversión de $3,500 dicha antes de la llamada, horario,
+  expectativas) que entra como evento `aplicacion` (nota "PIDIÓ LLAMADA" + `datos.aplicacion`). Las claves de área siguen
+  siendo estructura/ejecucion/riesgo/sistema (= Estrategia/Ejecución/Riesgo/Automatización e IA).
+  Desplegado con `npx vercel --prod --yes --archive=tgz` (sin `--archive` falla: más de 15,000 archivos). Pendiente: crear el
+  usuario de 1000X en Pulse con su fila en `leads_acceso` marca `1000x` (falta el correo).
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),

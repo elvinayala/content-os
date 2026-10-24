@@ -1,7 +1,7 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 
 import { upsertContacto } from "@/lib/activecampaign";
-import { leadQuiz } from "@/lib/leads/cables";
+import { leadQuiz, leadQuiz1000x } from "@/lib/leads/cables";
 
 // after() corre hasta maxDuration: AC es lento (tags + lista ≈ 10-40 s).
 export const maxDuration = 60;
@@ -24,7 +24,7 @@ export const maxDuration = 60;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Marca = "level-up" | "ai-borinquen" | "shadow-operator" | "1000x";
+type Marca = "level-up" | "ai-borinquen" | "shadow-operator" | "1000x" | "elvin-escalar";
 
 const CUENTAS: Record<
   Marca,
@@ -53,12 +53,20 @@ const CUENTAS: Record<
     etiqueta: "Auditoría Shadow",
   },
   "1000x": {
-    // Richy & Elvin Trading LLC → Pipedrive propio (token + stage por env; sin token = 503 y el
-    // quiz sigue andando, solo no escribe en el CRM).
-    token: process.env.PIPEDRIVE_1000X_TOKEN,
-    stage: Number(process.env.PIPEDRIVE_1000X_STAGE_DIAGNOSTICO ?? 0),
+    // Richy & Elvin Trading LLC. Desde el 24/oct/2026 NO usa Pipedrive: el lead entra a Leads (Pulse), marca
+    // 1000x, aislada de Level Up y AIB (ver el bloque "1000X" del handler). Aquí solo quedan título y etiqueta.
+    token: undefined,
+    stage: 0,
     titulo: "Diagnóstico de Trader",
     etiqueta: "Diagnóstico 1000X",
+  },
+  "elvin-escalar": {
+    // Marca personal de Elvin (elvinayala.com/escalar) → Pipedrive de Level Up.
+    // Pipeline 16 "ELVIN · ESCALAR $10-20K" → stage 154 "NEW LEAD / AUDITORÍA"
+    token: process.env.PIPEDRIVE_LEVELUP_TOKEN,
+    stage: Number(process.env.PIPEDRIVE_ELVIN_STAGE_ESCALAR ?? 154),
+    titulo: "Escala tu negocio digital",
+    etiqueta: "Auditoría Elvin",
   },
 };
 
@@ -163,20 +171,35 @@ const SO_OPC: Record<string, Record<string, string>> = {
   cuello: { oferta: "Oferta", nicho: "Nicho", contenido: "Contenido", estrategia: "Estrategia / cierre", tiempo: "Tiempo / sistema", otro: "Otro" },
   fund: { nicho: "Nicho", oferta: "Oferta", contenido: "Contenido", estrategia: "Estrategia" },
 };
+// 1000X v2 (24/oct/2026, embudo de Elvin: diagnóstico → resultado → aplicación + llamada → Done With You $3,500).
 const X_OPC: Record<string, Record<string, string>> = {
-  experiencia: { "0": "Nunca en real", "3": "< 6 meses", "12": "6 meses - 2 años", "36": "> 2 años" },
-  mercado: { futuros: "Futuros", forex: "Forex", cripto: "Cripto", acciones: "Acciones / opciones", nose: "No lo sabe" },
-  capital: { "250": "< $500", "1250": "$500-2K", "6000": "$2K-10K", "20000": "> $10K", fondeo: "Cuenta de fondeo" },
+  experiencia: { "0": "Nunca / solo demo", "3": "< 6 meses", "12": "6 meses - 2 años", "36": "> 2 años" },
+  fondeo: { no: "No, quiere empezar", fallo: "Lo intentó y no pasó", perdio: "Pasó y perdió la cuenta", activa: "Tiene cuenta fondeada activa" },
+  cuello: { estrategia: "Sin estrategia clara", emociones: "Emociones / disciplina", reglas: "Reglas del fondeo (drawdown, límite diario)", riesgo: "Gestión de riesgo", tiempo: "Falta de tiempo", info: "Información contradictoria" },
   estrategia: { probada: "Reglas escritas y probadas", reglas: "Reglas sin probar", intuicion: "Intuición / señales", ninguna: "Sin estrategia" },
-  entradas: { confirmacion: "Espera confirmación", persigo: "Persigue el movimiento", depende: "Depende del día" },
-  horario: { fijo: "Horario fijo", cuando: "Cuando puede", sin: "Sin planificar (celular)" },
+  ejecucion: { plan: "Sigue su plan", temprano: "Entra antes de la confirmación", venganza: "Sobreopera / se venga tras perder", cierra: "Corta ganancias / deja correr pérdidas", noopera: "Todavía no opera" },
   riesgo: { "1": "≤ 1%", "2": "1-3%", "5": "> 3%", nolo: "No lo calcula" },
-  rr: { "2": "1:2 o mejor", "1": "~1:1", corto: "Corta ganancias / deja correr pérdidas", nomido: "No la mide" },
-  resultado: { consistente: "Rentable consistente", devuelvo: "Gana y devuelve", pierdo: "Perdiendo", noreal: "Sin resultados en real" },
-  journal: { si: "Sí, semanal", aveces: "A veces", no: "No" },
-  pantalla: { "1": "< 1 h/día", "2": "1-3 h/día", "4": "> 3 h/día" },
-  cuello: { psicologia: "Emociones / psicología", estrategia: "Sin estrategia clara", riesgo: "Gestión de riesgo", tiempo: "Tiempo", info: "Información contradictoria", otro: "Otro" },
-  pilar: { estructura: "Estructura", ejecucion: "Ejecución", riesgo: "Riesgo", sistema: "Sistema" },
+  bots: { usa: "Usa bots o alertas", probo: "Probó y no le funcionó", interesa: "No, pero le interesa", no: "No le interesa" },
+  objetivo: { pasar: "Pasar su primera evaluación", retiros: "Mantener la cuenta y lograr los primeros retiros", escalar: "Escalar a más cuentas", base: "Aprender con una base sólida" },
+  acompanamiento: { si: "Sí, quiere acompañamiento", talvez: "Tal vez", no: "No, prefiere por su cuenta" },
+  area: { estructura: "Estrategia", ejecucion: "Ejecución", riesgo: "Gestión de riesgo", sistema: "Automatización e IA" },
+  disponibilidad: { "3": "< 3 h/semana", "5": "3-5 h/semana", "10": "5-10 h/semana", "11": "> 10 h/semana" },
+  inversion: { si: "Puede invertir $3,500", opciones: "Quiere conversar opciones de pago", no: "Ahora no puede invertir" },
+  horario: { manana: "Mañana", tarde: "Tarde", noche: "Noche" },
+};
+const EE_OPC: Record<string, Record<string, string>> = {
+  tipo: { coach: "Coaching / consultoría", creador: "Creador de contenido", curso: "Curso / producto digital", comunidad: "Comunidad / membresía", servicio: "Agencia / servicio digital" },
+  facturacion: { "500": "< $1K/mes", "2000": "$1K-3K/mes", "4000": "$3K-5K/mes", "7500": "$5K-10K/mes", "15000": "$10K-20K/mes", "25000": "> $20K/mes" },
+  audiencia: { "500": "< 2.5K", "5000": "2.5K-10K", "25000": "10K-50K", "100000": "> 50K" },
+  nicho: { claro: "Nicho claro (dolor + dinero)", amplio: "Público amplio", cambio: "Cambia de enfoque seguido" },
+  fuente: { organico: "Contenido orgánico", ads: "Anuncios", referidos: "Referidos", dm: "Prospección directa", ninguna: "Casi no le llegan" },
+  conversaciones: { "0": "0", "3": "1-5", "10": "5-15", "27": "15-40", "60": "40+" },
+  cierres: { "0": "0", "1.5": "1-2", "4": "3-5", "8": "6-10", "14": "10+" },
+  quien: { yo: "Él/ella mismo", setter: "Con setter", closer: "Closer", nadie: "Aún no hace llamadas" },
+  seguimiento: { si: "Sí, automático", medio: "A medias", no: "No" },
+  equipo: { solo: "Solo", free: "1-2 freelancers", pequeno: "Equipo pequeño", completo: "Equipo completo" },
+  cuello: { oferta: "Oferta", contenido: "Contenido", cierre: "Cierre", sistema: "Sistema / delegar", techo: "Estancado", otro: "Otro" },
+  palanca: { oferta: "Oferta", contenido: "Audiencia y contenido", cierre: "Cierre de ventas", sistema: "Sistema y equipo" },
 };
 const AB_OPC: Record<string, Record<string, string>> = {
   tipo: { salud: "Clínica / salud", estetica: "Estética / medspa", profesional: "Servicios profesionales", hogar: "Servicios al hogar", agencia: "Agencia / B2B", local: "Restaurante / retail", otro: "Otro" },
@@ -196,7 +219,7 @@ function notaLead(marca: Marca, d: Record<string, unknown>, tracking: Record<str
     .join(" · ");
   return (
     `<b>${c.titulo}</b> — empezó el diagnóstico (todavía no lo terminó).<br>` +
-    `Nombre: ${esc(d.nombre)} · ${marca === "shadow-operator" || marca === "1000x" ? "Instagram" : "Negocio"}: ${esc(d.negocio)} · WhatsApp: ${esc(d.telefonoCompleto ?? d.telefono)} · Email: ${esc(d.email)}` +
+    `Nombre: ${esc(d.nombre)} · ${marca === "shadow-operator" || marca === "1000x" || marca === "elvin-escalar" ? "Instagram" : "Negocio"}: ${esc(d.negocio)} · WhatsApp: ${esc(d.telefonoCompleto ?? d.telefono)} · Email: ${esc(d.email)}` +
     (utm ? `<br>Origen: ${utm}` : "") +
     (tracking.landing_url ? `<br>URL: ${esc(tracking.landing_url)}` : "")
   );
@@ -221,6 +244,21 @@ function notaResultado(
       `Cuello declarado: ${esc(et(LU_OPC, "cuello", d.cuello))}${d.frustracion ? ` — "${esc(d.frustracion)}"` : ""}`
     );
   }
+  if (marca === "elvin-escalar") {
+    const F = (r.F ?? {}) as Record<string, unknown>;
+    return (
+      `<b>Escala tu negocio digital — resultado</b><br>` +
+      `<b>Palanca floja:</b> ${esc(nombrePrincipal)}${r.secundario ? ` (+ ${esc(et(EE_OPC, "palanca", r.secundario))})` : ""}<br>` +
+      `<b>Palancas:</b> ${esc(r.score)}/100 · Oferta ${esc(F.oferta)} · Contenido ${esc(F.contenido)} · Cierre ${esc(F.cierre)} · Sistema ${esc(F.sistema)}<br>` +
+      `<b>Matemática de la meta:</b> meta ${usd(r.meta)}/mes · ticket ${usd(r.ticket)}${r.ticketEstimado ? " (estimado)" : ""} · ${esc(r.clientesMeta)} clientes · ${esc(r.convMeta)} conversaciones/mes · le faltan ${esc(r.convFaltan)} · cierre ${pct(r.tasa)}${r.tasaEstimada ? " (estimado)" : ""} · brecha ${usd(r.brecha)}/mes<br><br>` +
+      `<b>Respuestas</b><br>` +
+      `Negocio: ${esc(et(EE_OPC, "tipo", d.tipo))} · Factura: ${esc(et(EE_OPC, "facturacion", d.facturacion))} · Ticket: ${usd(d.ticket)} · Audiencia: ${esc(et(EE_OPC, "audiencia", d.audiencia))}<br>` +
+      `Nicho: ${esc(et(EE_OPC, "nicho", d.nicho))} · Ingredientes de la oferta: ${esc(d.ingredientes)}/4<br>` +
+      `Fuente: ${esc(et(EE_OPC, "fuente", d.fuente))} · Conversaciones: ${esc(et(EE_OPC, "conversaciones", d.conversaciones))}/mes · Cierres: ${esc(et(EE_OPC, "cierres", d.cierres))}/mes · Llamadas: ${esc(et(EE_OPC, "quien", d.quien))}<br>` +
+      `Seguimiento: ${d.seguimiento ? esc(et(EE_OPC, "seguimiento", d.seguimiento)) : "n/a"} · Equipo: ${d.equipo ? esc(et(EE_OPC, "equipo", d.equipo)) : "n/a"}<br>` +
+      `Lo que dice que le frena: ${esc(et(EE_OPC, "cuello", d.cuello))}${d.frustracion ? ` — "${esc(d.frustracion)}"` : ""}`
+    );
+  }
   if (marca === "shadow-operator") {
     const F = (r.F ?? {}) as Record<string, unknown>;
     return (
@@ -239,16 +277,14 @@ function notaResultado(
   if (marca === "1000x") {
     const F = (r.F ?? {}) as Record<string, unknown>;
     return (
-      `<b>Diagnóstico de Trader — resultado</b><br>` +
-      `<b>Perfil:</b> ${esc(r.perfil)} · <b>Pilar flojo:</b> ${esc(nombrePrincipal)}${r.secundario ? ` (+ ${esc(et(X_OPC, "pilar", r.secundario))})` : ""}<br>` +
-      `<b>Disciplina:</b> ${esc(r.score)}/100 · Estructura ${esc(F.estructura)} · Ejecución ${esc(F.ejecucion)} · Riesgo ${esc(F.riesgo)} · Sistema ${esc(F.sistema)}<br>` +
-      `<b>Matemática:</b> capital ${r.fondeo ? "fondeo" : usd(r.capital)} · riesgo ${pct(r.riesgoPct)}${r.riesgoEstimado ? " (estimado)" : ""} = ${usd(r.riesgoUSD)}/trade · mala semana ${usd(r.malaSemana)} · 10 stops seguidos −${pct(r.racha)}<br><br>` +
-      `<b>Respuestas</b><br>` +
-      `Experiencia: ${esc(et(X_OPC, "experiencia", d.experiencia))} · Mercado: ${esc(et(X_OPC, "mercado", d.mercado))} · Capital: ${esc(et(X_OPC, "capital", d.capital))}<br>` +
-      `Estrategia: ${esc(et(X_OPC, "estrategia", d.estrategia))} · Entradas: ${esc(et(X_OPC, "entradas", d.entradas))} · Horario: ${esc(et(X_OPC, "horario", d.horario))}<br>` +
-      `Riesgo: ${esc(et(X_OPC, "riesgo", d.riesgo))} · R:B: ${esc(et(X_OPC, "rr", d.rr))} · Últimos 3 meses: ${esc(et(X_OPC, "resultado", d.resultado))}<br>` +
-      `Journal: ${d.journal ? esc(et(X_OPC, "journal", d.journal)) : "n/a"} · Pantalla: ${d.pantalla ? esc(et(X_OPC, "pantalla", d.pantalla)) : "n/a"}<br>` +
-      `Lo que dice que le frena: ${esc(et(X_OPC, "cuello", d.cuello))}${d.frustracion ? ` — "${esc(d.frustracion)}"` : ""}`
+      `<b>Diagnóstico 1000X — resultado</b><br>` +
+      `<b>Área a mejorar:</b> ${esc(nombrePrincipal)}${r.secundario ? ` (+ ${esc(et(X_OPC, "area", r.secundario))})` : ""} · <b>Preparación:</b> ${esc(r.score)}/100<br>` +
+      `Estrategia ${esc(F.estructura)} · Ejecución ${esc(F.ejecucion)} · Riesgo ${esc(F.riesgo)} · Automatización ${esc(F.sistema)}<br><br>` +
+      `<b>Para el closer</b><br>` +
+      `Experiencia: ${esc(et(X_OPC, "experiencia", d.experiencia))} · Fondeo: ${esc(et(X_OPC, "fondeo", d.fondeo))}<br>` +
+      `Mayor dificultad: ${esc(et(X_OPC, "cuello", d.cuello))} · Objetivo 90 días: ${esc(et(X_OPC, "objetivo", d.objetivo))}<br>` +
+      `Bots / IA: ${esc(et(X_OPC, "bots", d.bots))} · Acompañamiento: ${esc(et(X_OPC, "acompanamiento", d.acompanamiento))}<br>` +
+      `Estrategia: ${esc(et(X_OPC, "estrategia", d.estrategia))} · Al operar: ${esc(et(X_OPC, "ejecucion", d.ejecucion))} · Riesgo: ${esc(et(X_OPC, "riesgo", d.riesgo))}`
     );
   }
   return (
@@ -263,6 +299,19 @@ function notaResultado(
     `Quiere automatizar: ${esc(et(AB_OPC, "proceso", d.proceso))}${d.frustracion ? ` — "${esc(d.frustracion)}"` : ""}`
   );
 }
+
+/** Las notas de Pipedrive vienen en HTML mínimo (<b>, <br>, entidades de esc()); el historial de Leads es texto plano. */
+const aTexto = (html: string) =>
+  html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+
+// Texto exacto de la casilla del quiz de 1000X (demos/auditorias/1000x/index.html, label.optin): queda guardado
+// con cada lead como prueba de qué aceptó, porque la casilla es propia del quiz y no la del registro legal común.
+const CASILLA_1000X = "Acepto recibir mi diagnóstico y que el equipo de 1000X me escriba por WhatsApp o DM. Entiendo que esto es educación, no asesoría financiera.";
 
 // --- Handler -----------------------------------------------------------------
 
@@ -281,17 +330,83 @@ export async function POST(req: NextRequest) {
   const tracking = (body.tracking ?? {}) as Record<string, unknown>;
   const cuenta = CUENTAS[marca];
   if (!cuenta) return json({ error: "marca-invalida" }, 400);
-  if (evento !== "lead" && evento !== "resultado") return json({ error: "evento-invalido" }, 400);
-  if (!emailOk(datos.email) || !String(datos.nombre ?? "").trim()) {
+  // "aplicacion" (pedir la llamada después del resultado) solo existe en el embudo de 1000X.
+  if (evento !== "lead" && evento !== "resultado" && !(evento === "aplicacion" && marca === "1000x")) return json({ error: "evento-invalido" }, 400);
+  if (!emailOk(datos.email) || String(datos.email).length > 254 || !String(datos.nombre ?? "").trim()) {
     return json({ error: "lead-incompleto" }, 400);
   }
-  if (!cuenta.token) return json({ error: "sin-token-pipedrive" }, 503);
-  const token = cuenta.token;
 
   const nombre = String(datos.nombre).trim().slice(0, 120);
   const email = String(datos.email).trim().toLowerCase();
   const telefono = String(datos.telefonoCompleto ?? datos.telefono ?? "").trim().slice(0, 40);
   const negocio = String(datos.negocio ?? "").trim().slice(0, 120);
+
+  // 1000X: sin Pipedrive ni ActiveCampaign (no hay registro de consentimiento de marketing todavía). El lead va
+  // directo a Leads (Pulse), marca 1000x. Si falla, 502: es la única copia del dato.
+  if (marca === "1000x") {
+    // Endpoint público (CORS *): todo lo que viene del navegador se acota antes de guardarse.
+    const r = body.resultado && typeof body.resultado === "object" ? (body.resultado as Record<string, unknown>) : {};
+    const txt = (v: unknown, n = 60) => (v == null ? null : String(v).slice(0, n));
+    const num = (v: unknown) => (Number.isFinite(Number(v)) && v !== null && v !== "" ? Number(v) : null);
+    const instagram = negocio.replace(/^@+/, "");
+    const principal = String(body.principalNombre ?? body.cuelloNombre ?? "").slice(0, 60);
+    const ap = body.aplicacion && typeof body.aplicacion === "object" ? (body.aplicacion as Record<string, unknown>) : {};
+    const aplicacion = {
+      disponibilidad: txt(ap.disponibilidad, 10),
+      inversion: txt(ap.inversion, 20),
+      horario: txt(ap.horario, 20),
+      expectativas: txt(ap.expectativas, 600),
+      enviadaEn: new Date().toISOString(),
+    };
+    const extra =
+      evento === "resultado"
+        ? {
+            resultadoQuiz: `${principal} · ${num(r.score) ?? "?"}/100`.slice(0, 160),
+            quiz1000x: {
+              area: txt(r.principal), secundaria: txt(r.secundario), score: num(r.score),
+              experiencia: txt(datos.experiencia, 10), fondeo: txt(datos.fondeo, 20), dificultad: txt(datos.cuello, 20),
+              objetivo: txt(datos.objetivo, 20), bots: txt(datos.bots, 20), acompanamiento: txt(datos.acompanamiento, 20),
+            },
+          }
+        : evento === "aplicacion"
+        ? { aplicacion }
+        : {
+            consentimiento: {
+              texto: CASILLA_1000X,
+              aceptadoEn: new Date().toISOString(),
+              ip: (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || null,
+              navegador: (req.headers.get("user-agent") ?? "").slice(0, 200) || null,
+              pagina: tracking.landing_url ? String(tracking.landing_url).slice(0, 300) : null,
+            },
+          };
+    try {
+      const lead = await leadQuiz1000x({
+        nombre,
+        email,
+        telefono,
+        instagram,
+        utm: tracking.utm_source ? String(tracking.utm_source).slice(0, 80) : null,
+        nota: aTexto(
+          evento === "lead"
+            ? notaLead(marca, { ...datos, telefonoCompleto: telefono }, tracking)
+            : evento === "aplicacion"
+            ? `<b>Diagnóstico 1000X — PIDIÓ LLAMADA</b><br>` +
+              `Inversión: ${esc(et(X_OPC, "inversion", aplicacion.inversion))} · Disponibilidad: ${esc(et(X_OPC, "disponibilidad", aplicacion.disponibilidad))} · Mejor horario: ${esc(et(X_OPC, "horario", aplicacion.horario))}<br>` +
+              (aplicacion.expectativas ? `Qué espera: "${esc(aplicacion.expectativas)}"<br>` : "") +
+              `Área a mejorar: ${esc(principal)} · Dificultad: ${esc(et(X_OPC, "cuello", datos.cuello))} · Objetivo 90 días: ${esc(et(X_OPC, "objetivo", datos.objetivo))}`
+            : notaResultado(marca, datos, r, principal),
+        ).slice(0, 4000),
+        datos: extra,
+      });
+      return json({ ok: true, leadId: lead.id, creado: lead.nuevo });
+    } catch (e) {
+      console.error("[auditoria] leads 1000x:", e instanceof Error ? e.message : e);
+      return json({ error: "leads" }, 502);
+    }
+  }
+
+  if (!cuenta.token) return json({ error: "sin-token-pipedrive" }, 503);
+  const token = cuenta.token;
   const titulo = `${cuenta.titulo} — ${negocio || nombre}`;
 
   try {
@@ -339,8 +454,8 @@ export async function POST(req: NextRequest) {
     // Nota
     // ActiveCampaign: la base del ecosistema. Entra con tags de marca, origen y resultado.
     // No-op sin ACTIVECAMPAIGN_*; nunca rompe el flujo del quiz.
-    // Shadow y 1000X solo entran a AC si tienen lista propia configurada.
-    const acConLista = { "shadow-operator": process.env.AC_LISTA_SO, "1000x": process.env.AC_LISTA_1000X } as Record<string, string | undefined>;
+    // Shadow y Elvin solo entran a AC si tienen lista propia configurada (1000X no pasa por aquí: ver arriba).
+    const acConLista = { "shadow-operator": process.env.AC_LISTA_SO, "elvin-escalar": process.env.AC_LISTA_ELVIN } as Record<string, string | undefined>;
     if (!(marca in acConLista) || acConLista[marca]) {
       const tagsAC = [`origen:quiz`, `quiz:${evento}`];
       if (evento === "resultado" && body.resultado && typeof body.resultado === "object") {

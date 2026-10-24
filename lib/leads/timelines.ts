@@ -7,7 +7,7 @@ import type { Marca } from "./reglas";
 // API: https://timelines.ai/docs · 50 req/min · webhooks sin firma → secreto en la URL.
 const BASE = "https://app.timelines.ai/integrations/api";
 
-export const tokenTimelines = (m: Marca) => (m === "level_up" ? process.env.TIMELINES_TOKEN_LU : process.env.TIMELINES_TOKEN_AIB) ?? "";
+export const tokenTimelines = (m: Marca) => (m === "level_up" ? process.env.TIMELINES_TOKEN_LU : m === "ai_borinquen" ? process.env.TIMELINES_TOKEN_AIB : undefined) ?? ""; // 1000X: sin WhatsApp todavía
 export const timelinesListo = (m: Marca) => Boolean(tokenTimelines(m));
 
 async function llamar<T>(m: Marca, metodo: "GET" | "POST", ruta: string, body?: unknown): Promise<{ ok: boolean; status: number; data?: T; error?: string }> {
