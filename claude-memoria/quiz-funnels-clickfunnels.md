@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: e26a1275-d67c-452e-b898-af4533d0dd8e
-  modified: 2026-10-24T18:17:17.303Z
+  modified: 2026-10-24T18:57:30.778Z
 ---
 
 Auditorías interactivas tipo Content Capital (Ramiro) construidas el 12/sep/2026 en
@@ -111,7 +111,7 @@ Shadow NO tiene pixel de Meta (los `fbq` del quiz no disparan nada).
 engines" está APAGADO en el hub (decidir si indexarlo), y el copy de `/ia` y del funnel de AIB dice "recuperar clientes… en los primeros
 21 días" (el plazo real es 15 días + optimización 16-45, ver [[aib-autoflow-plazos]]) — corregir con el OK de Elvin.
 
-**1000X — quiz "Diagnóstico de Trader" (24/oct/2026, en preparación, NO está en vivo):** Elvin eligió: leads a **Pulse Leads, marca `1000x` aislada**
+**1000X — quiz "Diagnóstico de Trader" (24/oct/2026, EN VIVO en https://www.x1000trade.com/diagnostico; deploy, DNS, dominio en CF y prueba e2e hechos; solo falta el usuario de Pulse):** Elvin eligió: leads a **Pulse Leads, marca `1000x` aislada**
 (Pipedrive descartado), CTA final **ninguno por ahora** (botones ocultos), dominio **`x1000trade.com`** (GoDaddy; tiene correo Microsoft 365: no tocar
 MX/TXT/autodiscover, solo `www` CNAME → us-east-shard-3.myclickfunnels.com + TXT de verificación de CF). Código listo y probado (478 tests, tsc
 limpio): `lib/leads/{reglas,repo,cables,timelines}.ts`, `app/api/auditoria/route.ts` (rama `1000x`), `demos/auditorias/1000x/{index,cf-snippet}.html`,
