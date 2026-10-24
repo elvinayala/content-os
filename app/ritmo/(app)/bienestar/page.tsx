@@ -1,8 +1,9 @@
-import { Flame, HeartPulse, Users } from "lucide-react";
+import { Flame, HeartPulse, Users, UsersRound } from "lucide-react";
 
 import { Animo, BarrasSemana, NuevaActividad, PausaActiva } from "@/components/ritmo/bienestar";
 import { MuroComunidad, TableroComunidad, UnirseComunidad } from "@/components/ritmo/comunidad";
 import { Tarjeta } from "@/components/ritmo/piezas";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { esVisible, feedComunidad, hoyPR, miembrosComunidad, personasActivas, registrosDe, registrosEquipo } from "@/lib/desempeno/bienestar";
 import { ANIMOS, equipoSemana, META_SEMANAL_MIN, MIN_RESPUESTAS_ANIMO, miSemana, rutinaDelDia, semanaDe, tableroComunidad } from "@/lib/desempeno/bienestar-reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -48,7 +49,7 @@ export default async function BienestarPage() {
             </div>
             <div className="flex flex-col gap-2">
               <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Tablero de la semana</p>
-              {tablero.length ? <TableroComunidad filas={tablero} yo={u.id} /> : <div className="panel p-6 text-center text-sm text-muted-foreground">Nadie se ha unido todavía.</div>}
+              {tablero.length ? <TableroComunidad filas={tablero} yo={u.id} /> : <EstadoVacio icono={UsersRound} titulo="Nadie se ha unido todavía" className="panel" compacto>{visible ? "Cuando alguien más se una y anote su actividad, sale aquí." : "Únete arriba y sé la primera persona en el tablero de la semana."}</EstadoVacio>}
             </div>
           </div>
         ) : null}

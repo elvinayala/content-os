@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, PhoneOff } from "lucide-react";
 import { toast } from "sonner";
 
-import { resincronizarLlamadasAction } from "@/app/portal/[slug]/actions";
+import { consentirGrabacionAction, resincronizarLlamadasAction } from "@/app/portal/[slug]/actions";
 import { Button } from "@/components/ui/button";
+import { LEGAL } from "@/lib/legal/versiones";
 
 type Estado = "listo" | "conectando" | "en-llamada" | "error";
 interface RetellUpdate {
@@ -23,6 +24,8 @@ interface RetellClient {
 export function ProbarVoz({ slug, agentId, asistente }: { slug: string; agentId: string; asistente: string }) {
   const [estado, setEstado] = useState<Estado>("listo");
   const [lineas, setLineas] = useState<{ role: string; content: string }[]>([]);
+  // Aviso de IA + grabación: casilla sin marcar; se registra en el servidor antes de pedir el token de la llamada.
+  const [acepto, setAcepto] = useState(false);
   const cliente = useRef<RetellClient | null>(null);
 
   useEffect(() => () => cliente.current?.stopCall(), []);
@@ -31,6 +34,8 @@ export function ProbarVoz({ slug, agentId, asistente }: { slug: string; agentId:
     setEstado("conectando");
     setLineas([]);
     try {
+      const ok = await consentirGrabacionAction(slug, acepto);
+      if (!ok.ok) throw new Error(ok.error);
       // Import dinámico fuera del bundler (Turbopack/webpack no lo analizan).
       const importar = new Function("u", "return import(u)") as (u: string) => Promise<{ RetellWebClient: new () => RetellClient }>;
       const mod = await importar("https://esm.sh/retell-client-js-sdk");
@@ -69,13 +74,26 @@ export function ProbarVoz({ slug, agentId, asistente }: { slug: string; agentId:
 
   return (
     <div className="space-y-3">
+      {estado !== "en-llamada" ? (
+        <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-border/60 p-3 text-xs leading-relaxed text-muted-foreground transition-colors hover:border-primary/40">
+          <input type="checkbox" checked={acepto} onChange={(e) => setAcepto(e.target.checked)} className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]" />
+          {/* Mismo texto que CASILLAS.grabacionLlamada (lib/legal/versiones.ts). */}
+          <span>
+            Entiendo que voy a hablar con un agente de inteligencia artificial y que la llamada se graba y se transcribe para
+            mostrarla en este portal.{" "}
+            <a href={`${LEGAL.privacidad.ruta}#datos`} target="_blank" rel="noopener" className="font-medium text-primary underline underline-offset-4 hover:opacity-80">
+              Privacidad
+            </a>
+          </span>
+        </label>
+      ) : null}
       <div className="flex flex-wrap items-center gap-2">
         {estado === "en-llamada" ? (
           <Button variant="destructive" onClick={terminar}>
             <PhoneOff className="size-4" /> Colgar
           </Button>
         ) : (
-          <Button onClick={llamar} disabled={estado === "conectando"}>
+          <Button onClick={llamar} disabled={estado === "conectando" || !acepto}>
             <Mic className="size-4" /> {estado === "conectando" ? "Conectando…" : `Llamar a ${asistente} ahora`}
           </Button>
         )}

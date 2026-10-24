@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, EyeOff, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { ExternalLink, EyeOff, Loader2, Pencil, Plus, SearchX, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { borrarEmpresaAction, guardarEmpresaAction } from "@/app/ritmo/actions";
 import { AvatarRitmo } from "@/components/ritmo/avatar";
 import { EmpresaBadge } from "@/components/ritmo/piezas";
 import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -180,7 +181,7 @@ function EditorEmpresa({ inicial, seccion, onCerrar }: { inicial?: ItemEmpresa; 
             Cancelar
           </Button>
           <Button onClick={guardar} disabled={guardando || titulo.trim().length < 2}>
-            {guardando ? <Loader2 className="animate-spin" /> : null} Guardar
+            {guardando ? <Loader2 className="animate-spin" /> : null} {guardando ? "Guardando…" : "Guardar"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -221,7 +222,23 @@ export function Directorio({ personas, maestro, yo }: { personas: Persona[]; mae
           </div>
         </section>
       ))}
-      {!lista.length ? <div className="panel p-6 text-center text-sm text-muted-foreground">No hay nadie con ese nombre.</div> : null}
+      {!lista.length ? (
+        <EstadoVacio
+          icono={SearchX}
+          tipo={q ? "filtro" : "inicio"}
+          titulo={q ? "No hay nadie con ese nombre" : "Todavía no hay nadie en el directorio"}
+          className="panel"
+          accion={
+            q ? (
+              <Button variant="outline" className="rounded-full" onClick={() => setQ("")}>
+                Limpiar búsqueda
+              </Button>
+            ) : null
+          }
+        >
+          {q ? "Prueba con otro nombre, puesto o departamento." : null}
+        </EstadoVacio>
+      ) : null}
     </div>
   );
 }

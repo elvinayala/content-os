@@ -1,9 +1,10 @@
-import { AlertTriangle, ChevronLeft, ChevronRight, ThumbsDown, ThumbsUp, TrendingUp } from "lucide-react";
+import { AlertTriangle, BarChart3, CalendarClock, ChevronLeft, ChevronRight, ThumbsDown, ThumbsUp, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Hora } from "@/components/ritmo/hora-local";
 import { EmpresaBadge, EstadoChip, FiltroEmpresa } from "@/components/ritmo/piezas";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { armarPanel, type FilaPersona } from "@/lib/desempeno/datos";
 import { PUESTOS_CARILIN, rankingMes, textoAlerta } from "@/lib/desempeno/ranking";
 import { alertasDeRendimiento } from "@/lib/desempeno/reporte-dia-datos";
@@ -125,6 +126,11 @@ async function VistaAyer({ u, hoy, ayer, empresa }: { u: Usuario; hoy: string; a
           </ul>
         </section>
       ))}
+      {!filas.length ? (
+        <EstadoVacio icono={Users} tipo={empresa ? "filtro" : "inicio"} titulo={empresa ? "Nadie de esa empresa en Desempeño" : "Todavía no hay nadie en Desempeño"} className="panel">
+          {empresa ? "Cambia la empresa arriba para ver al resto del equipo." : "Cuando el equipo tenga perfil (puesto, líder y horario), aquí sale lo de ayer de cada persona."}
+        </EstadoVacio>
+      ) : null}
     </>
   );
 }
@@ -191,7 +197,12 @@ async function VistaMes({ u, ayer, mes, empresa, href }: { u: Usuario; ayer: str
   const fin = ultimoDia(mes);
   const hasta = fin < ayer ? fin : ayer;
   const actual = ayer.slice(0, 7);
-  if (desde > hasta) return <p className="panel p-6 text-center text-sm text-muted-foreground">Todavía no hay datos de {nombreMes(mes)}.</p>;
+  if (desde > hasta)
+    return (
+      <EstadoVacio icono={CalendarClock} titulo={`Todavía no hay datos de ${nombreMes(mes)}`} className="panel">
+        El ranking del mes cuenta hasta ayer: mañana sale el primer día.
+      </EstadoVacio>
+    );
   const panel = await armarPanel(u, desde, hasta);
   const filas = panel.filas.filter((f) => !empresa || f.perfil.empresa === empresa);
   const ranking = rankingMes(personasRank(filas));
@@ -199,15 +210,19 @@ async function VistaMes({ u, ayer, mes, empresa, href }: { u: Usuario; ayer: str
   return (
     <>
       <div className="flex flex-wrap items-center gap-3">
-        <Link href={href({ m: mesMas(mes, -1) })} className="rounded-full border border-border p-1.5 text-muted-foreground hover:text-foreground" aria-label="Mes anterior"><ChevronLeft className="size-4" /></Link>
+        <Link href={href({ m: mesMas(mes, -1) })} className="rounded-full border border-border p-1.5 text-muted-foreground transition-colors hover:bg-white/[0.05] hover:text-foreground" aria-label="Mes anterior"><ChevronLeft className="size-4" /></Link>
         <h2 className="text-lg font-semibold">{nombreMes(mes)}</h2>
-        {mes < actual ? <Link href={href({ m: mesMas(mes, 1) })} className="rounded-full border border-border p-1.5 text-muted-foreground hover:text-foreground" aria-label="Mes siguiente"><ChevronRight className="size-4" /></Link> : null}
+        {mes < actual ? <Link href={href({ m: mesMas(mes, 1) })} className="rounded-full border border-border p-1.5 text-muted-foreground transition-colors hover:bg-white/[0.05] hover:text-foreground" aria-label="Mes siguiente"><ChevronRight className="size-4" /></Link> : null}
         <span className="text-sm text-muted-foreground">{mes === actual ? `hasta ayer (${largo(hasta).toLowerCase()})` : "mes completo"}</span>
       </div>
       <p className="text-xs text-muted-foreground">
         Índice de productividad: 30 % asistencia (puntualidad) · 20 % constancia (anotó sus KPIs al salir) · 50 % producción (sus KPIs comparados con el mejor de su mismo puesto). Sin KPIs en su puesto, cuenta solo la asistencia.
       </p>
-      {!ranking.length ? <p className="panel p-6 text-center text-sm text-muted-foreground">No hay datos para este mes.</p> : null}
+      {!ranking.length ? (
+        <EstadoVacio icono={BarChart3} tipo={empresa ? "filtro" : "inicio"} titulo={`No hay datos de ${nombreMes(mes)}`} className="panel">
+          {empresa ? "Nadie de esa empresa tiene días medidos este mes. Cambia la empresa arriba o mira otro mes." : "Nadie tiene días medidos este mes. Usa las flechas para ver otro mes."}
+        </EstadoVacio>
+      ) : null}
       <ol className="flex flex-col gap-3">
         {ranking.map((f) => (
           <li key={f.id} className="panel p-4">

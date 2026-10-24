@@ -104,7 +104,7 @@ export function MiGoal({ goal, mes }: { goal: number | null; mes: number }) {
       <div className="flex gap-2">
         <Input className="h-10" inputMode="numeric" placeholder="50000" value={monto} onChange={(e) => setMonto(soloNum(e.target.value))} />
         <Button className="h-10 rounded-full" onClick={guardar} disabled={guardando || !monto}>
-          {guardando ? <Loader2 className="animate-spin" /> : <Target className="size-4" />} Guardar
+          {guardando ? <Loader2 className="animate-spin" /> : <Target className="size-4" />} {guardando ? "Guardando…" : "Guardar"}
         </Button>
       </div>
     </div>

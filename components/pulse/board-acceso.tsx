@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -81,7 +81,7 @@ export function BoardAcceso({ open, onOpenChange, esAdmin = true, yo }: { open: 
             Cancelar
           </Button>
           <Button onClick={guardar} disabled={guardando}>
-            Guardar
+            {guardando ? <><Loader2 className="animate-spin" /> Guardando…</> : "Guardar"}
           </Button>
         </div>
       </DialogContent>

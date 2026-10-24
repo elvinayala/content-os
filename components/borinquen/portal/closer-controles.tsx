@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Download, Plus } from "lucide-react";
+import { Download, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { cambiarPortalAction, crearPortalDesdeDemoAction, importarHistorialAction } from "@/app/borinquen/portales/actions";
@@ -26,7 +26,7 @@ export function CrearPortalBoton({ slug }: { slug: string }) {
         })
       }
     >
-      <Plus className="size-4" /> {pendiente ? "Creando…" : "Crear portal"}
+      {pendiente ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />} {pendiente ? "Creando…" : "Crear portal"}
     </Button>
   );
 }

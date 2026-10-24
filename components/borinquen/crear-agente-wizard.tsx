@@ -7,6 +7,7 @@ import {
   ArrowRight,
   AudioLines,
   Check,
+  Loader2,
   MessageSquare,
   Sparkles,
 } from "lucide-react";
@@ -218,7 +219,7 @@ export function CrearAgenteWizard({
                 <Textarea
                   value={ent.conversaciones}
                   onChange={(e) => setE("conversaciones", e.target.value)}
-                  placeholder={"Pegá chats o llamadas reales para que copie el estilo.\nCliente: cuánto un corte?\nNegocio: $15 con diseño. ¿Te agendo hoy?"}
+                  placeholder={"Pega chats o llamadas reales para que copie el estilo.\nCliente: cuánto un corte?\nNegocio: $15 con diseño. ¿Te agendo hoy?"}
                   rows={5}
                 />
               </Campo>
@@ -311,6 +312,7 @@ export function CrearAgenteWizard({
               </Button>
             ) : (
               <Button onClick={crear} disabled={pendiente}>
+                {pendiente ? <Loader2 className="size-4 animate-spin" /> : null}
                 {pendiente ? "Creando…" : "Crear y entrenar"}
               </Button>
             )}

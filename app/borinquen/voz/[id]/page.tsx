@@ -132,7 +132,7 @@ export default async function AgenteVozPage({
             {transcriptos.length === 0 ? (
               <Card className="bg-gradient-to-b from-card to-background/40">
                 <CardContent className="p-6 text-sm text-muted-foreground">
-                  Todavía no hay llamadas transcriptas para este agente.
+                  Todavía no hay llamadas transcritas para este agente. Llámalo de prueba y en uno o dos minutos ves aquí la conversación.
                 </CardContent>
               </Card>
             ) : (

@@ -52,7 +52,7 @@ export function UnirseComunidad({ visible, miembros = 0 }: { visible: boolean; m
         <p className="text-sm text-muted-foreground">Únete para escribirle a tus compañeros, comentar, celebrar los logros de todos y aparecer en el tablero de la semana. Es opcional: puedes salir cuando quieras y tu energía del día nunca se comparte.</p>
       </div>
       <Button className="h-10 rounded-full" onClick={() => cambiar(true)} disabled={cargando}>
-        {cargando ? <Loader2 className="animate-spin" /> : null} Unirme
+        {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Uniéndote…" : "Unirme"}
       </Button>
     </div>
   );
@@ -128,7 +128,7 @@ export function MuroComunidad({ items, yo, maestro, puedeEscribir, miembros = []
               {texto.length}/{MAX_MENSAJE}
             </span>
             <Button size="sm" className="rounded-full" onClick={publicar} disabled={enviando || texto.trim().length < 2}>
-              {enviando ? <Loader2 className="animate-spin" /> : <Send className="size-3.5" />} Publicar
+              {enviando ? <Loader2 className="animate-spin" /> : <Send className="size-3.5" />} {enviando ? "Publicando…" : "Publicar"}
             </Button>
           </div>
         </div>

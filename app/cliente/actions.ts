@@ -50,3 +50,20 @@ export async function confirmarSubidaAction(p: { ruta: string; nombre: string })
     return {};
   });
 }
+
+// Términos y privacidad de la app (24/oct/2026): dos casillas separadas, sin marcar, obligatorias la primera vez (y
+// cada vez que sube la versión). Se registra desde el servidor; la vista previa del equipo no acepta por el cliente.
+export async function aceptarLegalClienteAction(p: { terminos: boolean; privacidad: boolean }): Promise<R> {
+  return envolver(async () => {
+    const v = await visorActual();
+    if (!v || v.modo !== "cliente") throw new Error("Solo desde la app del cliente");
+    if (!p.terminos || !p.privacidad) throw new Error("Marca las dos casillas para seguir");
+    const { registrarConsentimiento } = await import("@/lib/legal/consentimiento");
+    const { CASILLAS, LEGAL } = await import("@/lib/legal/versiones");
+    const persona = `cliente:${v.itemId}`;
+    const ok1 = await registrarConsentimiento({ persona, tipo: "terminos_app", version: LEGAL.terminos.version, textoCasilla: CASILLAS.terminosApp, origen: "/cliente" });
+    const ok2 = await registrarConsentimiento({ persona, tipo: "privacidad_app", version: LEGAL.privacidad.version, textoCasilla: CASILLAS.privacidadApp, origen: "/cliente" });
+    if (!ok1 || !ok2) throw new Error("No pudimos guardar tu aceptación. Intenta de nuevo en un momento.");
+    return {};
+  });
+}

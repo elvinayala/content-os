@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { completarFichaAction } from "@/app/ritmo/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LEGAL } from "@/lib/legal/versiones";
 import { cn } from "@/lib/utils";
 
 import { BotonSubir } from "./subir";
@@ -32,10 +33,11 @@ export function FormBienvenida({ userId, tieneFoto, ids, contratos, inicial }: {
   const router = useRouter();
   const [v, setV] = useState<Datos>({ telefono: "", telefonoAlterno: "", ciudad: "", pais: "", documentoTipo: "Cédula", documentoNumero: "", contactoEmergencia: "", ...Object.fromEntries(Object.entries(inicial ?? {}).filter(([, x]) => x)) });
   const [cargando, setCargando] = useState(false);
+  const [leiAviso, setLeiAviso] = useState(false);
   const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement>) => setV((x) => ({ ...x, [k]: e.target.value }));
   const terminar = async () => {
     setCargando(true);
-    const r = await completarFichaAction(v);
+    const r = await completarFichaAction({ ...v, leiAviso });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, { className: "ritmo" });
     toast.success("¡Listo! Tu ficha quedó completa", { className: "ritmo" });
@@ -74,8 +76,19 @@ export function FormBienvenida({ userId, tieneFoto, ids, contratos, inicial }: {
           {contratos ? <span className="flex items-center gap-1 text-xs text-primary"><Check className="size-3.5" /> Subido</span> : <span className="text-xs text-muted-foreground">Si ya lo tienes firmado.</span>}
         </div>
       </section>
-      <Button onClick={terminar} disabled={cargando} className="h-12 rounded-full text-base font-semibold">
-        {cargando ? <Loader2 className="animate-spin" /> : <Check />} Terminar mi ficha
+      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-white/[0.02] p-4 text-sm leading-relaxed transition-colors hover:border-primary/40">
+        <input type="checkbox" checked={leiAviso} onChange={(e) => setLeiAviso(e.target.checked)} className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]" required />
+        {/* Mismo texto que CASILLAS.privacidadEmpleado (lib/legal/versiones.ts), con el enlace al aviso. */}
+        <span>
+          Leí el{" "}
+          <a href={LEGAL.privacidadEquipo.ruta} target="_blank" rel="noopener" className="font-medium text-primary underline underline-offset-4 hover:opacity-80">
+            Aviso de privacidad del equipo
+          </a>{" "}
+          y entiendo qué datos guarda Ritmo y quién los ve. <span className="text-[color:var(--coral)]">*</span>
+        </span>
+      </label>
+      <Button onClick={terminar} disabled={cargando || !leiAviso} className="h-12 rounded-full text-base font-semibold">
+        {cargando ? <Loader2 className="animate-spin" /> : <Check />} {cargando ? "Guardando…" : "Terminar mi ficha"}
       </Button>
     </div>
   );

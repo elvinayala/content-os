@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 
 export const metadata = { title: "Asistentes de Chat · AI Borinquen" };
 export const dynamic = "force-dynamic";
@@ -34,6 +35,23 @@ export default async function ChatPage() {
       </PageHeader>
 
       <main className="flex-1 p-4 sm:p-6">
+        {asistentes.length === 0 ? (
+          <Card className="bg-gradient-to-b from-card to-background/40">
+            <EstadoVacio
+              icono={MessageSquare}
+              titulo="Todavía no tienes asistentes de chat"
+              accion={
+                <Button size="sm" asChild>
+                  <Link href="/borinquen/crear?tipo=chat">
+                    <Plus className="size-4" /> Crear asistente
+                  </Link>
+                </Button>
+              }
+            >
+              Crea uno y entrénalo con la info del negocio para que conteste WhatsApp, Instagram y web.
+            </EstadoVacio>
+          </Card>
+        ) : null}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {asistentes.map((a) => {
             const est = ESTADO[a.estado];

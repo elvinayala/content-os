@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { useBoard, useBoardActions, useGruposVisibles } from "@/components/pulse/board-provider";
+import { BoardSinResultados } from "@/components/pulse/board-sin-resultados";
 import { ItemCard } from "@/components/pulse/item-card";
 import { StatusPill } from "@/components/pulse/status-pill";
 import { cssColor } from "@/lib/pulse/colores";
@@ -106,6 +107,7 @@ export function BoardKanban() {
         </div>
         <DragOverlay>{activo ? <ItemCard item={activo} columns={s.columns.filter(columnaVisible)} usuarios={s.usuarios} arrastrando className="w-64" /> : null}</DragOverlay>
       </DndContext>
+      <BoardSinResultados total={visibles.length} className="absolute inset-x-4 top-28 z-20 mx-auto max-w-md rounded-xl border bg-background shadow-sm" />
     </div>
   );
 }
@@ -143,9 +145,16 @@ function ColumnaKanban({ id, titulo, color, items, suma, formato }: { id: string
 
 function TarjetaArrastrable({ item, colorGrupo }: { item: Item; colorGrupo: string }) {
   const s = useBoard();
+  const { abrirItem } = useBoardActions();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id });
   return (
-    <div ref={setNodeRef} {...listeners} {...attributes} className={cn("touch-none", isDragging && "opacity-30")}>
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      onKeyDown={(e) => e.key === "Enter" && abrirItem(item.id)}
+      className={cn("touch-none rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring", isDragging && "opacity-30")}
+    >
       <ItemCard item={item} columns={s.columns.filter(columnaVisible)} usuarios={s.usuarios} colorGrupo={colorGrupo} />
     </div>
   );

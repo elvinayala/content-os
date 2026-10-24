@@ -149,7 +149,7 @@ export function NuevaNoticia({ personas }: { personas: { id: string; nombre: str
           </div>
           <DialogFooter>
             <Button onClick={publicar} disabled={cargando} className="h-11 rounded-full px-6">
-              {cargando ? <Loader2 className="animate-spin" /> : null} Publicar
+              {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Publicando…" : "Publicar"}
             </Button>
           </DialogFooter>
         </DialogContent>

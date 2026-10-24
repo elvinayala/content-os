@@ -17,6 +17,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 
 export const metadata = { title: "Inicio · AI Borinquen" };
 export const dynamic = "force-dynamic";
@@ -28,9 +29,9 @@ const ESTADO: Record<EstadoAgenteVoz, string> = {
 };
 
 const PASOS = [
-  { icon: Wand2, titulo: "Elegí el tipo", desc: "Voz o chat, según cómo te escriben tus clientes." },
-  { icon: UploadCloud, titulo: "Entrenalo", desc: "Dale la info del negocio y pegá conversaciones reales." },
-  { icon: Sparkles, titulo: "Publicá", desc: "Sale a atender 24/7 con tu tono y tus respuestas." },
+  { icon: Wand2, titulo: "Elige el tipo", desc: "Voz o chat, según cómo te escriben tus clientes." },
+  { icon: UploadCloud, titulo: "Entrénalo", desc: "Dale la info del negocio y pega conversaciones reales." },
+  { icon: Sparkles, titulo: "Publícalo", desc: "Sale a atender 24/7 con tu tono y tus respuestas." },
 ];
 
 export default async function InicioPage() {
@@ -86,10 +87,10 @@ export default async function InicioPage() {
             <div>
               <p className="label-mono text-primary">AI Borinquen</p>
               <h1 className="mt-1 max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl">
-                Creá tu agente de IA en minutos
+                Crea tu agente de IA en minutos
               </h1>
               <p className="mt-2 max-w-lg text-muted-foreground">
-                Elegí voz o chat, dale la info de tu negocio y sale a atender a
+                Elige voz o chat, dale la info de tu negocio y sale a atender a
                 tus clientes con tu tono — sin bajar la calidad.
               </p>
             </div>
@@ -148,6 +149,24 @@ export default async function InicioPage() {
                   {agentes.length} en total
                 </span>
               </div>
+              {agentes.length === 0 ? (
+                <Card className="bg-gradient-to-b from-card to-background/40">
+                  <EstadoVacio
+                    compacto
+                    icono={Sparkles}
+                    titulo="Todavía no tienes agentes"
+                    accion={
+                      <Button size="sm" asChild>
+                        <Link href="/borinquen/crear">
+                          <Plus className="size-4" /> Crear tu primer agente
+                        </Link>
+                      </Button>
+                    }
+                  >
+                    Elige voz o chat arriba y en unos minutos lo tienes atendiendo.
+                  </EstadoVacio>
+                </Card>
+              ) : null}
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {agentes.slice(0, 6).map((a) => (
                   <Link key={a.id} href={a.href} className="block">

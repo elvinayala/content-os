@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { FormularioPublico } from "@/components/formularios/formulario-publico";
 import { formularioPorSlug } from "@/lib/formularios/repo";
-import { temaDe } from "@/lib/formularios/reglas";
+import { casillasFormulario, temaDe } from "@/lib/formularios/reglas";
 import { usuarioActual } from "@/lib/pulse/auth";
 
 export const dynamic = "force-dynamic";
@@ -41,5 +41,5 @@ export default async function FormularioPagina({ params, searchParams }: Props) 
     );
   }
   const origen = [sp.utm_source, sp.origen].find((x) => typeof x === "string") as string | undefined;
-  return <FormularioPublico slug={f.slug} config={f.config} tema={tema} previa={previa} origen={origen} />;
+  return <FormularioPublico slug={f.slug} config={f.config} tema={tema} previa={previa} origen={origen} casillas={casillasFormulario(f)} />;
 }

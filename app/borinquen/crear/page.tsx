@@ -17,7 +17,7 @@ export default async function CrearPage({
     <>
       <PageHeader
         titulo="Crear agente"
-        descripcion="Elegí voz o chat, entrenalo con la info de tu negocio y sale a trabajar."
+        descripcion="Elige voz o chat, entrénalo con la info de tu negocio y sale a trabajar."
       />
       <main className="flex-1 p-4 sm:p-6">
         <CrearAgenteWizard tipoInicial={tipoInicial} />

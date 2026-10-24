@@ -138,7 +138,7 @@ export function NuevaSolicitud({ tipos, saldo, dias, minVacaciones }: { tipos: T
       {tipo && ["vacaciones", "dia_libre"].includes(tipo.id) && saldo ? <p className="text-xs text-[color:var(--coral)]">{saldo}</p> : null}
       <Textarea rows={3} maxLength={2000} value={v.detalle} onChange={(e) => setV((x) => ({ ...x, detalle: e.target.value }))} placeholder={tipo?.id === "cita_medica" ? "Hora de la cita y médico o especialidad (ej.: 2:00 PM, dentista)" : "Explica brevemente (motivo, a quién va dirigida la carta, horario del permiso…)"} />
       <Button onClick={enviar} disabled={cargando || !v.tipo || !!visible.error} className="h-12 rounded-full text-base">
-        {cargando ? <Loader2 className="animate-spin" /> : <Send />} Enviar solicitud
+        {cargando ? <Loader2 className="animate-spin" /> : <Send />} {cargando ? "Enviando…" : "Enviar solicitud"}
       </Button>
     </div>
   );
@@ -234,8 +234,8 @@ export function TarjetaSolicitud({ s, tipos }: { s: SolicitudUI; tipos: Tipo[] }
           </div>
         </div>
       ) : s.mia && ["supervisor", "rrhh"].includes(s.estado) ? (
-        <button type="button" onClick={cancelar} disabled={!!cargando} className="self-start text-xs text-muted-foreground hover:text-foreground">
-          Cancelar solicitud
+        <button type="button" onClick={cancelar} disabled={!!cargando} className="self-start rounded text-xs text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50">
+          {cargando === "x" ? "Cancelando…" : "Cancelar solicitud"}
         </button>
       ) : null}
     </div>

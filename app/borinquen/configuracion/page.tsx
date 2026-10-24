@@ -78,7 +78,7 @@ export default async function ConexionesPage() {
                 {claves.map((c) => (
                   <li
                     key={c.env}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted/40"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/40"
                   >
                     <span
                       className="grid size-6 shrink-0 place-items-center rounded-full"
@@ -106,7 +106,7 @@ export default async function ConexionesPage() {
           <p className="mt-3 text-xs text-muted-foreground">
             Las keys van a{" "}
             <code className="rounded bg-muted px-1 py-0.5 font-mono">.env.local</code>{" "}
-            (nunca al repo). Reiniciá el server para tomarlas.
+            (nunca al repo). Reinicia el server para tomarlas.
           </p>
         </section>
       </main>

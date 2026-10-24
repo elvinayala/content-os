@@ -160,7 +160,7 @@ export function ReporteDiario({ manual, hoy, ayer, repHoy, repAyer }: { manual: 
           </div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={guardar} disabled={cargando} className="h-11 rounded-full px-8">
-              {cargando ? <Loader2 className="animate-spin" /> : null} {actual ? "Guardar cambios" : "Enviar mi reporte"}
+              {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Guardando…" : actual ? "Guardar cambios" : "Enviar mi reporte"}
             </Button>
             {actual ? (
               <Button variant="ghost" onClick={() => cambiarFecha(fecha)} className="h-11 rounded-full px-5">

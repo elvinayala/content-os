@@ -101,7 +101,7 @@ export function AppClientePanel({ itemId }: { itemId: string }) {
           <div className="flex gap-2">
             <Input value={slack} onChange={(x) => setSlack(x.target.value)} placeholder="https://levelupmediaespacio.slack.com/archives/C0…" />
             <Button size="sm" variant="outline" disabled={!!cargando || slack === (e.slackUrl ?? "")} onClick={() => hacer("slack", () => guardarSlackAppAction(itemId, slack), "Canal guardado")}>
-              Guardar
+              {cargando === "slack" ? <><Loader2 className="size-3.5 animate-spin" /> Guardando…</> : "Guardar"}
             </Button>
           </div>
         </div>

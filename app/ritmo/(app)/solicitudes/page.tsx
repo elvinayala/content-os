@@ -1,6 +1,7 @@
-import { ShieldCheck } from "lucide-react";
+import { Inbox, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { NuevaSolicitud, TarjetaSolicitud, type SolicitudUI } from "@/components/ritmo/solicitudes";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
 import { puedeDecidir, primerDiaVacaciones, TIPOS_SOLICITUD, diasYHoras } from "@/lib/desempeno/rrhh";
@@ -74,7 +75,13 @@ export default async function SolicitudesPage() {
             <TarjetaSolicitud key={x.id} s={x} tipos={tipos} />
           ))}
         </section>
-      ) : null}
+      ) : (
+        <section className="panel">
+          <EstadoVacio icono={Inbox} titulo="Todavía no has pedido nada" compacto>
+            Cuando envíes una solicitud arriba, aquí vas a ver en qué va: tu supervisor, RR.HH. y la firma.
+          </EstadoVacio>
+        </section>
+      )}
 
       {resto.length ? (
         <section className="flex flex-col gap-3">

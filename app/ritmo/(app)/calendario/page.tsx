@@ -1,6 +1,7 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { tramosEntre } from "@/lib/desempeno/calendario";
 import { diasEnConflicto, mesSiguiente, PUESTO_PLURAL, rango, semanasDelMes, TOPE_FUERA, type Tramo } from "@/lib/desempeno/calendario-reglas";
 import { perfilDe } from "@/lib/desempeno/datos";
@@ -67,7 +68,7 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
               { e: "ai_borinquen", t: "AI Borinquen" },
               { e: "todas", t: "Todas" },
             ].map((x) => (
-              <Link key={x.e} href={url(mes, x.e)} className={cn("rounded-full px-3 py-1", x.e === empresa ? "bg-primary/15 text-primary" : "text-muted-foreground")}>
+              <Link key={x.e} href={url(mes, x.e)} className={cn("rounded-full px-3 py-1 transition-colors", x.e === empresa ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-white/[0.05] hover:text-foreground")}>
                 {x.t}
               </Link>
             ))}
@@ -77,13 +78,13 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
 
       <section className="panel flex flex-col gap-3 p-4">
         <div className="flex items-center justify-between">
-          <Link href={url(mesSiguiente(mes, -1))} className="rounded-full p-2 text-muted-foreground hover:bg-white/[0.05] hover:text-foreground" aria-label="Mes anterior">
+          <Link href={url(mesSiguiente(mes, -1))} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-white/[0.05] hover:text-foreground" aria-label="Mes anterior">
             <ChevronLeft className="size-5" />
           </Link>
           <h2 className="text-lg font-semibold">
             {MESES[Number(mes.slice(5, 7)) - 1]} {mes.slice(0, 4)}
           </h2>
-          <Link href={url(mesSiguiente(mes, 1))} className="rounded-full p-2 text-muted-foreground hover:bg-white/[0.05] hover:text-foreground" aria-label="Mes siguiente">
+          <Link href={url(mesSiguiente(mes, 1))} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-white/[0.05] hover:text-foreground" aria-label="Mes siguiente">
             <ChevronRight className="size-5" />
           </Link>
         </div>
@@ -130,7 +131,13 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
               );
             })
           ) : (
-            <p className="py-3 text-sm text-muted-foreground">Nadie tiene días fuera este mes.</p>
+            <EstadoVacio icono={CalendarCheck} titulo="Nadie tiene días fuera este mes" compacto>
+              Todas las fechas están libres. Si necesitas días, pídelos en{" "}
+              <Link href="/ritmo/solicitudes" className="text-primary underline-offset-4 hover:underline">
+                Solicitudes
+              </Link>
+              .
+            </EstadoVacio>
           )}
         </div>
       </section>

@@ -29,7 +29,7 @@ export function MiDiaGoogle({ conectado, email, eventos, error, hoy }: { conecta
           <p className="text-sm font-medium">Conecta tu calendario</p>
           <p className="text-xs text-muted-foreground">Ve tu día aquí y anota lo que no quieres olvidar (tu Google Calendar del correo de trabajo).</p>
         </div>
-        <a href="/ritmo/google/conectar" className="shrink-0 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground">
+        <a href="/ritmo/google/conectar" className="shrink-0 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
           Conectar
         </a>
       </section>
@@ -76,7 +76,7 @@ export function MiDiaGoogle({ conectado, email, eventos, error, hoy }: { conecta
           </div>
           <p className="text-[11px] text-muted-foreground">{f.hora ? "Te avisa 10 min antes." : "Sin hora: queda para todo el día y te avisa a las 9 AM."}</p>
           <Button className="h-9 w-fit rounded-full" onClick={guardar} disabled={ocupado || !f.titulo.trim()}>
-            {ocupado ? <Loader2 className="animate-spin" /> : <Check className="size-4" />} Guardar en mi calendario
+            {ocupado ? <Loader2 className="animate-spin" /> : <Check className="size-4" />} {ocupado ? "Guardando…" : "Guardar en mi calendario"}
           </Button>
         </div>
       ) : null}

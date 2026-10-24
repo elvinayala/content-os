@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, GripVertical, Plus, Trash2 } from "lucide-react";
+import { Eye, EyeOff, GripVertical, Loader2, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useBoardActions } from "@/components/pulse/board-provider";
@@ -29,9 +29,15 @@ export function StatusLabelsEditor({ column, open, onOpenChange }: { column: Col
       return a;
     });
 
+  const [guardando, setGuardando] = useState(false);
   const guardar = async () => {
     const limpias = labels.map((l) => ({ ...l, label: l.label.trim() || "Etiqueta" }));
-    await actualizarColumna(column.id, { settings: { ...column.settings, labels: limpias } });
+    setGuardando(true);
+    try {
+      await actualizarColumna(column.id, { settings: { ...column.settings, labels: limpias } });
+    } finally {
+      setGuardando(false);
+    }
     onOpenChange(false);
   };
 
@@ -92,7 +98,9 @@ export function StatusLabelsEditor({ column, open, onOpenChange }: { column: Col
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={guardar}>Guardar</Button>
+          <Button onClick={guardar} disabled={guardando}>
+            {guardando ? <><Loader2 className="animate-spin" /> Guardando…</> : "Guardar"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

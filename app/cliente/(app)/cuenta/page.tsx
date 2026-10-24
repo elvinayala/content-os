@@ -38,7 +38,7 @@ export default async function CuentaCliente() {
           </div>
         ))}
         {f.acuerdo ? (
-          <a href="/cliente/acuerdo" target="_blank" className="flex items-center justify-between gap-3 px-4 py-3 text-sm hover:bg-white/[0.03]">
+          <a href="/cliente/acuerdo" target="_blank" className="flex items-center justify-between gap-3 px-4 py-3 text-sm transition-colors hover:bg-white/[0.03]">
             <span className="text-muted-foreground">Acuerdo firmado</span>
             <span className="flex items-center gap-1.5 font-medium text-primary">
               <FileText className="size-4" /> Ver PDF

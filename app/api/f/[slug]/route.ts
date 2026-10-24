@@ -1,7 +1,9 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 
+import { registrarConsentimientos } from "@/lib/consentimientos/repo";
+import { aceptadasValidas, faltanObligatorias, MENSAJE_FALTAN, type TipoConsentimiento } from "@/lib/consentimientos/reglas";
 import { formularioPorSlug, guardarParcial, guardarRespuesta, marcarAgendo, marcarResultado } from "@/lib/formularios/repo";
-import { type ConfigFormulario, limpiar, type Respuestas, resumenRespuestas, texto, tieneContacto, validar } from "@/lib/formularios/reglas";
+import { casillasFormulario, type ConfigFormulario, limpiar, type Respuestas, resumenRespuestas, texto, tieneContacto, validar } from "@/lib/formularios/reglas";
 import { leadFormularioAgenda } from "@/lib/leads/cables";
 import { iniciarClienteMax } from "@/lib/max/onboarding";
 import { altaDesdeFormulario } from "@/lib/onboarding/alta";
@@ -16,11 +18,12 @@ export const maxDuration = 60;
 // IP, campo trampa, la misma validación que la página y un token por navegador para no duplicar.
 // La respuesta SIEMPRE se guarda primero; la acción (p. ej. ficha en Pulse) corre después y si
 // falla queda marcada en la respuesta, sin perder nada. `?prueba=1` + `x-prueba: CRON_SECRET` →
-// la ficha va al tablero Demo.
+// la ficha va al tablero Demo. Casillas legales: sin términos y privacidad no se guarda nada, y cada
+// aceptación queda en legal_consentimientos (solo agregar) con IP, navegador y hora del servidor.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "?";
-  let body: { token?: string; respuestas?: Respuestas; empresa_web?: string; origen?: string; parcial?: boolean; agendo?: boolean };
+  let body: { token?: string; respuestas?: Respuestas; empresa_web?: string; origen?: string; parcial?: boolean; agendo?: boolean; consentimientos?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -41,6 +44,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 
   const preguntas = f.config.preguntas;
   const origen = body.origen ? String(body.origen).slice(0, 80) : null;
+  const casillas = casillasFormulario(f);
+  const aceptadas = aceptadasValidas(casillas, body.consentimientos);
+  const faltan = faltanObligatorias(casillas, aceptadas).length > 0;
+  const anotar = (r: Respuestas) => anotarConsentimientos(req, f.slug, token, casillas, aceptadas, preguntas, r, origen);
 
   // Paso 2 terminado: agendó en Calendly (el webhook de Calendly mueve el lead; aquí solo se anota).
   if (body.agendo) {
@@ -52,15 +59,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   if (body.parcial) {
     if (!f.config.parciales) return NextResponse.json({ ok: false }, { status: 400 });
     const r0 = limpiar(preguntas, body.respuestas ?? {});
-    if (!tieneContacto(preguntas, r0)) return NextResponse.json({ ok: true, guardado: false });
+    if (faltan || !tieneContacto(preguntas, r0)) return NextResponse.json({ ok: true, guardado: false });
+    await anotar(r0);
     const p = await guardarParcial({ formularioId: f.id, token, respuestas: r0, preguntas: preguntas.map((q) => ({ id: q.id, titulo: q.titulo })), origen });
     if (p && f.accion === "leads-closers-lu") after(() => leadAgenda(f, r0, origen, false, p.primera));
     return NextResponse.json({ ok: true, guardado: !!p });
   }
 
+  if (faltan) return NextResponse.json({ ok: false, consentimiento: true, error: MENSAJE_FALTAN }, { status: 422 });
   const errores = validar(preguntas, body.respuestas ?? {});
   if (Object.keys(errores).length) return NextResponse.json({ ok: false, errores }, { status: 422 });
   const respuestas = limpiar(preguntas, body.respuestas ?? {});
+  await anotar(respuestas);
 
   const r = await guardarRespuesta({
     formularioId: f.id,
@@ -117,4 +127,23 @@ function leadAgenda(f: { slug: string; titulo: string; config: ConfigFormulario 
     setter,
     resumen: resumenRespuestas(q.filter((p) => !["nombre", "telefono", "email"].includes(p.id)), r),
   });
+}
+
+/** Las casillas que marcó, al registro de consentimientos. Si falla, se avisa en el log y la respuesta igual se guarda. */
+async function anotarConsentimientos(req: NextRequest, slug: string, token: string, casillas: ReturnType<typeof casillasFormulario>, aceptadas: TipoConsentimiento[], preguntas: ConfigFormulario["preguntas"], r: Respuestas, origen: string | null) {
+  const de = (tipo: string) => texto(r[preguntas.find((p) => p.tipo === tipo)?.id ?? ""]);
+  try {
+    await registrarConsentimientos({
+      casillas,
+      aceptadas,
+      email: de("email"),
+      telefono: de("telefono"),
+      origen: `/f/${slug}`,
+      referencia: `form:${slug}:${token}`,
+      headers: req.headers,
+      datos: origen ? { origen } : null,
+    });
+  } catch (e) {
+    console.error(`[f/${slug}] consentimientos`, e instanceof Error ? e.message : e);
+  }
 }

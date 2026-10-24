@@ -3,6 +3,8 @@
 import { ArrowLeft, ArrowRight, Check, ExternalLink, Loader2 } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { CasillasConsentimiento, PieLegal } from "@/components/consentimientos/casillas";
+import { type Casilla, faltanObligatorias, MENSAJE_FALTAN, type TipoConsentimiento } from "@/lib/consentimientos/reglas";
 import { conNombre, type ConfigFormulario, errorDe, opcionesDe, prefillCalendly, type Pregunta, type Respuestas, type Tema, tieneContacto, verOpcion, visible } from "@/lib/formularios/reglas";
 
 const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -33,8 +35,10 @@ function Resaltado({ t }: { t: string }) {
 }
 
 // Formulario público de una pregunta por pantalla (el "Typeform" de la casa). `previa` = vista
-// previa del editor: no guarda nada ni envía.
-export function FormularioPublico({ slug, config, tema, previa = false, origen }: { slug: string; config: ConfigFormulario; tema: Tema; previa?: boolean; origen?: string }) {
+// previa del editor: no guarda nada ni envía. `casillas` = las legales de la bienvenida (las calcula el
+// servidor con casillasFormulario): sin términos y privacidad no se empieza, así lo que se guarda a medias
+// ya tiene el consentimiento.
+export function FormularioPublico({ slug, config, tema, previa = false, origen, casillas = [] }: { slug: string; config: ConfigFormulario; tema: Tema; previa?: boolean; origen?: string; casillas?: Casilla[] }) {
   const BORRADOR = `formulario-borrador:${slug}`;
   const [r, setR] = useState<Respuestas>({});
   const [paso, setPaso] = useState(0); // 0 = bienvenida; 1..n = preguntas; n+1 = final
@@ -43,6 +47,7 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
   const [token, setToken] = useState("");
   const [trampa, setTrampa] = useState("");
   const [dir, setDir] = useState<1 | -1>(1);
+  const [aceptadas, setAceptadas] = useState<TipoConsentimiento[]>([]);
 
   // Borrador: si cierra la pestaña, sigue donde iba (el onboarding hereda el borrador de su versión anterior).
   useEffect(() => {
@@ -50,8 +55,9 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
     try {
       const raw = localStorage.getItem(BORRADOR) ?? (slug === "onboarding-level-up" ? localStorage.getItem("lu-onboarding-borrador") : null);
       if (raw) {
-        const b = JSON.parse(raw) as { r: Respuestas; token: string };
+        const b = JSON.parse(raw) as { r: Respuestas; token: string; aceptadas?: TipoConsentimiento[] };
         setR(b.r ?? {});
+        if (Array.isArray(b.aceptadas)) setAceptadas(b.aceptadas);
         setToken(b.token || nuevoToken());
         return;
       }
@@ -61,9 +67,9 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
   useEffect(() => {
     if (!token || previa) return;
     try {
-      localStorage.setItem(BORRADOR, JSON.stringify({ r, token }));
+      localStorage.setItem(BORRADOR, JSON.stringify({ r, token, aceptadas }));
     } catch {}
-  }, [r, token, BORRADOR, previa]);
+  }, [r, token, aceptadas, BORRADOR, previa]);
 
   const preguntas = useMemo(() => config.preguntas.filter((p) => visible(p, r)), [config.preguntas, r]);
   const total = preguntas.length;
@@ -89,10 +95,16 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
       const res = await fetch(`/api/f/${slug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, respuestas: resp, empresa_web: trampa, origen }),
+        body: JSON.stringify({ token, respuestas: resp, empresa_web: trampa, origen, consentimientos: aceptadas }),
       });
       const j = await res.json().catch(() => ({}));
       if (!res.ok || !j.ok) {
+        if (j.consentimiento) {
+          setDir(-1);
+          setPaso(0);
+          setError(j.error ?? MENSAJE_FALTAN);
+          return;
+        }
         if (j.errores) {
           const primera = preguntas.findIndex((p) => j.errores[p.id]);
           if (primera >= 0) {
@@ -115,7 +127,7 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
     } finally {
       setEnviando(false);
     }
-  }, [previa, slug, token, r, trampa, origen, preguntas, total, BORRADOR]);
+  }, [previa, slug, token, r, trampa, origen, aceptadas, preguntas, total, BORRADOR]);
 
   const siguiente = useCallback(
     (respuestasActuales?: Respuestas) => {
@@ -131,11 +143,11 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
       if (paso >= vis.length) return void enviar(estado);
       // Guardado a medias (si el formulario lo permite): lo que lleva queda aunque no termine.
       if (config.parciales && !previa && token && tieneContacto(config.preguntas, estado)) {
-        fetch(`/api/f/${slug}`, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, respuestas: estado, parcial: true, origen }) }).catch(() => {});
+        fetch(`/api/f/${slug}`, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, respuestas: estado, parcial: true, origen, consentimientos: aceptadas }) }).catch(() => {});
       }
       setPaso((p) => p + 1);
     },
-    [actual, r, paso, config.preguntas, config.parciales, previa, token, slug, origen, enviar],
+    [actual, r, paso, config.preguntas, config.parciales, previa, token, slug, origen, aceptadas, enviar],
   );
   const atras = () => {
     setError(null);
@@ -144,7 +156,7 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
   };
 
   const progreso = terminado ? 100 : paso === 0 ? 0 : Math.round(((paso - 1) / total) * 100);
-  const estilo = { "--f-fondo": tema.fondo, "--f-texto": tema.texto, "--f-sutil": tema.sutil, "--f-acento": tema.acento, "--f-tinta": tema.tinta } as React.CSSProperties;
+  const estilo = { "--f-fondo": tema.fondo, "--f-texto": tema.texto, "--f-sutil": tema.sutil, "--f-acento": tema.acento, "--f-tinta": tema.tinta, "--consentimiento-acento": tema.acento } as React.CSSProperties;
 
   return (
     <main className="formulario lu-fondo relative flex min-h-svh flex-col" data-oscuro={tema.oscuro} style={estilo}>
@@ -175,7 +187,16 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
           {paso === 0 ? (
             <Bienvenida
               config={config}
+              casillas={casillas}
+              aceptadas={aceptadas}
+              onAceptadas={(a) => {
+                setError(null);
+                setAceptadas(a);
+              }}
+              error={error}
               onEmpezar={() => {
+                if (faltanObligatorias(casillas, aceptadas).length) return setError(MENSAJE_FALTAN);
+                setError(null);
                 setDir(1);
                 // Si viene de un borrador, salta a la primera pregunta que le falta.
                 const falta = preguntas.findIndex((p) => errorDe(p, r) || r[p.id] === undefined);
@@ -212,15 +233,34 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
         </footer>
       ) : null}
 
+      {!actual ? <PieLegal className="f-tenue px-5 pb-6 sm:px-10" /> : null}
+
       <input tabIndex={-1} autoComplete="off" aria-hidden="true" value={trampa} onChange={(e) => setTrampa(e.target.value)} name="empresa_web" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
     </main>
   );
 }
 
-function Bienvenida({ config, onEmpezar, continuar }: { config: ConfigFormulario; onEmpezar: () => void; continuar: boolean }) {
+function Bienvenida({
+  config,
+  onEmpezar,
+  continuar,
+  casillas,
+  aceptadas,
+  onAceptadas,
+  error,
+}: {
+  config: ConfigFormulario;
+  onEmpezar: () => void;
+  continuar: boolean;
+  casillas: Casilla[];
+  aceptadas: TipoConsentimiento[];
+  onAceptadas: (a: TipoConsentimiento[]) => void;
+  error: string | null;
+}) {
   const b = config.bienvenida;
   useEffect(() => {
-    const k = (e: KeyboardEvent) => e.key === "Enter" && onEmpezar();
+    // Enter empieza, salvo sobre un enlace (abre la página legal) o una casilla.
+    const k = (e: KeyboardEvent) => e.key === "Enter" && !(e.target as HTMLElement)?.closest?.("a, input") && onEmpezar();
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
   }, [onEmpezar]);
@@ -241,6 +281,7 @@ function Bienvenida({ config, onEmpezar, continuar }: { config: ConfigFormulario
           ))}
         </ul>
       ) : null}
+      {casillas.length ? <CasillasConsentimiento casillas={casillas} aceptadas={aceptadas} onCambio={onAceptadas} error={error} className="f-sutil max-w-xl" /> : null}
       <div className="flex flex-wrap items-center gap-4">
         <button type="button" onClick={onEmpezar} className="lu-boton">
           {continuar ? "Continuar donde iba" : b.boton || "Empezar"} <ArrowRight className="size-5" />
@@ -306,6 +347,7 @@ function Agenda({ config, r, tema, slug, token, origen, previa }: { config: Conf
       if (!ref.current || !window.Calendly) return;
       ref.current.innerHTML = "";
       window.Calendly.initInlineWidget({ url, parentElement: ref.current, prefill: pre, utm: origen ? { utmSource: origen } : {} });
+      ref.current.querySelector("iframe")?.setAttribute("title", "Calendario para escoger el día y la hora de tu videollamada");
     };
     const id = "calendly-widget-js";
     if (window.Calendly) iniciar();
@@ -408,11 +450,18 @@ function PreguntaVista({
   }, [p, valor]);
 
   const s = typeof valor === "string" ? valor : "";
+  // El campo se nombra con la pregunta (y su ayuda) para los lectores de pantalla.
+  const etiqueta = {
+    "aria-labelledby": `pregunta-${p.id}`,
+    "aria-describedby": [p.ayuda ? `ayuda-${p.id}` : "", error ? `error-${p.id}` : ""].filter(Boolean).join(" ") || undefined,
+    "aria-required": p.requerida,
+    "aria-invalid": !!error,
+  };
 
   return (
     <div className="flex flex-col gap-5">
       {p.seccion ? <span className="f-acento text-xs font-semibold tracking-[0.18em] uppercase">{p.seccion}</span> : null}
-      <h2 className="flex gap-3 font-[family-name:var(--font-sora)] text-2xl leading-snug font-semibold sm:text-4xl">
+      <h2 id={`pregunta-${p.id}`} className="flex gap-3 font-[family-name:var(--font-sora)] text-2xl leading-snug font-semibold sm:text-4xl">
         <span className="f-acento mt-1 flex shrink-0 items-center gap-1 text-base font-medium sm:mt-2 sm:text-lg">
           {numero} <ArrowRight className="size-4" />
         </span>
@@ -421,12 +470,17 @@ function PreguntaVista({
           {p.requerida ? <span className="f-acento"> *</span> : null}
         </span>
       </h2>
-      {p.ayuda ? <p className="f-sutil -mt-2 text-base sm:pl-10">{p.ayuda}</p> : null}
+      {p.ayuda ? (
+        <p id={`ayuda-${p.id}`} className="f-sutil -mt-2 text-base sm:pl-10">
+          {p.ayuda}
+        </p>
+      ) : null}
 
       <div className="sm:pl-10">
         {p.tipo === "largo" ? (
           <textarea
             ref={ref}
+            {...etiqueta}
             value={s}
             rows={3}
             placeholder={p.placeholder}
@@ -440,9 +494,9 @@ function PreguntaVista({
             className="lu-input min-h-28 resize-none"
           />
         ) : p.tipo === "escala" ? (
-          <div className="grid grid-cols-6 gap-2 sm:grid-cols-11">
+          <div role="group" aria-labelledby={`pregunta-${p.id}`} className="grid grid-cols-6 gap-2 sm:grid-cols-11">
             {opciones.map((op) => (
-              <button key={op} type="button" onClick={() => elegir(op)} className="lu-opcion lu-escala" data-on={s === op}>
+              <button key={op} type="button" onClick={() => elegir(op)} className="lu-opcion lu-escala" data-on={s === op} aria-pressed={s === op}>
                 {op}
               </button>
             ))}
@@ -454,12 +508,12 @@ function PreguntaVista({
         ) : unica ? (
           <Opciones p={p} opciones={opciones} valor={s} onElegir={elegir} onOtra={(t) => onCambio(t)} onSiguiente={onSiguiente} />
         ) : p.tipo === "multiple" ? (
-          <div className="flex flex-col gap-2">
+          <div role="group" aria-labelledby={`pregunta-${p.id}`} className="flex flex-col gap-2">
             {opciones.map((op, i) => {
               const lista = Array.isArray(valor) ? valor : [];
               const on = lista.includes(op);
               return (
-                <button key={op} type="button" onClick={() => onCambio(on ? lista.filter((x) => x !== op) : [...lista, op])} className="lu-opcion" data-on={on}>
+                <button key={op} type="button" onClick={() => onCambio(on ? lista.filter((x) => x !== op) : [...lista, op])} className="lu-opcion" data-on={on} aria-pressed={on}>
                   <span className="lu-letra">{LETRAS[i]}</span>
                   <span className="flex-1 text-left">{verOpcion(p, op)}</span>
                   {on ? <Check className="f-acento size-5" /> : null}
@@ -472,6 +526,7 @@ function PreguntaVista({
         ) : (
           <input
             ref={ref}
+            {...etiqueta}
             value={s}
             inputMode={p.tipo === "telefono" ? "tel" : p.tipo === "numero" ? "decimal" : p.tipo === "email" ? "email" : p.tipo === "url" ? "url" : "text"}
             type={p.tipo === "email" ? "email" : p.tipo === "telefono" ? "tel" : "text"}
@@ -489,7 +544,7 @@ function PreguntaVista({
         )}
 
         {error ? (
-          <p role="alert" className="mt-4 flex w-fit items-center gap-2 rounded-md bg-[#ff5a4e]/15 px-3 py-1.5 text-sm text-[#e5483d]">
+          <p id={`error-${p.id}`} role="alert" className="mt-4 flex w-fit items-center gap-2 rounded-md bg-[#ff5a4e]/15 px-3 py-1.5 text-sm text-[#e5483d]">
             ⚠ {error}
           </p>
         ) : null}
@@ -525,17 +580,17 @@ function Opciones({ p, opciones, valor, onElegir, onOtra, onSiguiente }: { p: Pr
 
   return (
     <div className="flex flex-col gap-3">
-      {muchas ? <input value={filtro} onChange={(e) => setFiltro(e.target.value)} placeholder="Busca…" className="lu-input text-lg" autoFocus /> : null}
-      <div className={muchas ? "grid max-h-[46vh] grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2" : p.tipo === "si-no" ? "grid max-w-md grid-cols-2 gap-2" : "flex flex-col gap-2"}>
+      {muchas ? <input value={filtro} onChange={(e) => setFiltro(e.target.value)} placeholder="Busca…" aria-label="Buscar una opción" className="lu-input text-lg" autoFocus /> : null}
+      <div role="group" aria-labelledby={`pregunta-${p.id}`} className={muchas ? "grid max-h-[46vh] grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2" : p.tipo === "si-no" ? "grid max-w-md grid-cols-2 gap-2" : "flex flex-col gap-2"}>
         {lista.map((op, i) => (
-          <button key={op} type="button" onClick={() => onElegir(op)} className="lu-opcion" data-on={valor === op}>
+          <button key={op} type="button" onClick={() => onElegir(op)} className="lu-opcion" data-on={valor === op} aria-pressed={valor === op}>
             {!muchas ? <span className="lu-letra">{LETRAS[i]}</span> : null}
             <span className="flex-1 text-left">{verOpcion(p, op)}</span>
             {valor === op ? <Check className="f-acento size-5" /> : null}
           </button>
         ))}
         {p.otra ? (
-          <button type="button" onClick={() => setModoOtra(true)} className="lu-opcion" data-on={modoOtra}>
+          <button type="button" onClick={() => setModoOtra(true)} className="lu-opcion" data-on={modoOtra} aria-pressed={modoOtra}>
             <span className="flex-1 text-left">Otra…</span>
           </button>
         ) : null}
@@ -546,6 +601,7 @@ function Opciones({ p, opciones, valor, onElegir, onOtra, onSiguiente }: { p: Pr
             autoFocus
             value={otra}
             placeholder="¿Cuál?"
+            aria-label="Otra opción: ¿cuál?"
             onChange={(e) => {
               setOtra(e.target.value);
               onOtra(`Otra: ${e.target.value}`);

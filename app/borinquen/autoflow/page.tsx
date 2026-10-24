@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check, Circle, MessageCircle, Phone } from "lucide-react";
+import { Check, Circle, MessageCircle, Phone, Workflow } from "lucide-react";
 
 import { leerInstancias } from "@/lib/autoflow";
 import { leerAgentesVoz } from "@/lib/voz/store";
@@ -7,6 +7,7 @@ import type { EstadoInstancia } from "@/lib/types";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 
 export const metadata = { title: "AutoFlow · Bori" };
 export const dynamic = "force-dynamic";
@@ -37,6 +38,13 @@ export default async function AutoFlowPage() {
       </PageHeader>
 
       <main className="flex-1 space-y-4 p-4 sm:p-6">
+        {instancias.length === 0 ? (
+          <Card className="bg-gradient-to-b from-card to-background/40">
+            <EstadoVacio icono={Workflow} titulo="Todavía no hay instancias de AutoFlow">
+              Cuando un cliente cierre AutoFlow y arranque su onboarding, su instancia aparece aquí con sus canales, agentes y pasos.
+            </EstadoVacio>
+          </Card>
+        ) : null}
         {instancias.map((inst) => {
           const est = ESTADO[inst.estado];
           const hechos = inst.pasosOnboarding.filter((p) => p.hecho).length;
@@ -100,7 +108,7 @@ export default async function AutoFlowPage() {
                           <Link key={id} href={`/borinquen/voz/${id}`}>
                             <Badge
                               variant="outline"
-                              className="hover:border-primary/60"
+                              className="transition-colors hover:border-primary/60 hover:text-primary"
                             >
                               {nombreAgente(id)}
                             </Badge>

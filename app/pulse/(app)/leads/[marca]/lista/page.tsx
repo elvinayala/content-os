@@ -1,7 +1,10 @@
+import { Inbox, SearchX } from "lucide-react";
 import Link from "next/link";
 
 import { BarraLeads } from "@/components/leads/tablero";
 import { UserAvatar } from "@/components/pulse/user-avatar";
+import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { contextoLeads } from "@/lib/leads/pagina";
 import { estadoActividad, telefonoLegible } from "@/lib/leads/reglas";
@@ -35,6 +38,9 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
     for (const [k, v] of Object.entries(extra)) p.set(k, v);
     return `?${p.toString()}`;
   };
+  const hayFiltros = !!(c.q || c.fecha || c.rubro || (typeof sp.dueno === "string" && sp.dueno));
+  const limpiar = `/pulse/leads/${c.m.slug}/lista?${new URLSearchParams({ ...(c.embudo ? { embudo: c.embudo.id } : {}), estado }).toString()}`;
+  const palabraEstado = ({ abierto: "abiertos", ganado: "ganados", perdido: "perdidos" } as Record<string, string>)[estado] ?? "";
   return (
     <div className="pulse flex h-svh flex-col bg-background">
       <header className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
@@ -46,7 +52,7 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
       <OtrosResultados marcaSlug={c.m.slug} q={c.q} resultados={otros} />
       <div className="flex gap-1 px-4 py-2">
         {ESTADOS.map((e) => (
-          <Link key={e.v} href={qs({ estado: e.v })} className={cn("rounded-full px-3 py-1 text-xs font-medium", estado === e.v ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground")}>
+          <Link key={e.v} href={qs({ estado: e.v })} className={cn("rounded-full px-3 py-1 text-xs font-medium transition-colors", estado === e.v ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:bg-muted-foreground/15 hover:text-foreground")}>
             {e.t}
           </Link>
         ))}
@@ -109,7 +115,27 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
             })}
           </tbody>
         </table>
-        {!filas.length && <p className="py-16 text-center text-sm text-muted-foreground">Nada por aquí con estos filtros.</p>}
+        {!filas.length &&
+          (hayFiltros ? (
+            <EstadoVacio
+              tipo="filtro"
+              icono={SearchX}
+              titulo={c.q ? `Ningún lead coincide con «${c.q}»` : "Ningún lead con estos filtros"}
+              accion={
+                <Button asChild size="sm" variant="outline">
+                  <Link href={limpiar}>Limpiar filtros</Link>
+                </Button>
+              }
+            >
+              Prueba con otra búsqueda o quita algún filtro.
+            </EstadoVacio>
+          ) : (
+            <EstadoVacio icono={Inbox} titulo={palabraEstado ? `Todavía no hay leads ${palabraEstado} aquí` : "Todavía no hay leads aquí"}>
+              {estado === "abierto" || estado === "todos"
+                ? "Cuando entre un lead (formulario, WhatsApp o lo agregues con + Lead), aparece aquí."
+                : "Cuando cierres un lead en el embudo, aparece en esta pestaña."}
+            </EstadoVacio>
+          ))}
       </div>
     </div>
   );

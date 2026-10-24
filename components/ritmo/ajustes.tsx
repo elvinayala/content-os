@@ -74,12 +74,12 @@ function Produccion({ existe }: { existe: boolean }) {
         </p>
       </div>
       {existe ? (
-        <Link href="/pulse/produccion" className="flex items-center gap-1.5 text-sm text-primary">
+        <Link href="/pulse/produccion" className="flex items-center gap-1.5 text-sm text-primary underline-offset-4 hover:underline">
           <Check className="size-4" /> Abrir en Pulse
         </Link>
       ) : (
         <Button onClick={crear} disabled={cargando} className="rounded-full">
-          {cargando ? <Loader2 className="animate-spin" /> : <Plus />} Crear tablero
+          {cargando ? <Loader2 className="animate-spin" /> : <Plus />} {cargando ? "Creando…" : "Crear tablero"}
         </Button>
       )}
     </div>
@@ -219,7 +219,7 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse, puestos }: { usuar
           <div className="flex flex-wrap items-center justify-end gap-2 sm:col-span-2">
             <LinkAcceso userId={usuario.id} nombre={usuario.nombre} />
             <Button onClick={guardar} disabled={cargando} className="rounded-full px-6">
-              {cargando ? <Loader2 className="animate-spin" /> : <Check />} Guardar
+              {cargando ? <Loader2 className="animate-spin" /> : <Check />} {cargando ? "Guardando…" : "Guardar"}
             </Button>
           </div>
         </div>

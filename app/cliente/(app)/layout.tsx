@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 
 import { RegistrarApp, type ConfigApp } from "@/components/app-movil";
 import { NavCliente } from "@/components/cliente/nav";
+import { AceptarLegalCliente } from "@/components/cliente/aceptar-legal";
+import { EnlacesLegales } from "@/components/legal/documento";
+import { aceptoVersion } from "@/lib/legal/consentimiento";
+import { LEGAL } from "@/lib/legal/versiones";
 import { COOKIE_CLIENTE, linkCliente, verificarCookieCliente } from "@/lib/clientes-app/acceso";
 import { fichaCliente } from "@/lib/clientes-app/datos";
 import { CLIENTE_APP } from "@/lib/clientes-app/config";
@@ -26,6 +30,13 @@ export default async function AppClienteLayout({ children }: Readonly<{ children
         <p className="text-sm text-muted-foreground">Si quieres volver a trabajar con nosotros, escríbenos y te ayudamos a retomar.</p>
       </main>
     );
+  // Términos y privacidad (24/oct/2026): la primera vez, o si sube la versión, el cliente los acepta con dos casillas.
+  // Si la tabla del registro no está (migración 0045 sin aplicar), aceptoVersion da null y NO se bloquea la app.
+  if (v.modo === "cliente") {
+    const persona = `cliente:${v.itemId}`;
+    const [t, p] = await Promise.all([aceptoVersion(persona, "terminos_app", LEGAL.terminos.version), aceptoVersion(persona, "privacidad_app", LEGAL.privacidad.version)]);
+    if (t === false || p === false) return <AceptarLegalCliente negocio={f.negocio} />;
+  }
   const cfg: ConfigApp = { ...CLIENTE_APP, link: v.modo === "cliente" ? await linkCliente(v.itemId, v.version) : null };
   return (
     <>
@@ -36,7 +47,10 @@ export default async function AppClienteLayout({ children }: Readonly<{ children
         </div>
       ) : null}
       <NavCliente negocio={f.negocio} />
-      <main className="mx-auto w-full max-w-3xl px-4 pt-5 pb-32 md:pb-16">{children}</main>
+      <main className="mx-auto w-full max-w-3xl px-4 pt-5 pb-32 md:pb-16">
+        {children}
+        <EnlacesLegales que={["terminos", "privacidad", "cookies"]} className="mt-14" />
+      </main>
     </>
   );
 }

@@ -1,7 +1,9 @@
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, SearchX, Users } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { tipoAcceso, usuarioActual } from "@/lib/pulse/auth";
 import { esVistaInicio, VISTAS, type VistaInicio } from "@/lib/pulse/inicio-clientes";
@@ -78,7 +80,7 @@ export default async function ClientesInicio({ searchParams }: { searchParams: P
                 <li key={f.id}>
                   <Link
                     href={`/pulse/${f.boardSlug}?item=${f.id}`}
-                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-0.5 px-5 py-3 transition hover:bg-[var(--pulse-hover)] sm:grid-cols-[minmax(0,2fr)_minmax(0,1.3fr)_90px_90px]"
+                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-0.5 px-5 py-3 outline-none transition hover:bg-[var(--pulse-hover)] focus-visible:bg-[var(--pulse-hover)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset active:bg-muted sm:grid-cols-[minmax(0,2fr)_minmax(0,1.3fr)_90px_90px]"
                   >
                     <span className="min-w-0">
                       <span className="block truncate text-sm font-medium">{f.nombre}</span>
@@ -94,7 +96,24 @@ export default async function ClientesInicio({ searchParams }: { searchParams: P
               ))}
             </ul>
           ) : (
-            <p className="px-5 py-10 text-center text-sm text-muted-foreground">{busca ? "Nadie coincide con esa búsqueda." : "No hay clientes aquí todavía."}</p>
+            busca ? (
+              <EstadoVacio
+                tipo="filtro"
+                icono={SearchX}
+                titulo={`Nadie en «${info.titulo}» coincide con «${q?.trim()}»`}
+                accion={
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/pulse/clientes?vista=${vista}`}>Limpiar búsqueda</Link>
+                  </Button>
+                }
+              >
+                Prueba con el nombre o la empresa, o busca en otra pestaña.
+              </EstadoVacio>
+            ) : (
+              <EstadoVacio icono={Users} titulo="No hay clientes aquí todavía">
+                Cuando un cliente de tus tableros entre en «{info.titulo}», aparece en esta lista.
+              </EstadoVacio>
+            )
           )}
         </section>
       </main>

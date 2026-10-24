@@ -52,6 +52,10 @@ export default async function PulseLoginPage({ searchParams }: { searchParams: P
             </Button>
           </form>
           <p className="mt-6 text-xs text-muted-foreground">¿No tienes acceso o se te olvidó la contraseña? Pídeselo a tu supervisor o a RR.HH.</p>
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            Información confidencial de clientes: solo para el equipo autorizado; los accesos y cambios quedan registrados.{" "}
+            <a href="/privacidad/equipo" target="_blank" rel="noopener" className="underline underline-offset-4 transition-colors hover:text-foreground">Aviso de privacidad del equipo</a>
+          </p>
         </div>
 
         <p className="text-[11px] text-muted-foreground/80">© {new Date().getFullYear()} EA Market LLC · Level Up Media · AI Borinquen</p>

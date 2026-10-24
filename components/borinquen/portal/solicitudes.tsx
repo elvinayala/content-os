@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Send } from "lucide-react";
+import { Inbox, Loader2, Send } from "lucide-react";
 import { toast } from "sonner";
 
 import { crearSolicitudAction } from "@/app/portal/[slug]/actions";
@@ -9,6 +9,7 @@ import { cambiarEstadoSolicitudAction } from "@/app/borinquen/portales/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ESTADOS_SOLICITUD, type EstadoSolicitud, type SolicitudCambio } from "@/lib/portal/types";
@@ -79,14 +80,18 @@ export function Solicitudes({
           <div className="flex flex-wrap items-center gap-2">
             <Input value={autor} onChange={(e) => setAutor(e.target.value)} placeholder="Tu nombre (opcional)" className="max-w-56" maxLength={80} />
             <Button onClick={enviar} disabled={pendiente}>
-              <Send className="size-4" /> {pendiente ? "Enviando…" : "Enviar solicitud"}
+              {pendiente ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />} {pendiente ? "Enviando…" : "Enviar solicitud"}
             </Button>
           </div>
         </CardContent>
       </Card>
 
       {solicitudes.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Todavía no has pedido ningún cambio.</p>
+        <EstadoVacio compacto icono={Inbox} titulo={modo === "closer" ? "Este cliente no ha pedido cambios" : "Todavía no has pedido ningún cambio"}>
+          {modo === "closer"
+            ? "Cuando escriba una solicitud desde su portal, aparece aquí y te llega el aviso."
+            : `Escribe arriba lo que quieras ajustar de ${asistente} y aquí vas a ver cómo va.`}
+        </EstadoVacio>
       ) : (
         <div className="space-y-2">
           {solicitudes.map((s) => (
@@ -139,7 +144,7 @@ function EstadoEditor({ slug, solicitud }: { slug: string; solicitud: SolicitudC
         value={solicitud.estado}
         disabled={pendiente}
         onChange={(e) => cambiar(e.target.value as EstadoSolicitud)}
-        className="h-7 rounded-md border border-border bg-background px-2 text-xs"
+        className="h-7 rounded-md border border-border bg-background px-2 text-xs transition-colors hover:border-primary/50 disabled:opacity-50"
       >
         {ESTADOS_SOLICITUD.map((e) => (
           <option key={e.estado} value={e.estado}>
@@ -154,7 +159,7 @@ function EstadoEditor({ slug, solicitud }: { slug: string; solicitud: SolicitudC
         <span className="mt-2 flex w-full items-center gap-2">
           <Input value={respuesta} onChange={(e) => setRespuesta(e.target.value)} placeholder="Qué se hizo / cuándo queda" maxLength={1000} />
           <Button size="sm" className="h-8" disabled={pendiente} onClick={() => cambiar(solicitud.estado)}>
-            Guardar
+            {pendiente ? <Loader2 className="size-4 animate-spin" /> : null} {pendiente ? "Guardando…" : "Guardar"}
           </Button>
         </span>
       ) : null}

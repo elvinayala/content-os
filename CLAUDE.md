@@ -73,3 +73,4 @@ máximo 1 de cada 4 piezas sobre atención. Fuente: `vault/estilo/ai-borinquen.m
 | `plan-listo.md` | `lib/estrategia/plan-listo.ts` | "PLAN LISTO" → alerta a Elvin |
 | `n8n.md` | `scripts/n8n.mjs`, `data/n8n/` | n8n de LU, reportes de encuestas |
 | `gabo-licitaciones.md` | `scripts/licitaciones.mjs`, `data/licitaciones/` | Gabo, licitaciones de Digital Seed Ventures |
+| `consentimientos.md` | `lib/consentimientos/`, `components/consentimientos/` | casillas legales de los formularios, registro de consentimientos (solo agregar), antes de mandar marketing automático |

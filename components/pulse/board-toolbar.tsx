@@ -32,6 +32,12 @@ export function BoardToolbar() {
   const { dispatch, crearItem, setVista, actualizarColumna } = useBoardActions();
   const [mas, setMas] = useState(false);
   const [q, setQ] = useState(s.busqueda);
+  // Si la búsqueda cambia desde afuera (vista guardada, "Limpiar búsqueda y filtros"), el campo la refleja.
+  const [busquedaPrevia, setBusquedaPrevia] = useState(s.busqueda);
+  if (s.busqueda !== busquedaPrevia) {
+    setBusquedaPrevia(s.busqueda);
+    if (s.busqueda !== q) setQ(s.busqueda);
+  }
   useEffect(() => {
     const t = setTimeout(() => dispatch({ type: "busqueda", texto: q }), 150);
     return () => clearTimeout(t);
@@ -70,7 +76,7 @@ export function BoardToolbar() {
         <Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar" className="h-8 w-28 rounded-md sm:w-44 border bg-background pl-7 pr-6 text-sm outline-none focus:ring-2 focus:ring-primary" />
         {q ? (
-          <button type="button" className="absolute top-1/2 right-1.5 -translate-y-1/2 text-muted-foreground" onClick={() => setQ("")} aria-label="Limpiar">
+          <button type="button" className="absolute top-1/2 right-1.5 -translate-y-1/2 rounded-sm text-muted-foreground transition-colors hover:text-foreground" onClick={() => setQ("")} aria-label="Limpiar búsqueda">
             <X className="size-3.5" />
           </button>
         ) : null}

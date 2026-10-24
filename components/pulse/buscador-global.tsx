@@ -135,7 +135,7 @@ export function BuscadorGlobal({ boards, puedeConfigurar }: { boards: { slug: st
           <kbd className="rounded border px-1.5 py-0.5 text-[10px] text-muted-foreground">esc</kbd>
         </div>
         <ul className="max-h-[55vh] overflow-y-auto p-1.5">
-          {q.trim().length >= 2 && !cargando && resultados.length === 0 && leads.length === 0 ? <li className="px-3 py-2 text-xs text-muted-foreground">Ningún cliente ni lead coincide con «{q.trim()}».</li> : null}
+          {q.trim().length >= 2 && !cargando && resultados.length === 0 && leads.length === 0 ? <li className="px-3 py-2 text-xs text-muted-foreground">Ningún cliente ni lead coincide con «{q.trim()}». Prueba con el teléfono, el e-mail o parte del nombre.</li> : null}
           {opciones.map((o, i) => (
             <li key={o.id}>
               <button
