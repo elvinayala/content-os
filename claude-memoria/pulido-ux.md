@@ -25,7 +25,7 @@ parche, porque su repo no tiene commits), AIB SaaS, Quality Care y dashboard de 
 ~/1000x-produccion, NO en 1000x-fuente; respaldo pre-cambio ahí mismo), AIB Core piloto (aicore-piloto),
 Ángelo/Quality Care (Worker + Netlify), Closer Lab (rama staff-agency → Railway) y AI Borinquen Salud (Railway).
 LISTO SIN PUBLICAR (el modo auto bloquea deploys delegados; Elvin aprueba o publica con DEPLOY-PENDIENTE.md /
-docs/contexto/consentimientos.md): Content OS (rama worktree-agent-af3189d862b544f7f, migración 0045 antes del push),
-Cortex (f129533), Bori (b01bf0f — arrastra 45 commits de pendiente-flyers + MALLOC_ARENA_MAX=2), AIB SaaS (token de
+docs/contexto/consentimientos.md): Content OS (rama worktree-agent-af3189d862b544f7f, HEAD f24e8849 revisado, migración 0045 antes del push),
+Cortex (137be7f, revisado; antes rotar AVE_SECRET), Bori (04af6b4 revisado — arrastra 45 commits de pendiente-flyers + MALLOC_ARENA_MAX=2), AIB SaaS (token de
 Supabase vencido en app/.env.supabase.local; migración 014 antes). Sin producción: ISLA Run (main local),
 La Granja, Resuelto (Netlify bloqueado). AMBC: parche aplicado al original, go-live 2/nov.
