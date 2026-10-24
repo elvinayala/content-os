@@ -47,12 +47,42 @@ export default async (req) => {
   ].filter(Boolean);
   const tags = esPlomero ? ["plomero", "candidato"] : esContratista ? ["contratista", "candidato"] : ["cliente", "lista-espera"];
 
+  // Consentimientos (Términos, Privacidad, marketing opcional, cookies) que manda legal/consentimiento.js.
+  // La hora, la IP y el navegador los pone el servidor, nunca el navegador.
+  const ahora = new Date().toISOString();
+  const ip = req.headers.get("x-nf-client-connection-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim();
+  const ua = (req.headers.get("user-agent") || "").slice(0, 300);
+  const consentimientos = (Array.isArray(d.consentimientos) ? d.consentimientos : []).slice(0, 10).map((c) => ({
+    tipo: String(c?.tipo || "").slice(0, 60),
+    accion: String(c?.accion || "").slice(0, 20),
+    version_documento: String(c?.version_documento || d.version_documentos || "").slice(0, 40),
+    texto_casilla: String(c?.texto_casilla || "").slice(0, 800),
+    origen: String(c?.origen || origen).slice(0, 300),
+    fecha_hora_cliente: String(c?.fecha_hora_cliente || "").slice(0, 40),
+  }));
+  const acepto = (t) => consentimientos.some((c) => c.tipo === t && c.accion === "acepto");
+  if (acepto("marketing_whatsapp_sms_llamadas")) tags.push("optin-marketing");
+  if (!(acepto("terminos") && acepto("privacidad"))) tags.push("sin-consentimiento");
+
   const body = { locationId: L, ...nombre(d.nombre), phone: tel(d.whatsapp || d.telefono), tags, source: origen, customFields: custom };
   if (d.email) body.email = d.email;
   const r = await fetch(`${BASE}/contacts/upsert`, { method: "POST", headers: H(tok), body: JSON.stringify(body) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) return Response.json({ ok: false, error: "GHL upsert", detalle: j }, { status: 502, headers: CORS });
   const contactId = j.contact?.id;
+
+  // Registro del consentimiento: nota en el contacto de GHL + log de la función.
+  // Ojo: en GHL las notas se pueden editar o borrar; no es una tabla "solo de agregar".
+  const registro = { persona: body.phone || body.email || "", ip, user_agent: ua, fecha_hora: ahora, consentimientos };
+  console.log(JSON.stringify({ consentimiento: registro, contactId }));
+  if (contactId && consentimientos.length) {
+    const texto = [
+      `CONSENTIMIENTO WEB · ${ahora} (UTC, hora del servidor)`,
+      `Persona: ${registro.persona} · IP: ${ip || "?"} · ${ua}`,
+      ...consentimientos.map((c) => `- ${c.tipo}: ${c.accion} · versión ${c.version_documento} · "${c.texto_casilla}" · ${c.origen}`),
+    ].join("\n");
+    await fetch(`${BASE}/contacts/${contactId}/notes`, { method: "POST", headers: H(tok), body: JSON.stringify({ body: texto }) }).catch(() => null);
+  }
 
   let oportunidad = null;
   const pipe = esPlomero ? PIPE.plomeros : esContratista ? PIPE.contratistas : null;

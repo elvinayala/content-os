@@ -86,9 +86,11 @@ footer{padding:36px 0 96px;border-top:1px solid var(--line);font-size:14px;color
 @media (max-width:940px){.hero .wrap,.cols,.two,.apply .wrap{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}.cats{grid-template-columns:repeat(2,minmax(0,1fr))}.hdr-actions a.plain{display:none}}
 @media (max-width:560px){.flow,.cats,.r2,.money{grid-template-columns:1fr}.logo .tag{display:none}}
 </style>
+<link rel="stylesheet" href="../legal/ui.css">
 <!-- Meta Pixel · Resuelto -->
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+try{if(localStorage.getItem('resuelto_cookies')==='no')fbq('consent','revoke');}catch(e){} // rechazó cookies en el aviso
 fbq('init','28140823722265213');fbq('track','PageView');
 // Lead al enviar cualquier formulario · Contact al tocar un botón de WhatsApp
 document.addEventListener('submit',function(){fbq('track','Lead');},true);
@@ -96,7 +98,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href*="w
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=28140823722265213&ev=PageView&noscript=1"/></noscript>
 </head>
-<body>
+<body class="entra">
 <script>
 window.RESUELTO_C = { whatsapp: "17879561111", chat: "https://m.me/1278171838721301", saludo: "Hola, soy contratista y quiero entrar a Resuelto Verified", webhook: "/api/lead", urlSitio: "../index.html" };
 </script>
@@ -211,9 +213,16 @@ window.RESUELTO_C = { whatsapp: "17879561111", chat: "https://m.me/1278171838721
     <div><div class="fl">Documentos</div><div class="r2"><input type="text" name="daco" placeholder="Número de registro DACO (o 'no tengo')" required><input type="text" name="seguro" placeholder="Seguro de responsabilidad (compañía)"></div></div>
     <div class="r2"><input type="number" name="experiencia" placeholder="Años de experiencia" min="0" required><select name="capacidad" required><option value="">Proyectos que puedes tomar al mes</option><option>1–2</option><option>3–4</option><option>5–8</option><option>Más de 8</option></select></div>
     <input type="url" name="portfolio" placeholder="Link a fotos de trabajos (Instagram, Facebook, Drive)">
+    <fieldset class="ck" data-keep>
+      <legend class="sr">Consentimientos</legend>
+      <label><input type="checkbox" data-consent="terminos" required><span>Acepto los <a href="../terminos/" target="_blank" rel="noopener">Términos y condiciones</a>.</span></label>
+      <label><input type="checkbox" data-consent="privacidad" required><span>Acepto la <a href="../privacidad/" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
+      <label><input type="checkbox" data-consent="marketing_whatsapp_sms_llamadas"><span><span class="opc">Opcional:</span> acepto recibir ofertas y novedades de Resuelto por WhatsApp, SMS o llamadas (incluidas automatizadas o con voz artificial o de IA) al número que di. No es condición para aplicar. Responde STOP para salir.</span></label>
+    </fieldset>
     <button class="btn" type="submit">Enviar mi aplicación</button>
-    <p class="legal">Al enviar autorizas que verifiquemos tu registro DACO, seguro y referencias. No compartimos tus datos con nadie más.</p>
-    <div class="ok" id="ok">Aplicación recibida. Te escribimos por WhatsApp en menos de 48 horas.</div>
+    <p class="legal">Al enviar autorizas que verifiquemos tu registro DACO, seguro y referencias. Usamos tus datos solo para evaluar tu aplicación y contactarte; no los vendemos. Detalles en la <a href="../privacidad/" style="text-decoration:underline">Política de privacidad</a>.</p>
+    <div class="ok" id="ok" role="status">Aplicación recibida. Te escribimos por WhatsApp en menos de 48 horas.</div>
+    <div class="form-err" role="alert" hidden></div>
   </form>
 </div></section>
 
@@ -231,18 +240,20 @@ window.RESUELTO_C = { whatsapp: "17879561111", chat: "https://m.me/1278171838721
 
 <footer><div class="wrap">
   <a class="logo" href="#"><svg viewBox="0 0 64 64" fill="none"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#fff"/><path d="M20 35 L29 44 L46 26" stroke="#F2621F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>resuelto</a>
-  <div>Resuelto PR Home Services LLC · Puerto Rico</div>
+  <div>© 2026 Resuelto · [PENDIENTE ELVIN: nombre legal de la entidad] · Puerto Rico</div>
   <div><a data-sitio href="#">Página del servicio</a> · <a href="../plomeros/">Plomeros</a> · <a data-wa href="#">WhatsApp</a></div>
+  <div class="legal-links" style="flex-basis:100%;font-size:13px"><a href="../terminos/">Términos y condiciones</a> · <a href="../privacidad/">Privacidad</a> · <button type="button" data-cookies>Cookies</button></div>
 </div></footer>
 
 <a class="wa" data-wa href="#" aria-label="Preguntar por WhatsApp"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.4-1.8-.9-.9.8a4 4 0 0 1-2.5-2.5l.8-.9-.9-1.8L9 9.5Z" fill="currentColor"/></svg>Preguntar</a>
 
+<script src="../legal/consentimiento.js"></script>
 <script>
 (function(){
   var cfg=window.RESUELTO_C||{};
   // Mientras Meta revisa el WhatsApp (24/sep/2026): cfg.chat manda los botones a Messenger. Quitar chat = vuelve a WhatsApp.
   var wa = cfg.chat ? cfg.chat : 'https://wa.me/' + (cfg.whatsapp||'') + '?text=' + encodeURIComponent(cfg.saludo||'Hola');
-  if(cfg.chat){var tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nd;while((nd=tw.nextNode())){if(/WhatsApp/.test(nd.nodeValue))nd.nodeValue=nd.nodeValue.replace(/WhatsApp/g,'Messenger');}document.querySelectorAll('[aria-label*="WhatsApp"]').forEach(function(x){x.setAttribute('aria-label',x.getAttribute('aria-label').replace(/WhatsApp/g,'Messenger'));});}
+  if(cfg.chat){var tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nd;while((nd=tw.nextNode())){if(nd.parentNode.closest('[data-keep]'))continue;if(/WhatsApp/.test(nd.nodeValue))nd.nodeValue=nd.nodeValue.replace(/WhatsApp/g,'Messenger');}document.querySelectorAll('[aria-label*="WhatsApp"]').forEach(function(x){x.setAttribute('aria-label',x.getAttribute('aria-label').replace(/WhatsApp/g,'Messenger'));});}
   document.querySelectorAll('[data-wa]').forEach(function(a){a.href=wa;a.target='_blank';a.rel='noopener';});
   document.querySelectorAll('[data-sitio]').forEach(function(a){a.href=cfg.urlSitio||'../index.html';});
   var f=document.getElementById('f');
@@ -251,6 +262,7 @@ window.RESUELTO_C = { whatsapp: "17879561111", chat: "https://m.me/1278171838721
     var data={categorias:[]};new FormData(f).forEach(function(v,k){ if(k==='categorias'){data.categorias.push(v);} else {data[k]=v;} });
     data.origen='landing-contratistas';data.fecha=new Date().toISOString();
     var done=function(){document.getElementById('ok').style.display='block';f.querySelectorAll('input,select,button').forEach(function(el){el.disabled=true;});};
+    if(window.ResueltoLegal){ResueltoLegal.enviar(f,cfg.webhook,data,done);return;} // consentimientos + Enviando… + error
     if(cfg.webhook){fetch(cfg.webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(done).catch(done);} else {done();}
   });
 })();
