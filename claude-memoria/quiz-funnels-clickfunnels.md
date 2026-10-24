@@ -122,3 +122,5 @@ guardar `www` CNAME → us-east-shard-3.myclickfunnels.com y agregar TXT `@` `cl
 verificar www.x1000trade.com y ponerlo como Domain del funnel. También: usuario de Pulse para 1000X (falta su correo), prueba e2e con lead
 PRUEBA y borrarlo. Ojo legal: 1000X tiene la duda CFTC/NFA con abogado (ver `docs/contexto/consentimientos.md`) y sus páginas /terminos y /privacidad no están
 publicadas (404 en 1000x-trading.vercel.app). CF admin: `https://accounts.myclickfunnels.com/` (sesión ya abierta en Chrome).
+
+**24/oct tarde (v2 en vivo):** copy de Elvin ("¿Qué te está impidiendo pasar tu cuenta fondeada…?"), 9 preguntas, resultado + "Solicitar mi llamada" → aplicación (DWY **90 días**, $3,500 dicho antes de la llamada) = evento `aplicacion` en Pulse. Commit en GitHub (antes estaba sin commit y el puente de Railway, que despliega desde GitHub, lo borró de prod 3:57–4:20 PM). **Lección:** todo código que deba vivir en prod va a GitHub; un deploy desde la Mac no basta. Al copiar el snippet a CF usar `LANG=en_US.UTF-8 pbcopy` (sin eso se dañan los acentos).
