@@ -66,3 +66,5 @@ Además (30/sep): cada quien declara su Wi-Fi principal en Hoy; red nueva → av
 19/oct: cita médica por horas (María García pidió 2 h como permiso de día completo → corregida a mano: enfermedad 0.25, vacaciones 8/8). Calendario muestra "2 h" y no cuenta como fuera (vacaciones de medio día sí). Deploy desde ~/bori-trabajo/deploy-ritmo (no /tmp).
 
 - 19/oct: Derek Toro dado de alta (videógrafo, LU, sin supervisor, ingreso 19/oct; link mandado por Slack; Carilin debe poner supervisor/ingreso). Videógrafo no ve Empresa (`sinEmpresa`). María García (tesorera) registra las ventas de LU en la Arena (`desempeno_ventas_registro`); con ventas del mes, la Arena cuenta con ellas en vez de la hoja.
+
+- 24/oct: salida sin el "0" gris de ejemplo (Ángela no podía marcar salida 13–19/oct); ponches fallidos quedan como `ponche-fallido` en desempeno_eventos (mirar ahí primero si alguien dice "no me deja marcar"). Registro de ventas de la Arena → hoja de María por el Apps Script ventas-hoy.gs (agregar/quitar); inerte hasta que Elvin publique el script (copia con clave en .privado/ventas-hoy-PARA-PEGAR.gs).
