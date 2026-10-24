@@ -70,7 +70,7 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   fecha en que se renuevan salen en Solicitudes y Mi ficha. **Vacaciones con mínimo 60 días de anticipación** (`errorAnticipacion`,
   `primerDiaVacaciones`; al crear, no al aprobar las que ya estaban). Comunicado fijado en Noticias. Tests en `tests/rrhh.test.mjs`. **19/oct (María pidió 2 h y le contó el día):** la cita médica
   va **por horas** ("¿Cuánto tiempo?": 1, 2, 3, 4, 6 h, día completo o más de un día; `redondearDias` = 1/8 de día para cita y
-  enfermedad, medio día para lo demás; `duracionTexto` → "2 h"); en el Calendario sale con sus horas y **no cuenta como fuera**
+  enfermedad, medio día para lo demás; `duracionTexto` → "2 h"; **24/oct (Jessica, 2 h de permiso que se cobraron como día de vacaciones):** el permiso y la ausencia personal también van por horas, `POR_HORAS`); en el Calendario sale con sus horas y **no cuenta como fuera**
   (`cuentaFuera`; las vacaciones de medio día sí siguen contando para la regla de estrategas). Aviso de 12 meses:
   banner en Hoy/ficha + cron `?tarea=aniversarios` (diario 9 AM PR, a la persona y a RR.HH./Carilin).
 - **Nómina estimada** del mes siguiente: salario + ajustes (`desempeno_ajustes`) − días sin paga.
