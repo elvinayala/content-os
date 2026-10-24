@@ -39,6 +39,7 @@ export interface VentaNueva {
 export interface Venta extends VentaNueva {
   id: string;
   registradoPor: string | null;
+  hoja?: "ok" | "pendiente" | "error" | null; // copia en la hoja de tesorería (null = la hoja no está conectada)
 }
 
 const texto = (v: unknown, max: number) => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, max);
@@ -162,4 +163,62 @@ export function resumenRegistro(ventas: VentaNueva[]) {
     porTipo,
     porFuente: [...porFuente.entries()].map(([fuente, x]) => ({ fuente, ...x })).sort((a, b) => b.cash - a.cash),
   };
+}
+
+// ─── A la hoja de ventas de tesorería (24/oct, Elvin: "la idea es que se automatice su hoja de Excel de ventas con Arena") ──
+// Cada venta registrada se añade como fila en la pestaña del mes. Las columnas se buscan por nombre (como al leer la
+// hoja): el Apps Script aplica ESTAS reglas (se le mandan como texto) para que la lógica viva aquí y esté probada.
+
+/** Columna de la hoja → patrón del encabezado (normalizado). El orden importa: gana el primero que calce. */
+export const COLUMNAS_HOJA: [campo: string, patron: string][] = [
+  ["id", "^id ritmo"],
+  ["fecha", "^fecha"],
+  ["tipo", "tipo de transacc|tipo de venta|^tipo$"],
+  ["cliente", "^cliente|nombre del cliente|^nombre$|^empresa|^negocio"],
+  ["acuerdo", "acuerdo|total del contrato|valor total|precio total|total de la venta|^total$"],
+  ["cash", "cash collected|monto cobrado|total cobrado|pago inicial|^monto|^cobrado|^pago$"],
+  ["metodo", "pasarela|metodo de pago|forma de pago|plataforma de pago|procesador|^metodo|^via de pago"],
+  ["closer", "^closer|vendido por|^vendedor"],
+  ["agendo", "^setter|agendad|^agendo"],
+  ["fuente", "fuente|utm|source|origen|^canal"],
+  ["anuncio", "anuncio|^ad link|^ad$"],
+  ["referido", "referid"],
+  ["nota", "^nota|comentario|observac|detalle"],
+];
+
+const TIPO_HOJA: Record<TipoVenta, string> = { nueva: "New Sale", referido: "New Sale", recurrente: "Recurrente", balance: "Pago de balance" };
+
+/** Los valores de una venta para la hoja. Fecha como la escribe cada hoja (LU m/d/aaaa, AIB d/m/aaaa). */
+export function valoresParaHoja(v: VentaNueva & { id: string }, orden: "mdy" | "dmy"): Record<string, string> {
+  const [y, m, d] = v.fecha.split("-").map(Number);
+  const dinero = (n: number) => n.toFixed(2);
+  return {
+    id: v.id,
+    fecha: orden === "mdy" ? `${m}/${d}/${y}` : `${d}/${m}/${y}`,
+    tipo: TIPO_HOJA[v.tipo],
+    cliente: v.cliente,
+    cash: dinero(v.cash),
+    acuerdo: dinero(v.acuerdo),
+    metodo: v.metodo ?? "",
+    closer: v.vendedor,
+    agendo: v.agendo ?? "",
+    fuente: v.fuente,
+    anuncio: v.anuncio ?? "",
+    referido: v.referidoPor ?? "",
+    nota: [v.tipo === "referido" ? "Referido" : "", v.tipo === "balance" ? "Pago de balance" : "", v.nota ?? ""].filter(Boolean).join(" · "),
+  };
+}
+
+/** La fila según el encabezado de la hoja (lo mismo que hace el Apps Script): cada columna toma el primer campo que calce
+ *  y que no se haya usado; lo que no calza queda vacío. */
+export function filaSegunEncabezado(encabezado: string[], valores: Record<string, string>): string[] {
+  const usados = new Set<string>();
+  return encabezado.map((c) => {
+    const n = norm(c);
+    if (!n) return "";
+    const hit = COLUMNAS_HOJA.find(([campo, re]) => !usados.has(campo) && new RegExp(re).test(n));
+    if (!hit) return "";
+    usados.add(hit[0]);
+    return valores[hit[0]] ?? "";
+  });
 }

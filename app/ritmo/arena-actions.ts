@@ -1,10 +1,11 @@
 "use server";
 
 import { refresh } from "next/cache";
+import { after } from "next/server";
 
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import * as v from "@/lib/ventas/datos";
-import { borrarVenta, registrarVenta } from "@/lib/ventas/registro";
+import { borrarVenta, copiarPendientesAHoja, registrarVenta } from "@/lib/ventas/registro";
 import { validarVenta } from "@/lib/ventas/registro-reglas";
 import { camposViejos, type Empresa, errorBono, limpiarCierres, limpiarKpis, MAX_NOTA_DIARIO, type RolVentas } from "@/lib/ventas/reglas";
 
@@ -122,6 +123,8 @@ export async function registrarVentaAction(empresa: Empresa, p: Record<string, u
     const r = validarVenta(p, hoyPR());
     if (!r.ok) throw new Error(r.error);
     await registrarVenta(empresa, r.v, u.id);
+    // A la hoja de ventas de tesorería (24/oct): después de responder; si falla queda pendiente y va en el próximo registro.
+    after(() => copiarPendientesAHoja(empresa).catch((e) => console.error("[registro→hoja]", e)));
   });
 }
 

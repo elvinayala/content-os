@@ -92,3 +92,25 @@ test("el videógrafo no ve Empresa", () => {
   assert.equal(puestoPorId("videografo").sinEmpresa, true);
   assert.equal(puestoPorId("tesoreria").sinEmpresa, undefined);
 });
+
+import { filaSegunEncabezado, valoresParaHoja } from "../lib/ventas/registro-reglas.ts";
+
+test("a la hoja: cada columna por su nombre, fecha como la escribe cada hoja y lo que no calza vacío", () => {
+  const v = { ...validarVenta({ ...base, anuncio: "facebook.com/ads/1", nota: "2 de 3 cuotas" }, HOY).v, id: "abc" };
+  const val = valoresParaHoja(v, "mdy");
+  assert.equal(val.fecha, "10/19/2026");
+  assert.equal(valoresParaHoja(v, "dmy").fecha, "19/10/2026");
+  assert.equal(val.tipo, "New Sale");
+  const enc = ["Fecha", "Cliente", "Tipo de Transacción", "Closer", "Setter", "Monto Cobrado", "Valor Neto", "Método de pago", "Total del acuerdo", "UTM / Fuente", "Link del anuncio", "Notas", "", "ID Ritmo"];
+  const fila = filaSegunEncabezado(enc, val);
+  assert.deepEqual(fila, ["10/19/2026", "Tinos Pizza", "New Sale", "Roger Arteaga", "Valentina", "1500.00", "", "Stripe", "3500.00", "Anuncio de Meta", "https://facebook.com/ads/1", "2 de 3 cuotas", "", "abc"]);
+});
+
+test("a la hoja: referido y balance siguen contando bien al leer la hoja (New Sale = nueva)", () => {
+  const ref = { ...validarVenta({ ...base, tipo: "referido", referidoPor: "Ana" }, HOY).v, id: "r" };
+  const bal = { ...validarVenta({ ...base, tipo: "balance" }, HOY).v, id: "b" };
+  assert.equal(valoresParaHoja(ref, "mdy").tipo, "New Sale");
+  assert.equal(valoresParaHoja(ref, "mdy").referido, "Ana");
+  assert.equal(valoresParaHoja(ref, "mdy").nota, "Referido");
+  assert.equal(valoresParaHoja(bal, "mdy").tipo, "Pago de balance");
+});

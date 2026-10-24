@@ -58,7 +58,7 @@ function env(n) {
 // "separar que la Mac no firme como Sofi"). Una rutina de un agente en la Mac pone AGENTE=<agente>.
 // En Railway el servicio de Sofi ("puente") no tiene PUENTE_BOT: ahí sigue siendo Sofi (Railway pone RAILWAY_SERVICE_NAME).
 const YO = (process.env.PUENTE_BOT || process.env.AGENTE || (process.env.RAILWAY_SERVICE_NAME ? "sofi" : "mac")).toLowerCase();
-const NOMBRE = { mac: "Claude (Mac)", sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela", mariadelcarmen: "María del Carmen" };
+const NOMBRE = { mac: "Claude (Mac)", sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela", mariadelcarmen: "María del Carmen", yaileen: "Yaileen" };
 const CON_BUZON = new Set(["sofi", "nico", "max", "lola", "jarvis"]);
 const BASE = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app";
 const SECRETO = env("CRON_SECRET");

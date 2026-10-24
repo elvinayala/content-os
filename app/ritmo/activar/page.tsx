@@ -1,9 +1,12 @@
+import Link from "next/link";
+
 import { activarAction } from "@/app/ritmo/activar/actions";
 import { RitmoLogo } from "@/components/ritmo/logo";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { verificarLink } from "@/lib/desempeno/acceso";
+
+import { BotonActivar } from "./boton";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Crear tu clave" };
@@ -34,8 +37,10 @@ export default async function ActivarPage({ searchParams }: { searchParams: Prom
             </div>
           ) : (
             <div>
-              <h1 className="text-xl font-semibold tracking-tight">Este link ya no sirve</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Venció o ya se usó. Pídele uno nuevo a RR.HH. (Yaileen).</p>
+              <h1 className="text-xl font-semibold tracking-tight">Este link ya se usó o venció</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Si ya creaste tu clave, entra con tu correo y esa clave. Si todavía no la has creado, pídele un link nuevo a RR.HH. (Yaileen).
+              </p>
             </div>
           )}
         </div>
@@ -52,9 +57,14 @@ export default async function ActivarPage({ searchParams }: { searchParams: Prom
               <Input id="otra" name="otra" type="password" autoComplete="new-password" minLength={8} className="h-12" required />
             </div>
             {error && ERRORES[error] ? <p className="text-sm text-red-400">{ERRORES[error]}</p> : null}
-            <Button type="submit" className="mt-2 h-12 rounded-full text-base font-semibold">{leads ? "Entrar a Leads" : "Entrar a Ritmo"}</Button>
+            <BotonActivar texto={leads ? "Entrar a Leads" : "Entrar a Ritmo"} />
           </form>
-        ) : null}
+        ) : (
+          // Sirve una sola vez: quien ya creó la clave (o tocó dos veces, o la creó dentro de WhatsApp y volvió a abrir el link) entra por aquí.
+          <Link href={leads ? "/pulse/login" : "/ritmo/entrar"} className="flex h-12 items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+            Ya tengo mi clave: entrar
+          </Link>
+        )}
       </div>
     </div>
   );

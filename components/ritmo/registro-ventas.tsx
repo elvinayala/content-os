@@ -227,6 +227,11 @@ export function RegistroVentas({ empresa, hoy, ventas, equipo, puedeRegistrar, c
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <span className="num font-mono font-semibold">{usd(v.cash)}</span>
                         <span className="text-[11px] text-muted-foreground">de {usd(v.acuerdo)}</span>
+                        {v.hoja ? (
+                          <span className={cn("text-[10px]", v.hoja === "ok" ? "text-emerald-300/80" : v.hoja === "error" ? "text-amber-300" : "text-muted-foreground")} title={v.hoja === "error" ? "Se vuelve a intentar sola cuando registres la próxima venta" : undefined}>
+                            {v.hoja === "ok" ? "✓ en tu hoja" : v.hoja === "error" ? "no pasó a la hoja" : "pasando a la hoja…"}
+                          </span>
+                        ) : null}
                         {puedeRegistrar ? (
                           <button type="button" aria-label="Borrar venta" disabled={borrando === v.id} onClick={() => borrar(v)} className="grid size-7 place-items-center rounded-lg text-muted-foreground transition hover:bg-red-500/10 hover:text-red-300">
                             {borrando === v.id ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
