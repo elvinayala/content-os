@@ -1,0 +1,139 @@
+{
+  "id": "edr-03-fase1-remodelar-sale-caro-9x16-v2",
+  "formato": "9:16",
+  "musica": "audio/vital-energia.mp3",
+  "titulo": "Remodelar sale caro (fase 1)",
+  "angulo": "Gran Sorteo: 15 puertas instaladas",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "¿Remodelar en PR?",
+        "Sale *caro*.",
+        "Participar: *$20*"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-1Ved8tr34NwqnaYmM2qaAuQDyg8vnJs3V-IMG_6193.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xVmVkOHRyMzROd3FuYVltTTJxYUF1UUR5Zzh2bkpzM1YtSU1HXzYxOTMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzNCwiZXhwIjoxODI0MzI4OTM0fQ.RUoxdxeaPeiCG0VxXqQ0PtFz8TQenAy8v-_Ke7H-UmO7GEfrtWigoIzJGLfWEhYYKpz1S6qp4_wVxOwxB-b9ZA",
+      "enfoque": "45% 50%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "*EDR* sortea",
+        "15 puertas de aluminio"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-1LQl-e7TBMJ2gkgrZDVw8a-HfYVO6gj3X-IMG_0122.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xTFFsLWU3VEJNSjJna2dyWkRWdzhhLUhmWVZPNmdqM1gtSU1HXzAxMjIuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzMywiZXhwIjoxODI0MzI4OTMzfQ.yF9anXexJ82JEAChBj7sG87PwGDOXFST29WjJR98CLyQPZXzSPeLqhVOneJaRN6GchYrBWWgEtnu2vu-Bwn_0w",
+      "enfoque": "50% 35%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 60,
+      "lineas": [
+        "*Garaje*"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-122Ib-ClATFoH403Yjn6OOBpG3mKKI1Mf-IMG_4406.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xMjJJYi1DbEFURm9INDAzWWpuNk9PQnBHM21LS0kxTWYtSU1HXzQ0MDYuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzNCwiZXhwIjoxODI0MzI4OTM0fQ.NTxWjdb_6v07vL1mpSddDfDxPHYlVoHPNX5Ce49X1rxObmsQtS1hC_34Z8ogkm7pooZtZq6huUj2dzIEpfYNRQ",
+      "enfoque": "50% 45%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 60,
+      "lineas": [
+        "*Entrada*"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-10N5Eb0f69YgevpYSL_oCcaDkXG10QufP-IMG_3298.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xME41RWIwZjY5WWdldnBZU0xfb0NjYURrWEcxMFF1ZlAtSU1HXzMyOTguanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzMywiZXhwIjoxODI0MzI4OTMzfQ.QOBGLuGsR1mj78Vb-Jsf_aKqyNTntlx2VKL36ZGrWBjaOEvcocddqw-Yc6VoGKbqs3LMNodzX6EV7OSlRop7ew",
+      "enfoque": "25% 45%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 60,
+      "lineas": [
+        "*Interiores*"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-150VsJlKJxGyCV-sxW_6pFpfW-fOw0S9s-IMG_5266.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xNTBWc0psS0p4R3lDVi1zeFdfNnBGcGZXLWZPdzBTOXMtSU1HXzUyNjYuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjgxNDc2MCwiZXhwIjoxODI0MzUwNzYwfQ.-y-ihpt1U0SGPppplu7MBX0OdMJ3nc5YyCRkOXWssrQ44gJfb5Uww7q64bHzLByThTX2N5FL333MejDQYHGsQQ",
+      "enfoque": "55% 50%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 105,
+      "lineas": [
+        "*3* ganadores",
+        "Solo *5,000* números"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 135,
+      "lineas": [
+        "Medimos, rectificamos",
+        "e *instalamos*"
+      ],
+      "sub": "Sin costo · Tú no gestionas nada",
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-16aIlVvCAzpyBDNzJU4txEsMHn1AyjcZA-IMG_4567.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xNmFJbFZ2Q0F6cHlCRE56SlU0dHhFc01IbjFBeWpjWkEtSU1HXzQ1NjcuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjgxNDc2MCwiZXhwIjoxODI0MzUwNzYwfQ.uCcY2qT_gdpfGt1AAaWTKHe9FjYfHcYnqi2ABqQvj1XkUpALhQ7QfNJENn772Mol2xkMMV70jcVXHUZAOL0g8w",
+      "enfoque": "50% 50%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "Tu arte digital *$20*",
+        "Tu número *único*"
+      ],
+      "sub": "Pago seguro",
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-1krhfKlGDgXsUbjU1DrxsLs9yY3PFhX0k-IMG_4255.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xa3JoZktsR0RnWHNVYmpVMURyeHNMczl5WTNQRmhYMGstSU1HXzQyNTUuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzNSwiZXhwIjoxODI0MzI4OTM1fQ.3IK--l9i4Ds-GlTrzzKuuSIF5rhS5CC4veIQl_GgCRVxqdr7kwMweWOKTqFJbzqLHIo71TPOHQLEI3n8KY_G5g",
+      "enfoque": "50% 50%"
+    },
+    {
+      "tipo": "lista",
+      "dur": 150,
+      "modo": "marcar",
+      "titulo": "*3* premios instalados",
+      "items": [
+        {
+          "texto": "1.º Garaje + entrada + 4 interiores"
+        },
+        {
+          "texto": "2.º Entrada + 4 interiores"
+        },
+        {
+          "texto": "3.º 4 puertas de interior"
+        }
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "Entra a",
+        "*edraluminum.com*"
+      ],
+      "sub": "y reserva tu número",
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-1Pdahcesrek4iPcVUZ1rEfjBtj_SuZ3lP-IMG_0507.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xUGRhaGNlc3JlazRpUGNWVVoxckVmakJ0al9TdVozbFAtSU1HXzA1MDcuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzMywiZXhwIjoxODI0MzI4OTMzfQ.4depWYayP7EG3PCPNLkdvwrhayztqk_NGkgvQ6-wj8Kw3TLSv3bIpxQZRu98nHX3PKvChU7MYr0LhjkDcfp9Nw",
+      "enfoque": "50% 40%"
+    },
+    {
+      "tipo": "cierre",
+      "dur": 120,
+      "grande": true,
+      "cta": "edraluminum.com",
+      "sub": "Solo 5,000 artes",
+      "url": "WhatsApp (939) 380-1564"
+    }
+  ],
+  "cliente": {
+    "fondo": "#0C0C0C",
+    "texto": "#FFFFFF",
+    "acento": "#E4B43C",
+    "fuente": "Bebas Neue",
+    "musica": "audio/vital-energia.mp3",
+    "nombre": "EDR Aluminium & More",
+    "acento2": "#B4B4B4",
+    "estilos": [
+      "impacto",
+      "editorial"
+    ],
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-1835Imnr7DC-ncy5oeKFTpuQYHVxhqnDk-image.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xODM1SW1ucjdEQy1uY3k1b2VLRlRwdVFZSFZ4aHFuRGstaW1hZ2UucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzNiwiZXhwIjoxODI0MzI4OTM2fQ.KJlMdH8VzcpO6jrAVxOV_GYldJCkN2_7T41n2FrpAGbVLHTdmqPgIqPvahSlVQcamEYx0wLWo8H4UYrxln0bcw",
+    "subtitulo": "Puertas y ventanas de aluminio"
+  },
+  "estilo": "impacto"
+}
