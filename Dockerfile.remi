@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libxfixes3 libxcomposite1 libxdamage1 libpango-1.0-0 libcairo2 libcups2 libdrm2 libxshmfence1 \
       fonts-noto-color-emoji fonts-noto-core ffmpeg \
     && rm -rf /var/lib/apt/lists/*
+# yt-dlp (23/oct): baja los videos de referencia ("hazlo como este Reel") para POST /referencia. Binario sin Python.
+RUN curl -fsSL https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.21/yt-dlp_linux -o /usr/local/bin/yt-dlp \
+    && chmod +x /usr/local/bin/yt-dlp && yt-dlp --version
 WORKDIR /app
 COPY scripts/remi-nube.sh /app/remi-nube.sh
 COPY data/plataformas.json /app/data/plataformas.json

@@ -9,6 +9,13 @@ Motor: `motion/referencias/vision/` (de Motion Architect, MIT; ver `docs/oficio/
 yt-dlp baja el video, ffmpeg saca cuadros por cambio de escena y trae los subtítulos si existen. Nada se sube.
 
 ## 1. Mirar el video
+**Desde Slack / Max / sin la Mac (nube):** `node scripts/remi.mjs referencia "<url>" --slug <nombre>` → el servicio
+`remi` en Railway baja el video, mide duración, cortes y segundos por escena (mediana) y deja 3 hojas de 12 cuadros
+(primera mitad, segunda mitad y un cuadro después de cada corte) en archivos locales para leer con Read; las medidas
+quedan en `data/motion/referencias/<slug>.json`. El video nunca se guarda. En motion con barridos/fundidos sobre fondo
+oscuro puede no detectar cortes: el ritmo se mide en las hojas.
+
+**En la Mac, con más detalle** (cuadros por cambio de escena, tramos finos, subtítulos):
 ```bash
 cd motion
 python3 referencias/vision/setup.py --check                       # 0 = listo (ffmpeg + yt-dlp)

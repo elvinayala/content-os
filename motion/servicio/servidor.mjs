@@ -14,11 +14,13 @@
 //   GET  /trabajo/<id>                       → { estado: en-cola|trabajando|listo|error, resultados: [{ id, url, segundos }], error }
 //   POST /capas { capas: [{ id, props }] }   → { trabajo }   (14/oct: capas TRANSPARENTES de Cortex — cifras, anillos, íconos,
 //        cursor, lluvia — composición CortexCapa en VP9 con alpha; cola propia para no esperar detrás de los lotes de Max)
+//   POST /referencia { url }                 → { trabajo }   (23/oct: "hazlo como este Reel" — baja el video con yt-dlp,
+//        mide cortes y ritmo y sube 3 hojas de cuadros para que Max/Remi las MIREN; el video no se guarda)
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 
 const PORT = Number(process.env.PORT || 8080);
 const SECRETO = process.env.REMI_SECRETO || "";
@@ -111,9 +113,49 @@ async function hoja(salida, id, segundos) {
   } catch (e) { log(`hoja ${id}: ${e?.message || e}`); return null; }
 }
 
+// Referencia en video (23/oct, de Motion Architect): se mira el LENGUAJE (ritmo, cortes, paleta, movimiento), nunca se
+// guarda ni se reusa el video. Mide hasta 120 s. Hojas: primera mitad, segunda mitad y el cuadro justo después de cada corte.
+async function analizarReferencia(t) {
+  const dir = fs.mkdtempSync(path.join("/tmp", "ref-"));
+  try {
+    const video = path.join(dir, "ref.mp4");
+    const dl = spawnSync("yt-dlp", ["-q", "--no-warnings", "--no-playlist", "--max-filesize", "300M", "-f", "b[height<=1080][ext=mp4]/bv*[height<=1080]+ba/b", "--merge-output-format", "mp4", "-o", video, t.referencia.url], { encoding: "utf8", timeout: 240_000 });
+    if (!fs.existsSync(video)) throw new Error(`no se pudo bajar el video (${(dl.stderr || dl.error?.message || "").trim().split("\n").pop()?.slice(0, 300) || "sin detalle"}). Si es de Instagram y pide sesión, que suban el MP4 al hilo y pásame ese link.`);
+    const prob = (a) => execFileSync("ffprobe", ["-v", "error", ...a, "-of", "csv=p=0:s=x", video]).toString().trim();
+    const duracion = Math.min(120, Number(prob(["-show_entries", "format=duration"])) || 0);
+    const [w, h] = prob(["-select_streams", "v:0", "-show_entries", "stream=width,height"]).split("x").map(Number);
+    const [fn, fd] = prob(["-select_streams", "v:0", "-show_entries", "stream=r_frame_rate"]).split("/").map(Number);
+    const fps = fn && fd ? fn / fd : 30;
+    const audio = prob(["-select_streams", "a", "-show_entries", "stream=codec_name"]) !== "";
+    // Umbral bajo (0.12): en motion los cambios son barridos y fundidos, no cortes secos; un barrido da varios cuadros
+    // seguidos, así que lo que cae a menos de 0.4 s del anterior es la misma transición.
+    const sc = spawnSync("ffmpeg", ["-hide_banner", "-t", String(duracion), "-i", video, "-vf", "select='gt(scene,0.12)',showinfo", "-f", "null", "-"], { encoding: "utf8", timeout: 240_000, maxBuffer: 64 * 1024 * 1024 });
+    const cortes = [];
+    for (const m of (sc.stderr || "").matchAll(/pts_time:([0-9.]+)/g)) {
+      const x = Number(m[1]);
+      if (x > 0.2 && (!cortes.length || x - cortes.at(-1) >= 0.4)) cortes.push(Math.round(x * 100) / 100);
+    }
+    const tramos = [0, ...cortes, duracion].map((x, i, a) => (i ? x - a[i - 1] : null)).filter((x) => x && x > 0.05).sort((a, b) => a - b);
+    const segPorEscena = tramos.length ? Math.round(tramos[Math.floor(tramos.length / 2)] * 100) / 100 : duracion;
+    const vertical = h > w, ancho = vertical ? 300 : 480, rejilla = vertical ? "6x2" : "4x3";
+    const hojas = [];
+    const hacer = async (nombre, entrada, filtro) => {
+      const img = path.join(dir, `${nombre}.jpg`);
+      execFileSync("ffmpeg", ["-v", "error", "-y", ...entrada, "-i", video, "-vf", `${filtro},scale=${ancho}:-2,tile=${rejilla}:padding=6:color=0x222222`, "-frames:v", "1", "-q:v", "4", img], { timeout: 180_000 });
+      hojas.push({ nombre, url: await subir(img, `referencias/${t.id}-${nombre}.jpg`, "image/jpeg") });
+    };
+    const mitad = duracion / 2;
+    await hacer("1-primera-mitad", ["-t", String(mitad)], `fps=12/${Math.max(0.5, mitad)}`);
+    await hacer("2-segunda-mitad", ["-ss", String(mitad), "-t", String(mitad)], `fps=12/${Math.max(0.5, mitad)}`);
+    if (cortes.length) await hacer("3-cortes", ["-t", String(duracion)], `select='${cortes.slice(0, 12).map((c) => `between(t,${c + 0.35},${c + 0.35 + 1 / fps})`).join("+")}'`);
+    t.resultados.push({ id: "referencia", url: t.referencia.url, duracion: Math.round(duracion * 10) / 10, formato: `${w}x${h}`, audio, cortes, escenas: cortes.length + 1, segPorEscena, hojas });
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+}
+
 async function procesar(t) {
   t.estado = "trabajando";
   try {
+    if (t.referencia) { await analizarReferencia(t); t.estado = "listo"; t.terminado = new Date().toISOString(); return; }
     t.commit = actualizarRepo();
     if (t.html) { await renderHtml(t); t.estado = "listo"; t.terminado = new Date().toISOString(); return; }
     // El servidor corre DESDE el clon (motion/servicio/), así que resuelve el node_modules de la fábrica.
@@ -247,7 +289,7 @@ http.createServer(async (req, res) => {
     const idValido = (x) => typeof x === "string" && /^[A-Za-z0-9._-]{1,120}$/.test(x);
     ids = ids.filter(idValido);
     guiones = guiones.filter((g) => g && idValido(g.id) && Array.isArray(g.escenas) && g.escenas.length && ["9:16", "16:9", "1:1", "4:5"].includes(g.formato));
-    if (!ids.length && !guiones.length) return responder(res, 400, { ok: false, error: "Pasa { ids: [...] } o { guiones: [...] } válidos (id, formato 9:16|16:9|1:1, escenas)" });
+    if (!ids.length && !guiones.length) return responder(res, 400, { ok: false, error: "Pasa { ids: [...] } o { guiones: [...] } válidos (id, formato 9:16|16:9|1:1|4:5, escenas)" });
     if (ids.length + guiones.length > 12) return responder(res, 400, { ok: false, error: "Máximo 12 videos por trabajo" });
     const t = { id: crypto.randomUUID().slice(0, 8), ids, guiones, estado: "en-cola", resultados: [], creado: new Date().toISOString() };
     trabajos.set(t.id, t);
@@ -285,7 +327,19 @@ http.createServer(async (req, res) => {
     bombear();
     return responder(res, 202, { ok: true, trabajo: t.id, enCola: cola.length });
   }
+  if (req.method === "POST" && u.pathname === "/referencia") {
+    let cuerpo = "";
+    for await (const c of req) cuerpo += c;
+    let url = "";
+    try { url = String(JSON.parse(cuerpo || "{}").url || "").trim(); } catch { return responder(res, 400, { ok: false, error: "JSON inválido" }); }
+    if (!/^https:\/\/\S{8,600}$/.test(url)) return responder(res, 400, { ok: false, error: "Pasa { url: \"https://…\" } (Reel, TikTok, YouTube o un MP4)" });
+    const t = { id: crypto.randomUUID().slice(0, 8), ids: [], guiones: [], referencia: { url }, estado: "en-cola", resultados: [], creado: new Date().toISOString() };
+    trabajos.set(t.id, t);
+    cola.push(t);
+    bombear();
+    return responder(res, 202, { ok: true, trabajo: t.id, enCola: cola.length });
+  }
   const m = u.pathname.match(/^\/trabajo\/([a-f0-9-]+)$/);
-  if (m) { const t = trabajos.get(m[1]); if (!t) return responder(res, 404, { ok: false, error: "no existe" }); const { guiones, html, capas, ...resto } = t; return responder(res, 200, { ok: true, ...resto, guiones: guiones.map((g) => g.id), html: html?.id, capas: capas?.length }); }
+  if (m) { const t = trabajos.get(m[1]); if (!t) return responder(res, 404, { ok: false, error: "no existe" }); const { guiones, html, capas, referencia, ...resto } = t; return responder(res, 200, { ok: true, ...resto, guiones: guiones.map((g) => g.id), html: html?.id, capas: capas?.length }); }
   responder(res, 404, { ok: false, error: "ruta desconocida" });
 }).listen(PORT, () => log(`Remi escuchando en :${PORT} · repo ${REPO}`));

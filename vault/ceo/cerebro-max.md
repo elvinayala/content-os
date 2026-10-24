@@ -765,6 +765,29 @@ se renderizan quedan en `data/motion/guiones/<id>.json`.
 
 **Quién aprueba:** igual que §22b (Elvin, Carilin, Jessica o María del Carmen); publicar o pautar, Elvin o Carilin.
 
+## 22d. "Hazlo como este video" — referencias en video y formato 4:5 (Elvin, 23/oct/2026)
+
+Si en #max-aprobaciones me pasan un Reel, TikTok, YouTube o un MP4 ("quiero un motion así", "con este ritmo", "como
+este video pero para <cliente>"), PRIMERO lo miro:
+```bash
+node scripts/remi.mjs referencia "<link>" --slug <cliente>-ref
+```
+Remi lo baja en la nube, mide duración, cortes y segundos por escena y me deja 3 hojas de cuadros (primera mitad,
+segunda mitad y el cuadro de cada corte). **Las miro con Read** y saco: ritmo, paleta (aprox.), tipo de letra,
+movimientos, transiciones y qué hace que funcione. Lo traduzco a NUESTRA fábrica con la tabla de
+`motion/docs/referencias.md` (estilo neon/editorial/impacto/minimal/pop/tecno + tipos de escena + `dur` según los
+segundos por escena) y en la propuesta digo en una línea qué tomé ("ritmo de 1.5 s y cortes secos del video que
+pasó María"). Se copia el LENGUAJE, nunca el contenido, los textos, las caras, la música ni el logo de la referencia;
+los colores, la letra y el logo siguen siendo los del cliente.
+- Si Instagram no deja bajarlo ("no se pudo bajar el video"), pido que suban el MP4 al hilo y uso ese link
+  (`max.mjs material` lo deja en Storage con link https).
+- Si dice "sin cortes secos", el ritmo lo mido mirando las hojas (cada cuadro dice cuántos segundos son).
+
+**Formato 4:5 (1080×1350, feed de Instagram):** además de 9:16, 16:9 y 1:1, el guion acepta `"formato": "4:5"`.
+**Sonidos:** la fábrica trae 260 efectos libres (impactos, clicks, whooshes, teclas) en `motion/public/sfx/` (índice en
+`motion/docs/oficio/sfx-library.md`). **Antes de proponer**, además de la hoja: nada aparece de golpe, cada texto se
+alcanza a leer (≥ 1 s), no se mueven dos cosas grandes a la vez (`motion/docs/oficio/motion-principles.md`).
+
 ## 23. La revisión de cuentas de clientes (15/oct/2026)
 
 Elvin: *"Necesito que Max me ayude a revisar clientes, que tenga mi skill…"* y, el mismo día, la v2: *"Tenemos que saber si

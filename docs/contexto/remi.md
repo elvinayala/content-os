@@ -41,3 +41,6 @@ CC0** (Kenney) en `motion/public/sfx/` (`<Sfx src="sfx/…ogg">`, índice `docs/
 motion** en `motion/docs/oficio/` (principios + checklist de revisión, tonos ↔ estilos, storyboard, vocabulario,
 estándares, audio al beat) y el **formato 4:5** (1080×1350, feed de IG) en la fábrica y en el servicio de la nube.
 Copia del repo en `~/motion-architect` (solo consulta). Licencias en `motion/docs/oficio/NOTICES.md`.
+En la nube (mismo día): `POST /referencia` en el servicio `remi` (yt-dlp fijado en `Dockerfile.remi`) +
+`node scripts/remi.mjs referencia <url>` → medidas + 3 hojas de cuadros; Max lo usa desde #max-aprobaciones
+(cerebro-max §22d). Instagram funciona desde la Mac; si la IP de Railway queda bloqueada, se sube el MP4 al hilo.

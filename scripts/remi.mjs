@@ -13,6 +13,10 @@
 //   node scripts/remi.mjs render --guion <json> [--estilo neon|editorial|impacto|minimal|pop|tecno|auto]
 //     (sin --estilo ni `estilo` en el guion: uno al azar por video, sin repetir dentro del mismo pedido)
 //   node scripts/remi.mjs salud
+//   node scripts/remi.mjs referencia <url> [--slug <nombre>]
+//     (23/oct) "Hazlo como este Reel": Remi baja el video (Reel, TikTok, YouTube o un MP4 con link https), mide los
+//     cortes y el ritmo y deja 3 hojas de cuadros en archivos locales para MIRARLAS (Read). Con eso se escoge estilo +
+//     escenas de la fábrica (motion/docs/referencias.md). Se copia el lenguaje, nunca el contenido. El video no se guarda.
 //   node scripts/remi.mjs lote <tabla.csv | tabla.json | URL de Google Sheets (CSV)> --plantilla <guion.json>
 //        [--id-columna <col>] [--max 50] [--probar] [--omitir-errores] + las mismas opciones de render
 //     "Una plantilla, mil videos": cada fila de la tabla rellena los {{campos}} de la plantilla → un video por fila
@@ -144,6 +148,40 @@ if (cmd === "salud") {
   console.log(await (await fetch(`${URL_REMI}/salud`)).text());
   process.exit(0);
 }
+if (cmd === "referencia") {
+  const url = resto.find((x) => /^https:\/\//.test(x));
+  if (!url) { console.error("Uso: remi.mjs referencia <https://… Reel, TikTok, YouTube o MP4> [--slug <nombre>]"); process.exit(1); }
+  if (!SECRETO) { console.error("Falta REMI_SECRETO"); process.exit(1); }
+  const slug = (arg("slug") || new URL(url).pathname.split("/").filter(Boolean).pop() || "referencia").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 60) || "referencia";
+  const r0 = await fetch(`${URL_REMI}/referencia`, { method: "POST", headers: h, body: JSON.stringify({ url }) });
+  const j0 = await r0.json().catch(() => ({ ok: false, error: "HTTP " + r0.status }));
+  if (!j0.ok) { console.error("✖", j0.error || r0.status); process.exit(1); }
+  console.log(`⏳ trabajo ${j0.trabajo} — Remi baja la referencia y saca los cuadros…`);
+  let tr;
+  for (let i = 0; i < 120; i++) {
+    await new Promise((s) => setTimeout(s, 4000));
+    tr = await (await fetch(`${URL_REMI}/trabajo/${j0.trabajo}`, { headers: h })).json();
+    if (tr.estado === "listo" || tr.estado === "error") break;
+  }
+  if (tr?.estado !== "listo") { console.error("✖", tr?.error || tr?.estado || "sin respuesta"); process.exit(1); }
+  const x = tr.resultados[0];
+  const dir = path.join((await import("node:os")).tmpdir(), `remi-ref-${slug}`);
+  fs.mkdirSync(dir, { recursive: true });
+  const locales = [];
+  for (const hj of x.hojas) {
+    const destino = path.join(dir, `${hj.nombre}.jpg`);
+    try { fs.writeFileSync(destino, Buffer.from(await (await fetch(hj.url)).arrayBuffer())); locales.push(destino); } catch { locales.push(hj.url); }
+  }
+  const medida = { fuente: url, duracion_s: x.duracion, tamano: x.formato, audio: x.audio, escenas: x.escenas, seg_por_escena: x.segPorEscena, cortes_s: x.cortes, hojas: x.hojas.map((hj) => hj.url) };
+  fs.mkdirSync(path.join(ROOT, "data/motion/referencias"), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, "data/motion/referencias", `${slug}.json`), JSON.stringify(medida, null, 2) + "\n");
+  const sinCortes = !x.cortes.length && x.duracion > 6;
+  console.log(`✓ ${x.duracion} s · ${x.formato} · audio: ${x.audio ? "sí" : "no"} · ${sinCortes ? "sin cortes secos (transiciones suaves sobre fondo oscuro o una sola toma): mide el ritmo en las hojas — cada cuadro = " + Math.round((x.duracion / 24) * 10) / 10 + " s" : `${x.escenas} escenas · ~${x.segPorEscena} s por escena (mediana)`}`);
+  if (x.cortes.length) console.log(`  cortes (s): ${x.cortes.slice(0, 40).join(", ")}${x.cortes.length > 40 ? " …" : ""}`);
+  console.log(`  🖼 Hojas para MIRAR con Read (12 cuadros cada una, en orden):\n${locales.map((l) => "    " + l).join("\n")}`);
+  console.log(`  → Medidas en data/motion/referencias/${slug}.json. Ahora: paleta, letra, movimientos y transiciones a ojo,\n    y tradúcelo a estilo + escenas con la tabla de motion/docs/referencias.md ${sinCortes ? "" : `(ritmo: dur ≈ ${Math.round(x.segPorEscena * 30)} cuadros por escena)`}.`);
+  process.exit(0);
+}
 let cuerpoHtml = null;
 if (cmd === "html") {
   const id = arg("id");
@@ -157,7 +195,7 @@ if (cmd === "html") {
   console.log(`🎞 Hyperframes: ${id} · ${(html.length / 1024).toFixed(0)} KB · ${assets.length} archivo(s)`);
 }
 if (!["render", "lote", "html"].includes(cmd) || (!ids.length && !guiones.length && !cuerpoHtml)) {
-  console.error('Uso: remi.mjs render <id>… [--entregar --marca <m> --titulo "…" --formato "…"] | remi.mjs lote … | remi.mjs html --id … | remi.mjs salud');
+  console.error('Uso: remi.mjs render <id>… [--entregar --marca <m> --titulo "…" --formato "…"] | remi.mjs lote … | remi.mjs html --id … | remi.mjs referencia <url> | remi.mjs salud');
   process.exit(1);
 }
 if (!SECRETO) { console.error("Falta REMI_SECRETO"); process.exit(1); }

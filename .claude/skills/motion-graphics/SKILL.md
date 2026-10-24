@@ -17,7 +17,8 @@ Este método produjo el 27/sep/2026 más de 80 videos (Level Up, Bori, AI Borinq
    Sin logo real = sin logo (jamás inventarlo). Nada de testimonios o números que no dé el cliente.
 4. **¿Trae un video de referencia** ("hazlo como este Reel")? Míralo primero con el motor de visión y saca su ficha
    (ritmo, cortes, paleta, movimientos, transiciones, audio) traducida a estilo + escenas de la fábrica:
-   **`motion/docs/referencias.md`** (subagente `remi-referencia`, uno por video). Se copia el lenguaje, nunca el contenido.
+   **`motion/docs/referencias.md`** (subagente `remi-referencia`, uno por video; desde la nube / Max:
+   `node scripts/remi.mjs referencia "<url>"`). Se copia el lenguaje, nunca el contenido.
 5. Antes de escribir el guion, un **storyboard** de una página (escena · dur · texto · movimiento · transición · sonido,
    plantilla en `motion/docs/oficio/storyboard.md`); si lo pidió Elvin directo y es grande, se lo enseñas antes de renderizar.
 
