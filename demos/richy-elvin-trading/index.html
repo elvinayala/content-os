@@ -169,6 +169,40 @@ footer{padding-block:40px; font-size:12px; color:var(--static)}
 footer .disclaimer{max-width:80ch; border-left:2px solid var(--loss); padding-left:16px; margin-bottom:28px; line-height:1.7}
 footer .disclaimer strong{color:var(--ghost)}
 footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase}
+/* ── Aviso de riesgo visible + links legales (legal 24/oct/2026) ── */
+.riesgo{background:var(--charcoal); border-bottom:1px solid var(--line)}
+.riesgo .wrap{padding-block:16px; font-size:12px; line-height:1.6; color:#AEB9B3; border-left:2px solid var(--loss); padding-left:18px; margin-block:14px}
+.riesgo strong{color:var(--ghost); letter-spacing:.08em}
+.riesgo a,.legal-links a{color:var(--ghost); text-decoration:underline; text-underline-offset:3px}
+.riesgo a:hover,.legal-links a:hover{color:var(--phosphor)}
+.nota-tipica{margin-top:12px; font-size:11.5px; color:#AEB9B3; letter-spacing:.02em}
+footer .disclaimer{color:#AEB9B3}
+footer .disclaimer + .disclaimer{border-left-color:var(--line)}
+.legal-links{display:flex; gap:18px; flex-wrap:wrap; font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:18px}
+
+/* ── Pulido UX: presionado, foco, entrada discreta ── */
+:focus-visible{outline:2px solid var(--phosphor); outline-offset:3px}
+.btn{transition:background-color .12s ease, color .12s ease, border-color .12s ease, box-shadow .12s ease, transform .12s ease}
+.btn:active{transform:scale(.97)}
+.btn.solid:active{background:var(--phosphor-dim); border-color:var(--phosphor-dim)}
+.btn[aria-disabled="true"],.btn:disabled{opacity:.5; cursor:not-allowed; box-shadow:none; transform:none}
+.nav-links a, footer a{transition:color .12s ease}
+summary{transition:color .12s ease}
+summary:hover{color:var(--phosphor)}
+.plan{transition:border-color .15s ease, transform .15s ease}
+.plan:hover{border-color:color-mix(in srgb, var(--phosphor) 45%, var(--line)); transform:translateY(-2px)}
+@keyframes entra{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+.js-anim .rv{opacity:0; transform:translateY(6px)}
+.js-anim .rv.on{opacity:1; transform:none; transition:opacity .24s ease-out, transform .24s ease-out}
+.hero > *{animation:entra .24s ease-out both}
+.hero > *:nth-child(2){animation-delay:.05s}
+@media print{ .js-anim .rv{opacity:1; transform:none} }
+@media (prefers-reduced-motion: reduce){
+  .hero > *{animation:none}
+  .btn:active,.plan:hover{transform:none}
+  .js-anim .rv{opacity:1; transform:none}
+  .js-anim .rv.on{transition:opacity .2s linear}
+}
 </style>
 
 <div class="demo-bar">
@@ -255,6 +289,10 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
   </div>
 </section>
 
+<aside class="riesgo" aria-label="Aviso de riesgo">
+  <div class="wrap"><p><strong>// AVISO DE RIESGO.</strong> El trading de futuros, y el de divisas, metales, índices o CFDs con apalancamiento, conlleva un riesgo sustancial de pérdida y no es para todo el mundo: puedes perder más de lo que depositaste. Los resultados pasados o hipotéticos, incluido el backtest, no garantizan resultados futuros. 1000X es educación: no es asesoría financiera ni de inversión, y no promete ganancias ni ingresos. <a href="#aviso">Aviso completo</a></p></div>
+</aside>
+
 <section class="band">
   <div class="wrap inner">
     <p class="eyebrow"><span class="p">&gt;</span> LA CASA</p>
@@ -284,7 +322,7 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
       <div class="cell">
         <span class="k">03 · Ejecutar</span>
         <h3>1:2 y break even</h3>
-        <p>Entrada, stop debajo de la mecha, objetivo al doble del riesgo. Cuando el precio corre a favor, el stop se mueve a la entrada: de ahí en adelante el trade empata o gana.</p>
+        <p>Entrada, stop debajo de la mecha, objetivo al doble del riesgo. Cuando el precio corre a favor, el stop se mueve a la entrada: de ahí en adelante, en condiciones normales, el trade cierra en empate o a favor (gaps, deslizamiento y comisiones pueden causar pérdidas).</p>
       </div>
     </div>
   </div>
@@ -298,10 +336,10 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
       <p>En la sala se opera con el mismo protocolo todos los días. El que lo rompe, no está operando el sistema.</p>
     </div>
     <div class="rules">
-      <div class="rule"><span class="tag">[R1]</span><div><strong>Ratio 1:2 fijo.</strong><p>Arriesgas 1 para buscar 2. Con 7 de 10 aciertos cierras el mes verde aunque pierdas tres.</p></div></div>
+      <div class="rule"><span class="tag">[R1]</span><div><strong>Ratio 1:2 fijo.</strong><p>Arriesgas 1 para buscar 2: en papel, cada trade ganador cubre dos perdedores. Es matemática del ratio, no una promesa; el resultado depende de tu ejecución, tus costos y el mercado.</p></div></div>
       <div class="rule"><span class="tag">[R2]</span><div><strong>El plan no se cambia a mitad de trade.</strong><p>El stop y el objetivo se ponen antes de entrar. Mover el stop en contra es la forma más rápida de quemar la cuenta.</p></div></div>
       <div class="rule"><span class="tag">[R3]</span><div><strong>En acumulación no se opera.</strong><p>Mercado lateral, sin dirección: eso es casino. Se espera tendencia o cambio de estructura.</p></div></div>
-      <div class="rule"><span class="tag">[R4]</span><div><strong>Break even a mitad de camino.</strong><p>Cuando el mercado te da 1R a favor, el stop sube a la entrada. El trade deja de poder costarte dinero.</p></div></div>
+      <div class="rule"><span class="tag">[R4]</span><div><strong>Break even a mitad de camino.</strong><p>Cuando el mercado te da 1R a favor, el stop sube a la entrada. En condiciones normales ya no arriesgas el capital de ese trade (gaps, deslizamiento y comisiones pueden causar pérdidas).</p></div></div>
       <div class="rule"><span class="tag">[R5]</span><div><strong>Backtest antes de dinero real.</strong><p>Seis meses de mercado hacia atrás en FX Replay, en cuenta de práctica, antes de tocar una cuenta de fondeo.</p></div></div>
     </div>
   </div>
@@ -355,6 +393,7 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
         </tbody>
       </table>
     </div>
+    <p class="nota-tipica">// Datos de ejemplo de la maqueta, no son operaciones reales. Cuando la sala esté en vivo se publicarán todas, ganadas y perdidas. Ningún resultado individual es típico ni garantiza el tuyo.</p>
   </div>
 </section>
 
@@ -373,7 +412,7 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
           <li>Lives de trading en vivo cada semana</li>
           <li>Análisis de la sesión y niveles del día</li>
           <li>Comunidad privada para preguntar</li>
-          <li>Cancelas cuando quieras</li>
+          <li>Se renueva cada mes hasta que canceles; cancelas cuando quieras [PENDIENTE ELVIN: cómo se cancela]</li>
         </ul>
         <a class="btn ghost" href="#contacto">Entrar a la sala</a>
       </div>
@@ -401,6 +440,7 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
         <p class="note">// cupos limitados por temporada</p>
       </div>
     </div>
+    <p class="nota-tipica">// Ver <a href="terminos.html" style="color:inherit">Términos</a> y <a href="reembolsos.html" style="color:inherit">Reembolsos</a> antes de pagar. Ningún acceso incluye asesoría financiera personalizada ni garantiza resultados.</p>
   </div>
 </section>
 
@@ -437,7 +477,10 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
 
 <footer>
   <div class="wrap">
-    <p class="disclaimer"><strong>Aviso de riesgo.</strong> Operar divisas, metales, índices y CFDs con apalancamiento conlleva un riesgo alto de pérdida y no es apropiado para todo el mundo. Puedes perder la totalidad de tu capital. El rendimiento pasado y los resultados de backtest no garantizan resultados futuros. 1000X ofrece formación y herramientas educativas; no es asesor de inversiones registrado, no administra fondos de terceros ni promete rendimientos. Cualquier decisión de operar es tuya y bajo tu responsabilidad.</p>
+    <p class="disclaimer" id="aviso"><strong>Aviso de riesgo.</strong> El trading de futuros conlleva un riesgo sustancial de pérdida y no es apropiado para todos los inversionistas; puedes perder más de tu depósito inicial. Operar divisas, metales, índices y CFDs con apalancamiento conlleva un riesgo alto de pérdida y no es apropiado para todo el mundo. Puedes perder la totalidad de tu capital. El rendimiento pasado y los resultados de backtest no garantizan resultados futuros. 1000X ofrece formación y herramientas educativas; no es asesor de inversiones registrado, no administra fondos de terceros ni promete rendimientos. Cualquier decisión de operar es tuya y bajo tu responsabilidad. Nada en este sitio es asesoría financiera, de inversión ni recomendación de comprar o vender.</p>
+    <p class="disclaimer"><strong>Resultados hipotéticos (CFTC, Regla 4.41).</strong> Los resultados de rendimiento hipotéticos o simulados, como un backtest, tienen limitaciones inherentes. A diferencia de un registro de rendimiento real, los resultados simulados no representan operaciones reales. Como las operaciones no se ejecutaron, los resultados pueden haber compensado de menos o de más el impacto de ciertos factores del mercado, como la falta de liquidez. Los programas de trading simulado también se diseñan con el beneficio de la retrospectiva. No se afirma que alguna cuenta vaya a lograr, o que sea probable que logre, ganancias o pérdidas similares a las mostradas.</p>
+    <p class="disclaimer"><strong>Testimonios y capturas.</strong> Si mostramos testimonios o capturas de ganancias, son experiencias individuales y no son típicas: la mayoría de las personas que operan pierden dinero. No prometemos ganancias ni ingresos.</p>
+    <nav class="legal-links" aria-label="Documentos legales"><a href="terminos.html">Términos y condiciones</a><a href="privacidad.html">Privacidad</a><a href="reembolsos.html">Reembolsos</a></nav>
     <div class="row">
       <span>1000X · una marca de Richy &amp; Elvin Trading LLC · Puerto Rico</span>
       <span>Maqueta de demostración · 2026</span>
@@ -446,6 +489,14 @@ footer .row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wra
 </footer>
 
 <script>
+(function(){
+  // Solo anima con la pestaña visible (en segundo plano, captura o impresión todo se ve sin animación)
+  if(!('IntersectionObserver' in window) || document.visibilityState !== 'visible' || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  var els = document.querySelectorAll('.head-block, .rules, .grid3, .tablewrap, .plans');
+  document.documentElement.classList.add('js-anim');
+  var io = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('on'); io.unobserve(en.target); } }); }, {rootMargin:'0px 0px -6% 0px'});
+  els.forEach(function(el){ el.classList.add('rv'); io.observe(el); });
+})();
 (function(){
   var el = document.getElementById('typed');
   if(!el) return;
