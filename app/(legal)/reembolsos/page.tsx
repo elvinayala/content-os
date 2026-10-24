@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { DocumentoLegal, NavLegal, Pendiente, Seccion } from "@/components/legal/documento";
+import { DocumentoLegal, NavLegal, Seccion } from "@/components/legal/documento";
 import { ENTIDAD, LEGAL } from "@/lib/legal/versiones";
 
 export const metadata: Metadata = { title: "Política de reembolsos y cancelación" };
@@ -22,29 +22,28 @@ export default function ReembolsosPage() {
           </>
         }
       >
-        <Seccion titulo="1. Plazo para pedir un reembolso">
+        <Seccion titulo="1. Lo que dice tu acuerdo">
           <p>
-            Puedes pedir el reembolso del pago inicial dentro de <Pendiente>número de días para pedir reembolso y desde cuándo cuentan (firma, pago o inicio)</Pendiente>,
-            siempre que <Pendiente>condiciones (p. ej., antes de empezar la producción o la configuración del agente)</Pendiente>.
-            Pasado ese plazo, el trabajo ya hecho no es reembolsable, salvo lo que dice la sección 2.
+            Los plazos y condiciones de reembolso de tu servicio son los de tu acuerdo o contrato firmado. En el contrato de AI
+            Borinquen, los pagos no son reembolsables salvo incumplimiento grave verificado. En todos los casos aplica lo que
+            dice la sección 2.
           </p>
         </Seccion>
 
         <Seccion titulo="2. Lo que siempre se reembolsa">
           <p>
-            Sin importar lo anterior, si el servicio <strong>no funciona, no sirve para lo que se contrató o no cumple lo que se
-            anunció</strong>, tienes derecho a que se corrija o a la devolución, según las reglas del DACO de Puerto Rico.
+            Sin importar lo anterior, <strong>siempre reembolsamos si el servicio está defectuoso o no cumple lo que se
+            anunció</strong>, además de los derechos que te dan las reglas del DACO de Puerto Rico.
           </p>
         </Seccion>
 
         <Seccion titulo="3. Mensualidades y cancelación">
           <ul>
-            <li>Los servicios mensuales se cobran mes a mes según tu acuerdo. No hay penalidad por cancelar <Pendiente>confirmar si hay permanencia mínima</Pendiente>.</li>
+            <li>Los servicios mensuales se cobran según tu acuerdo; la permanencia y la cancelación son las que dice ese acuerdo.</li>
             <li>
-              Para cancelar, avísanos por <Pendiente>canal para cancelar (correo / Slack de tu negocio)</Pendiente> antes de la
-              próxima fecha de cobro. Cancelar es igual de fácil que contratar: no tienes que llamar ni dar explicaciones.
+              Para cancelar, escríbenos al correo de la sección 5 antes de la próxima fecha de cobro. No tienes que llamar ni dar
+              explicaciones.
             </li>
-            <li>El mes ya pagado no se prorratea <Pendiente>confirmar</Pendiente>; el servicio sigue hasta que termina ese período.</li>
           </ul>
         </Seccion>
 
@@ -57,9 +56,9 @@ export default function ReembolsosPage() {
 
         <Seccion titulo="5. Cómo pedirlo y cuándo llega">
           <p>
-            Escríbenos a <Pendiente>correo para reembolsos</Pendiente> con tu nombre, negocio y el motivo. Te contestamos en{" "}
-            <Pendiente>días hábiles para contestar</Pendiente> y, si procede, el dinero vuelve al mismo método de pago en{" "}
-            <Pendiente>días hábiles para devolver</Pendiente>.
+            Escríbenos a <a className="underline underline-offset-2" href="mailto:info@levelupmediapr.net">info@levelupmediapr.net</a>{" "}
+            (Level Up Media) o <a className="underline underline-offset-2" href="mailto:hola@aiborinquen.co">hola@aiborinquen.co</a>{" "}
+            (AI Borinquen) con tu nombre, negocio y el motivo. Si procede, el dinero vuelve al mismo método de pago.
           </p>
         </Seccion>
       </DocumentoLegal>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { DocumentoLegal, NavLegal, Pendiente, Seccion } from "@/components/legal/documento";
+import { DocumentoLegal, NavLegal, Seccion } from "@/components/legal/documento";
 import { ENTIDAD, LEGAL } from "@/lib/legal/versiones";
 
 export const metadata: Metadata = { title: "Términos y condiciones" };
@@ -26,8 +26,8 @@ export default function TerminosPage() {
         <Seccion titulo="1. Quiénes somos">
           <p>
             Las plataformas las opera <strong>{ENTIDAD}</strong>, compañía de Puerto Rico, dueña de las marcas Level Up Media y
-            AI Borinquen. Dirección física: <Pendiente>dirección física de EA Market LLC</Pendiente>. Contacto legal:{" "}
-            <Pendiente>correo de contacto legal</Pendiente>.
+            AI Borinquen. Contacto: <a className="underline underline-offset-2" href="mailto:info@levelupmediapr.net">info@levelupmediapr.net</a>{" "}
+            (Level Up Media) o <a className="underline underline-offset-2" href="mailto:hola@aiborinquen.co">hola@aiborinquen.co</a> (AI Borinquen).
           </p>
         </Seccion>
 
@@ -128,15 +128,14 @@ export default function TerminosPage() {
           </p>
           <p>
             Hasta donde lo permite la ley, {ENTIDAD} no responde por daños indirectos, lucro cesante ni pérdida de datos causada
-            por terceros, y su responsabilidad total no pasará de <Pendiente>tope de responsabilidad (p. ej., lo pagado en los
-            últimos 3 meses)</Pendiente>. Nada de esto limita los derechos que te da la ley como consumidor en Puerto Rico.
+            por terceros. Nada de esto limita los derechos que te da la ley como consumidor en Puerto Rico.
           </p>
         </Seccion>
 
         <Seccion titulo="10. Ley aplicable y disputas">
           <p>
-            Estos términos se rigen por las leyes de Puerto Rico y las federales que apliquen. Cualquier disputa se atenderá en{" "}
-            <Pendiente>foro: tribunales de Puerto Rico (región) o arbitraje</Pendiente>.
+            Estos términos se rigen por las leyes de Puerto Rico y las federales que apliquen. Cualquier disputa se atenderá en
+            los tribunales de Puerto Rico.
           </p>
         </Seccion>
 
@@ -149,7 +148,7 @@ export default function TerminosPage() {
 
         <Seccion titulo="12. Idioma">
           <p>
-            Estos términos están en español. <Pendiente>¿versión en inglés? Si se publica, indicar cuál prevalece</Pendiente>
+            Estos términos están en español. Si existe una traducción y hay diferencias, prevalece la versión en español.
           </p>
         </Seccion>
       </DocumentoLegal>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { DocumentoLegal, NavLegal, Pendiente, Seccion } from "@/components/legal/documento";
+import { DocumentoLegal, NavLegal, Seccion } from "@/components/legal/documento";
 import { LEGAL } from "@/lib/legal/versiones";
 
 export const metadata: Metadata = { title: "Accesibilidad" };
@@ -21,7 +21,7 @@ export default function AccesibilidadPage() {
         </Seccion>
         <Seccion titulo="¿Encontraste una barrera?">
           <p>
-            Escríbenos a <Pendiente>correo para reportar barreras de accesibilidad</Pendiente> con la página y lo que pasó. Te
+            Escríbenos a <a className="underline underline-offset-2" href="mailto:info@levelupmediapr.net">info@levelupmediapr.net</a> con la página y lo que pasó. Te
             contestamos y te ayudamos por otra vía mientras lo arreglamos.
           </p>
         </Seccion>

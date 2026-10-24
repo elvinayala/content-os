@@ -36,3 +36,31 @@ derivan de ahí). Al cambiar el texto de una página, sube su versión allí.
   `aria-pressed` en un `role="group"`, foco visible, `title` al iframe de Calendly. Queda el auto-avance al elegir.
 - Pendiente: que el contrato de AIB (`/contrato`) y el Portal escriban también sus filas; respetar
   `tieneConsentimiento` en cualquier envío automático futuro.
+
+## Decisiones abiertas de Elvin (24/oct/2026)
+
+Para publicar se neutralizó todo "[PENDIENTE ELVIN …]" (componente `Pendiente` borrado): foro = tribunales de PR,
+prevalece el español, contacto = info@levelupmediapr.net (LU/EA Market) · hola@aiborinquen.co (AIB) ·
+hola@resueltopr.com (Resuelto), retención = "el tiempo necesario para los fines descritos y lo que exija la ley". Lo
+que no se pudo neutralizar se quitó. Queda por decidir (y subir la versión en `lib/legal/versiones.ts` al cambiarlo):
+
+- **Content OS** (`app/(legal)/`): dirección física de EA Market LLC (quitada); tope de responsabilidad (quitado);
+  ¿EA Market LLC cubre todas las marcas? (`ENTIDAD_LEGAL`); correo propio de privacidad/legal y de RR.HH. (hoy
+  info@levelupmediapr.net); plazos de respuesta a derechos y de devolución (quitados); retención por tipo de dato
+  (clientes, grabaciones, leads, expedientes y ponches, registro de seguridad); cómo se avisa la grabación en las
+  llamadas con closers (Fathom); confirmar la lista de proveedores de /privacidad; versión en inglés.
+- **Reembolsos LU/AIB**: la página remite al acuerdo firmado. ⚠️ El contrato de AIB (`lib/aib-contratos/documento.ts`,
+  cláusula 7) dice "no reembolsables salvo incumplimiento grave verificado mediante dictamen técnico", y /reembolsos
+  ahora dice "siempre reembolsamos si el servicio está defectuoso o no cumple lo anunciado": alinear el contrato. El
+  acuerdo de LU es un PDF fuera del repo: definir días para pedir reembolso, permanencia mínima y prorrateo.
+- Casillas de marketing por formulario (`lib/formularios/reglas.ts`).
+- **1000X** (`demos/richy-elvin-trading/`): ⚠️ CRÍTICO, con abogado: ¿la licencia del bot / la sala requieren registro
+  CFTC/NFA (CTA) o exención? (cláusula quitada); correo público (no hay: hoy dice "el canal de contacto de esta página"
+  y los botones son `#`); dirección; procesador de pagos; qué pasa tras los 12 meses de la licencia y pagos a plazos;
+  reembolso de sistema_completo y bot_licencia (secciones quitadas; DACO pide días visibles); reembolso al expulsar de
+  la comunidad; tope de responsabilidad; lista exacta de datos y proveedores.
+- **Resuelto** (`vault/proyectos/plomeria-pr/kit/landing/`): nombre legal de la entidad (el pie dice solo "Resuelto ·
+  Puerto Rico") y dirección; devolución del depósito si cancela el cliente y materiales especiales; plazo para reclamar
+  (DACO pide días visibles); piezas compradas no instaladas; exclusiones de la garantía de destapes; cancelar o
+  reprogramar citas; límite de responsabilidad y seguro; plazos de respuesta y devolución; plazo para borrar leads y
+  aplicaciones.

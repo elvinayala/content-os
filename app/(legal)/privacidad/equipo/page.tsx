@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { DocumentoLegal, NavLegal, Pendiente, Seccion } from "@/components/legal/documento";
+import { DocumentoLegal, NavLegal, Seccion } from "@/components/legal/documento";
 import { ENTIDAD, LEGAL } from "@/lib/legal/versiones";
 
 export const metadata: Metadata = { title: "Aviso de privacidad del equipo" };
@@ -96,16 +96,16 @@ export default function PrivacidadEquipoPage() {
 
         <Seccion titulo="5. Cuánto tiempo">
           <p>
-            Mientras trabajes con nosotros y después el tiempo que exige la ley laboral y contributiva:{" "}
-            <Pendiente>plazo de retención de expedientes, ponches y documentos de nómina tras la salida</Pendiente>. El registro de
-            seguridad se guarda <Pendiente>plazo del registro de seguridad</Pendiente>.
+            El tiempo necesario para los fines descritos y lo que exija la ley (incluida la laboral y la contributiva). Eso
+            aplica también al registro de seguridad.
           </p>
         </Seccion>
 
         <Seccion titulo="6. Tus derechos">
           <p>
             Puedes ver tu ficha y tus documentos en Ritmo (Mi ficha) y pedir que se corrija lo que esté mal. Para pedir una copia
-            de tus datos o hacer preguntas sobre este aviso, escribe a Recursos Humanos: <Pendiente>correo de Recursos Humanos</Pendiente>.
+            de tus datos o hacer preguntas sobre este aviso, escribe a Recursos Humanos a{" "}
+            <a className="underline underline-offset-2" href="mailto:info@levelupmediapr.net">info@levelupmediapr.net</a>.
           </p>
         </Seccion>
 

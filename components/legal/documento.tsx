@@ -31,11 +31,6 @@ export function Seccion({ id, titulo, children }: { id?: string; titulo: string;
   );
 }
 
-// Lo que solo decide Elvin: se ve en la página (borrador) para que nadie lo publique sin llenarlo.
-export function Pendiente({ children }: { children: React.ReactNode }) {
-  return <mark className="rounded bg-amber-300/20 px-1 font-medium text-amber-700 dark:text-amber-300">[PENDIENTE ELVIN: {children}]</mark>;
-}
-
 const ENLACES = [
   { href: LEGAL.terminos.ruta, texto: "Términos" },
   { href: LEGAL.privacidad.ruta, texto: "Privacidad" },

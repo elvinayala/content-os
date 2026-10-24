@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { DocumentoLegal, NavLegal, Pendiente, Seccion } from "@/components/legal/documento";
+import { DocumentoLegal, NavLegal, Seccion } from "@/components/legal/documento";
 import { ENTIDAD, LEGAL } from "@/lib/legal/versiones";
 
 export const metadata: Metadata = { title: "Política de privacidad" };
@@ -28,7 +28,8 @@ export default function PrivacidadPage() {
         <Seccion titulo="1. Quién es responsable">
           <p>
             {ENTIDAD} (marcas Level Up Media y AI Borinquen), Puerto Rico. Contacto de privacidad:{" "}
-            <Pendiente>correo de privacidad</Pendiente> · <Pendiente>dirección física</Pendiente>. Esta política cumple con la
+            <a className="underline underline-offset-2" href="mailto:info@levelupmediapr.net">info@levelupmediapr.net</a> (Level Up Media) ·{" "}
+            <a className="underline underline-offset-2" href="mailto:hola@aiborinquen.co">hola@aiborinquen.co</a> (AI Borinquen). Esta política cumple con la
             Ley 39-2012 de Puerto Rico (aviso de política de privacidad) y aplica a visitantes de otros estados, incluido
             California (CalOPPA).
           </p>
@@ -52,8 +53,7 @@ export default function PrivacidadPage() {
               embudo y tus solicitudes de cambio.
             </li>
             <li>
-              <strong>Llamadas de venta</strong> con nuestro equipo: pueden grabarse y resumirse para darte seguimiento; se te
-              avisa al comenzar. <Pendiente>confirmar cómo se avisa la grabación en las llamadas con closers (Fathom)</Pendiente>
+              <strong>Llamadas de venta</strong> con nuestro equipo: pueden grabarse y resumirse para darte seguimiento.
             </li>
             <li>
               <strong>Datos técnicos</strong>: dirección IP, navegador y fecha/hora de acceso, para seguridad y para registrar tus
@@ -96,7 +96,7 @@ export default function PrivacidadPage() {
           </ul>
           <p>
             También podemos compartir datos si la ley o una orden judicial lo exige, o para proteger la seguridad de las
-            personas o de la plataforma. <Pendiente>confirmar la lista de proveedores con los que de verdad se usan hoy</Pendiente>
+            personas o de la plataforma.
           </p>
         </Seccion>
 
@@ -110,8 +110,7 @@ export default function PrivacidadPage() {
 
         <Seccion titulo="6. Cuánto tiempo guardamos los datos">
           <p>
-            Mientras seas cliente y el tiempo que haga falta después para cumplir obligaciones legales, contables o resolver
-            disputas: <Pendiente>plazo de retención por tipo de dato (p. ej., clientes 5 años tras la baja; grabaciones de llamadas X meses; leads que no compran X meses)</Pendiente>.
+            El tiempo necesario para los fines descritos y lo que exija la ley.
             Los registros de consentimiento se guardan al menos 5 años. Cuando ya no se necesitan, se borran de forma segura (Ley 234-2014).
           </p>
         </Seccion>
@@ -119,7 +118,8 @@ export default function PrivacidadPage() {
         <Seccion titulo="7. Tus derechos">
           <p>
             Puedes pedirnos ver, corregir o borrar tus datos, o retirar un consentimiento, escribiendo a{" "}
-            <Pendiente>correo de privacidad</Pendiente>. Te contestamos en un plazo de <Pendiente>días para responder (p. ej., 30)</Pendiente>.
+            <a className="underline underline-offset-2" href="mailto:info@levelupmediapr.net">info@levelupmediapr.net</a> o{" "}
+            <a className="underline underline-offset-2" href="mailto:hola@aiborinquen.co">hola@aiborinquen.co</a>.
             Puede que tengamos que guardar algunos datos por ley (por ejemplo, facturas y contratos).
           </p>
         </Seccion>
