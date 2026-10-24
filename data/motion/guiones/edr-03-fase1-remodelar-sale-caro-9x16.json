@@ -1,0 +1,34 @@
+{
+  "id": "edr-03-fase1-remodelar-sale-caro-9x16",
+  "formato": "9:16",
+  "titulo": "Remodelar sale caro (fase 1)",
+  "angulo": "Gran Sorteo: 15 puertas instaladas por $20",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "¿Remodelar en PR?",
+        "Sale *caro*.",
+        "Participar cuesta *$20*."
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-1Ved8tr34NwqnaYmM2qaAuQDyg8vnJs3V-IMG_6193.jpg?token=PLACEHOLDER",
+      "enfoque": "50% 50%"
+    }
+  ],
+  "cliente": {
+    "fondo": "#0C0C0C",
+    "texto": "#FFFFFF",
+    "acento": "#E4B43C",
+    "fuente": "Bebas Neue",
+    "nombre": "EDR Aluminium & More",
+    "acento2": "#B4B4B4",
+    "estilos": [
+      "impacto",
+      "editorial"
+    ],
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/edr-aluminium/drive-1835Imnr7DC-ncy5oeKFTpuQYHVxhqnDk-image.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvZWRyLWFsdW1pbml1bS9kcml2ZS0xODM1SW1ucjdEQy1uY3k1b2VLRlRwdVFZSFZ4aHFuRGstaW1hZ2UucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5Mjc5MjkzNiwiZXhwIjoxODI0MzI4OTM2fQ.KJlMdH8VzcpO6jrAVxOV_GYldJCkN2_7T41n2FrpAGbVLHTdmqPgIqPvahSlVQcamEYx0wLWo8H4UYrxln0bcw",
+    "subtitulo": "Puertas y ventanas de aluminio"
+  },
+  "estilo": "impacto"
+}

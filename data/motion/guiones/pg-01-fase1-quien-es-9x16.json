@@ -1,0 +1,105 @@
+{
+  "id": "pg-01-fase1-quien-es-9x16",
+  "formato": "9:16",
+  "titulo": "Quién es PG Electrical Contractor (fase 1)",
+  "angulo": "Reconocimiento: licencia + 10 años + 24 horas toda la isla",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "¿Trabajo *eléctrico*?",
+        "¿Sabes a quién *llamar*?"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/pgelectricalcontractor/drive-1YIZerstI68sVytoSl3DEkGR570yoC7Da-IMG_2827.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcGdlbGVjdHJpY2FsY29udHJhY3Rvci9kcml2ZS0xWUlaZXJzdEk2OHNWeXRvU2wzREVrR1I1NzB5b0M3RGEtSU1HXzI4MjcuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjgxNDQ3MywiZXhwIjoxODI0MzUwNDczfQ.V7F1pohiynY2wF0irCUe8lezpU9OLeaOHKo4dBYFUSgzMGIzoHXd9kv34NMkqFbzzt_6l_aOjY5f8J6L_94yqw",
+      "enfoque": "50% 45%"
+    },
+    {
+      "tipo": "retrato",
+      "dur": 165,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/pgelectricalcontractor/drive-1pY6uCkaHykfXTUFMBNAraYF3m4LE0Ff2-756143694_18064341620733557_2797156473144062322_n.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcGdlbGVjdHJpY2FsY29udHJhY3Rvci9kcml2ZS0xcFk2dUNrYUh5a2ZYVFVGTUJOQXJhWUYzbTRMRTBGZjItNzU2MTQzNjk0XzE4MDY0MzQxNjIwNzMzNTU3XzI3OTcxNTY0NzMxNDQwNjIzMjJfbi5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyODE0NDcyLCJleHAiOjE4MjQzNTA0NzJ9.VbQA3oFLMkvbd1_Jjb0R8SMQrFC_nLe5IXSDJwMVuIEuhP1tmT9xwazxZmUXoVEkguAQvQO9Uj_nK6ug4aVnsg",
+      "enfoque": "25% 30%",
+      "etiqueta": "PG Electrical Contractor",
+      "titulo": "Él es *Gabriel Perdomo*",
+      "puntos": [
+        "Licencia",
+        "Equipo propio",
+        "+10 años"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 75,
+      "lineas": [
+        "*Residencial*",
+        "Instalaciones y reparaciones"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/pgelectricalcontractor/drive-1oCQ3PQLyxjdVjpidvFoU2R1DlvPkf0tc-0AFD5DFC-D189-4C22-8C03-3C4781E22F1D.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcGdlbGVjdHJpY2FsY29udHJhY3Rvci9kcml2ZS0xb0NRM1BRTHl4amRWanBpZHZGb1UyUjFEbHZQa2YwdGMtMEFGRDVERkMtRDE4OS00QzIyLThDMDMtM0M0NzgxRTIyRjFELmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTI4MTQ0NzQsImV4cCI6MTgyNDM1MDQ3NH0.baKpCvqIda2IqEwaBIYjKyJb_WVyrloX7qQeKFXeMVdbqQNEYiARxFMo0ETIZ8THmXHiCDlZhGnYaVoMNr8ppw",
+      "enfoque": "60% 50%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 75,
+      "lineas": [
+        "*Comercial*",
+        "Iluminación y certificaciones"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/pgelectricalcontractor/drive-1r80cyBcLqY7x_uC8GITkEFFS-SpOS4Tq-IMG_1623.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcGdlbGVjdHJpY2FsY29udHJhY3Rvci9kcml2ZS0xcjgwY3lCY0xxWTd4X3VDOEdJVGtFRkZTLVNwT1M0VHEtSU1HXzE2MjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjgxNDQ3NCwiZXhwIjoxODI0MzUwNDc0fQ.XF3YMPg_lTx8cyFejrVMjUotdGKFdrbVR8Mmt70BKfFUom_jydp_ePQ0RApe-l0Yjjp_n0Q066w4m4ay1Hy76w",
+      "enfoque": "40% 40%"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 75,
+      "lineas": [
+        "*Industrial*",
+        "Aires y generadores",
+        "Subestaciones"
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/pgelectricalcontractor/drive-11svATEF_uHZx2GoOMANbOSGIWpwFhXGW-IMG_0030.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcGdlbGVjdHJpY2FsY29udHJhY3Rvci9kcml2ZS0xMXN2QVRFRl91SFp4MkdvT01BTmJPU0dJV3B3RmhYR1ctSU1HXzAwMzAuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjgxNDQ3MiwiZXhwIjoxODI0MzUwNDcyfQ.gvvyS_1uxlzJBjZxhVDEyuxxLMRLmU8I6q1SNbSVX8Wsh_wp5YB2RTVRks5VQnacypOilWnnjATKNBdi1t0W8A",
+      "enfoque": "40% 50%"
+    },
+    {
+      "tipo": "lista",
+      "dur": 120,
+      "modo": "marcar",
+      "titulo": "Te atienden *24 horas*",
+      "items": [
+        {
+          "texto": "24 horas"
+        },
+        {
+          "texto": "Toda la isla"
+        },
+        {
+          "texto": "Sin cobro de traslado"
+        }
+      ],
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/pgelectricalcontractor/drive-1laltyH4sPkW98XCpJjMmP0L8W8OMgDgk-IMG_0861.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcGdlbGVjdHJpY2FsY29udHJhY3Rvci9kcml2ZS0xbGFsdHlINHNQa1c5OFhDcEpqTW1QMEw4VzhPTWdEZ2stSU1HXzA4NjEuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MjgxNDQ3MiwiZXhwIjoxODI0MzUwNDcyfQ.9YeN9VaD0XtdHxGR7WKQl0jKNtj1hoxg2lTjgM7eaQ68LlqJRXCuV7wciw54ao_3LXS0ZXmgO_Z2GRubcvNK3g",
+      "enfoque": "50% 60%"
+    },
+    {
+      "tipo": "cierre",
+      "dur": 150,
+      "grande": true,
+      "cta": "WhatsApp 787-662-0037",
+      "sub": "Atención 24 horas · Toda la isla",
+      "url": "Cuéntale qué necesitas y te cotiza"
+    }
+  ],
+  "cliente": {
+    "fondo": "#000000",
+    "texto": "#FFFFFF",
+    "acento": "#FBCA2D",
+    "fuente": "Sora",
+    "nombre": "PG Electrical Contractor",
+    "acento2": "#5242A2",
+    "estilos": [
+      "impacto",
+      "neon",
+      "tecno"
+    ],
+    "logoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/pgelectricalcontractor/drive-1sYoIklUklswjnHI9gq5dEBaHNN5Rj4Jf-Logo-PG-Eletrical-Contractor.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcGdlbGVjdHJpY2FsY29udHJhY3Rvci9kcml2ZS0xc1lvSWtsVWtsc3dqbkhJOWdxNWRFQmFITk41Umo0SmYtTG9nby1QRy1FbGV0cmljYWwtQ29udHJhY3Rvci5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkyODE0NDc1LCJleHAiOjE4MjQzNTA0NzV9.MjJTwInJs4VBXUo-_mBZSkGOEZRJGygwD9CIXbiyOwIycwAqAAUgqVnKJG5-qo_ritCEHTipIQqzy6tEAcEQEQ",
+    "subtitulo": "Contratista eléctrico"
+  },
+  "estilo": "impacto"
+}
