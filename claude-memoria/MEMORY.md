@@ -116,3 +116,4 @@
 - [Trabajo largo fuera de /tmp](trabajo-fuera-de-tmp.md) — 18/oct: un reinicio borró /private/tmp con las finales y worktrees; usar ~/bori-trabajo/
 - [Gabo — licitador (Digital Seed Ventures)](gabo-licitaciones.md) — 19/oct: contratos del gobierno vía LicitaPR a nombre de DIGITAL SEED VENTURES LLC (no EA Market); 1.ª DDEC-RFP-2026-003 cierra 5/nov; bloqueo = RUP
 - [Viaje de Elvin (21/oct)](viaje-elvin-oct-2026.md) — sin la Mac: pide por Nico/Remote Control; Bori en rama pendiente-flyers sin deploy; repos nuevos en GitHub pendientes de gh login
+- [Entidad legal por marca](entidades-legales-por-marca.md) — 24/oct: Bori, AIB SaaS y Cortex = Digital Seed Ventures LLC; Content OS = EA Market; 1000X = Richy & Elvin; Resuelto sin entidad
