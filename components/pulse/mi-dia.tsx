@@ -49,8 +49,8 @@ export function MiDia({ pendientes, hoy, yo, usuarios }: { pendientes: Pendiente
           </p>
         </div>
         <div className="segmentado flex text-xs">
-          <button type="button" data-activo={!soloMios} onClick={() => setSoloMios(false)} className="rounded-[7px] px-3 py-1.5">Todo el equipo</button>
-          <button type="button" data-activo={soloMios} onClick={() => setSoloMios(true)} className="rounded-[7px] px-3 py-1.5">Solo míos ({mios})</button>
+          <button type="button" data-activo={!soloMios} onClick={() => setSoloMios(false)} className="rounded-[7px] px-3 py-1.5 transition-colors data-[activo=false]:hover:bg-white/60">Todo el equipo</button>
+          <button type="button" data-activo={soloMios} onClick={() => setSoloMios(true)} className="rounded-[7px] px-3 py-1.5 transition-colors data-[activo=false]:hover:bg-white/60">Solo míos ({mios})</button>
         </div>
       </section>
 
@@ -76,11 +76,11 @@ export function MiDia({ pendientes, hoy, yo, usuarios }: { pendientes: Pendiente
             </div>
             <ul className="overflow-hidden rounded-xl border bg-white">
               {items.map((p) => (
-                <li key={k(p)} className="flex items-center gap-3 border-b px-3 py-2.5 last:border-b-0">
+                <li key={k(p)} className="flex items-center gap-3 border-b px-3 py-2.5 transition-colors last:border-b-0 hover:bg-[var(--pulse-hover)]">
                   <div className="min-w-0 flex-1">
                     <Link href={`/pulse/${p.boardSlug}?item=${p.itemId}`} className="group flex items-center gap-1 font-medium hover:text-primary">
                       <span className="truncate">{p.nombre}</span>
-                      <ChevronRight className="size-3.5 shrink-0 opacity-0 transition group-hover:opacity-100" />
+                      <ChevronRight className="size-3.5 shrink-0 opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100" />
                     </Link>
                     <p className="truncate text-xs text-muted-foreground">
                       {[p.empresa, p.info?.industria, p.boardNombre].filter(Boolean).join(" · ")}

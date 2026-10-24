@@ -1,11 +1,12 @@
 "use client";
 
-import { MessageCircle, Phone, Users, CheckSquare } from "lucide-react";
+import { CalendarCheck, MessageCircle, Phone, Users, CheckSquare } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { completarActividadAction } from "@/app/pulse/(app)/leads/actions";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { telefonoLegible } from "@/lib/leads/reglas";
 import { cn } from "@/lib/utils";
 
@@ -32,9 +33,9 @@ export function ListaActividades({ filas, marcaSlug }: { filas: ActividadFila[];
   const [, start] = useTransition();
   const hoy = dia(new Date());
   const grupos = [
-    { t: "Vencidas", c: "text-red-600", f: filas.filter((a) => new Date(a.venceAt) < new Date() && dia(new Date(a.venceAt)) !== hoy) },
-    { t: "Hoy", c: "text-[#08a742]", f: filas.filter((a) => dia(new Date(a.venceAt)) === hoy) },
-    { t: "Próximos días", c: "text-muted-foreground", f: filas.filter((a) => dia(new Date(a.venceAt)) > hoy) },
+    { t: "Vencidas", vacio: "Nada vencido.", c: "text-red-600", f: filas.filter((a) => new Date(a.venceAt) < new Date() && dia(new Date(a.venceAt)) !== hoy) },
+    { t: "Hoy", vacio: "Nada para hoy.", c: "text-[#08a742]", f: filas.filter((a) => dia(new Date(a.venceAt)) === hoy) },
+    { t: "Próximos días", vacio: "Nada programado todavía.", c: "text-muted-foreground", f: filas.filter((a) => dia(new Date(a.venceAt)) > hoy) },
   ];
   const marcar = (id: string) => {
     setHechas((s) => new Set(s).add(id));
@@ -50,6 +51,15 @@ export function ListaActividades({ filas, marcaSlug }: { filas: ActividadFila[];
       }
     });
   };
+  if (!filas.length) {
+    return (
+      <div className="mx-auto w-full max-w-3xl px-4 py-6">
+        <EstadoVacio icono={CalendarCheck} titulo="Estás al día">
+          No tienes seguimientos pendientes. Cuando programes una llamada, un WhatsApp o una reunión desde un lead, aparece aquí.
+        </EstadoVacio>
+      </div>
+    );
+  }
   return (
     <div className="mx-auto grid w-full max-w-3xl gap-6 px-4 py-6">
       {grupos.map((g) => (
@@ -57,8 +67,8 @@ export function ListaActividades({ filas, marcaSlug }: { filas: ActividadFila[];
           <h2 className={cn("mb-2 text-xs font-bold uppercase tracking-wider", g.c)}>
             {g.t} · {g.f.length}
           </h2>
-          {!g.f.length && <p className="text-sm text-muted-foreground">—</p>}
-          <ul className="divide-y rounded-lg border bg-background">
+          {!g.f.length && <p className="text-sm text-muted-foreground">{g.vacio}</p>}
+          <ul className={cn("divide-y rounded-lg border bg-background", !g.f.length && "hidden")}>
             {g.f.map((a) => {
               const Icono = ICONO_ACTIVIDAD[a.tipo] ?? CheckSquare;
               const v = new Date(a.venceAt);

@@ -1,10 +1,11 @@
 "use client";
 
-import { KeyRound, Plus, UserCheck, UserX } from "lucide-react";
+import { KeyRound, Loader2, Plus, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { actualizarUsuarioAction, crearUsuarioAction } from "@/app/pulse/(app)/configuracion/actions";
+import { BotonEnviar } from "@/components/pulse/boton-enviar";
 import { ColorPicker } from "@/components/pulse/color-picker";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
   const [abierto, setAbierto] = useState(false);
   const [claveDe, setClaveDe] = useState<UsuarioPulse | null>(null);
   const [clave, setClave] = useState("");
+  const [guardandoClave, setGuardandoClave] = useState(false);
 
   const aviso = (r: { ok: true } | { ok: false; error: string }, okMsg: string) => {
     if (r.ok) toast.success(okMsg, { className: "pulse" });
@@ -78,7 +80,7 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
                 <Label>Color del avatar</Label>
                 <ColorPicker name="color" defaultValue="blue" />
               </div>
-              <Button type="submit">Crear</Button>
+              <BotonEnviar pendiente="Creando…">Crear</BotonEnviar>
             </form>
           </DialogContent>
         </Dialog>
@@ -94,11 +96,13 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
           </DialogHeader>
           <div className="flex flex-col gap-3">
             <Input type="text" placeholder="Clave (mín. 6)" value={clave} onChange={(e) => setClave(e.target.value)} autoFocus />
-            <p className="text-xs text-muted-foreground">Al guardar, el usuario queda activo y puede entrar con su e-mail ({claveDe?.email}) y esta clave. Pasásela por un canal seguro.</p>
+            <p className="text-xs text-muted-foreground">Al guardar, el usuario queda activo y puede entrar con su e-mail ({claveDe?.email}) y esta clave. Pásasela por un canal seguro.</p>
             <Button
+              disabled={guardandoClave}
               onClick={async () => {
                 if (!claveDe) return;
-                const r = await actualizarUsuarioAction({ id: claveDe.id, password: clave });
+                setGuardandoClave(true);
+                const r = await actualizarUsuarioAction({ id: claveDe.id, password: clave }).finally(() => setGuardandoClave(false));
                 aviso(r, "Clave guardada");
                 if (r.ok) {
                   setClaveDe(null);
@@ -106,7 +110,7 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
                 }
               }}
             >
-              Guardar clave
+              {guardandoClave ? <><Loader2 className="animate-spin" /> Guardando…</> : "Guardar clave"}
             </Button>
           </div>
         </DialogContent>

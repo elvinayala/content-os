@@ -19,6 +19,7 @@ export const ItemCard = memo(function ItemCard({
   colorGrupo,
   className,
   arrastrando,
+  enfocable = false,
 }: {
   item: Item;
   columns: Columna[];
@@ -26,6 +27,8 @@ export const ItemCard = memo(function ItemCard({
   colorGrupo?: string;
   className?: string;
   arrastrando?: boolean;
+  /** Vista tarjetas: la tarjeta se puede abrir con el teclado (en kanban el envoltorio arrastrable ya es enfocable). */
+  enfocable?: boolean;
 }) {
   const { abrirItem } = useBoardActions();
   const personas = columns.find((c) => c.type === "people");
@@ -35,7 +38,8 @@ export const ItemCard = memo(function ItemCard({
   return (
     <div
       onClick={() => abrirItem(item.id)}
-      className={cn("tarjeta-item cursor-pointer rounded-lg border bg-background p-2.5 text-sm", arrastrando && "rotate-1 shadow-xl", className)}
+      {...(enfocable ? { role: "button", tabIndex: 0, onKeyDown: (e: React.KeyboardEvent) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), abrirItem(item.id)) } : {})}
+      className={cn("tarjeta-item cursor-pointer rounded-lg border bg-background p-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring", arrastrando && "rotate-1 shadow-xl", className)}
       style={colorGrupo ? { borderLeft: `4px solid ${colorGrupo}` } : undefined}
     >
       <div className="flex items-start gap-2">

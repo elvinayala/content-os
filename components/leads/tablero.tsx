@@ -197,8 +197,8 @@ export function BarraLeads({
             <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar nombre, negocio, teléfono…" className="h-8 w-44 pl-8 sm:w-64" />
             {q && (
-              <button className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setQ("")} aria-label="Borrar búsqueda">
-                <X className="size-3.5 text-muted-foreground" />
+              <button className="group/x absolute right-2 top-1/2 -translate-y-1/2 rounded-sm" onClick={() => setQ("")} aria-label="Borrar búsqueda">
+                <X className="size-3.5 text-muted-foreground transition-colors group-hover/x:text-foreground" />
               </button>
             )}
           </div>
@@ -696,7 +696,7 @@ function Columna({ etapa, color, grupos, tratos, diasEstancado, ahora, marcaSlug
           <span className="rounded-full px-1.5 py-px text-[11px] font-semibold tabular-nums" style={{ background: `color-mix(in srgb, ${color} 14%, white)`, color }}>
             {tratos.length}
           </span>
-          <button onClick={onNuevo} className="grid size-6 place-items-center rounded-md text-muted-foreground opacity-0 transition group-hover/cab:opacity-100 hover:bg-muted hover:text-foreground" aria-label={`Nuevo lead en ${etapa.nombre}`} title="Agregar lead aquí">
+          <button onClick={onNuevo} className="grid size-6 place-items-center rounded-md text-muted-foreground opacity-0 transition group-hover/cab:opacity-100 hover:bg-muted hover:text-foreground focus-visible:opacity-100" aria-label={`Nuevo lead en ${etapa.nombre}`} title="Agregar lead aquí">
             <Plus className="size-3.5" />
           </button>
         </div>
@@ -778,7 +778,7 @@ function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaU
         fantasma && "w-[260px] rotate-2 shadow-xl",
       )}
     >
-      <Link href={`/pulse/leads/${marcaSlug}/${t.id}`} className="block cursor-pointer p-3" draggable={false} onClick={(e) => drag.isDragging && e.preventDefault()}>
+      <Link href={`/pulse/leads/${marcaSlug}/${t.id}`} className="block cursor-pointer rounded-lg p-3 outline-none focus-visible:ring-2 focus-visible:ring-ring" draggable={false} onClick={(e) => drag.isDragging && e.preventDefault()}>
         <div className="flex items-start gap-2.5">
           <span
             className="grid size-8 shrink-0 place-items-center rounded-full text-[11px] font-semibold text-white uppercase"

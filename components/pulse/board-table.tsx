@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 
 import { useBoard, useBoardActions, useGruposVisibles, type GrupoVisible } from "@/components/pulse/board-provider";
+import { BoardSinResultados } from "@/components/pulse/board-sin-resultados";
 import { ColumnHeader } from "@/components/pulse/column-header";
 import { GroupHeader } from "@/components/pulse/group-header";
 import { NuevaColumnaPopover } from "@/components/pulse/nueva-columna";
@@ -63,6 +64,7 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
   const todosSeleccionados = todosIds.length > 0 && todosIds.every((id) => s.seleccion.has(id));
 
   return (
+    <>
     <div ref={scrollRef} className="scroll-fino relative h-full w-full overflow-auto">
       <div style={{ width: anchoTotal, minWidth: "100%" }}>
         {/* header sticky */}
@@ -80,7 +82,7 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
           ))}
           <div className="flex shrink-0 items-center justify-center" style={{ width: ANCHO_FINAL }}>
             <NuevaColumnaPopover>
-              <button type="button" className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground" title="Agregar columna" aria-label="Agregar columna">
+              <button type="button" className="rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" title="Agregar columna" aria-label="Agregar columna">
                 <Plus className="size-4" />
               </button>
             </NuevaColumnaPopover>
@@ -115,6 +117,8 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
         </div>
       </div>
     </div>
+    <BoardSinResultados total={todosIds.length} className="absolute inset-x-4 top-24 z-20 mx-auto max-w-md rounded-xl border bg-background shadow-sm" />
+    </>
   );
 }
 
@@ -151,7 +155,7 @@ function FilaAgregar({ estilo, grupo }: { estilo: React.CSSProperties; grupo: Gr
             }}
           />
         ) : (
-          <button type="button" onClick={() => setActivo(true)} className="flex h-full w-full items-center gap-1 px-3 text-[13px] text-muted-foreground hover:text-foreground">
+          <button type="button" onClick={() => setActivo(true)} className="flex h-full w-full items-center gap-1 px-3 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--pulse-hover)] hover:text-foreground">
             <Plus className="size-3.5" /> Agregar elemento
           </button>
         )}

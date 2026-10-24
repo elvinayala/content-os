@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Loader2, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -130,7 +130,7 @@ export function NuevoLeadDialog({
               Cancelar
             </Button>
             <Button type="submit" disabled={pend || !f.nombre.trim()} className="bg-[#08a742] text-white hover:bg-[#07923a]">
-              Guardar
+              {pend ? <><Loader2 className="animate-spin" /> Guardando…</> : "Guardar"}
             </Button>
           </DialogFooter>
         </form>
@@ -174,7 +174,7 @@ export function PerdidoDialog({ tratoId, nombre, onCerrar, onHecho }: { tratoId:
             Cancelar
           </Button>
           <Button disabled={pend || !motivo} onClick={guardar} className="bg-red-600 text-white hover:bg-red-700">
-            Perdido
+            {pend ? <><Loader2 className="animate-spin" /> Guardando…</> : "Perdido"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -294,7 +294,7 @@ export function EmbudoDialog({ abierto, onCerrar, embudo, etapas, equipo = [], s
             Cancelar
           </Button>
           <Button disabled={pend} onClick={guardar}>
-            Guardar
+            {pend ? <><Loader2 className="animate-spin" /> Guardando…</> : "Guardar"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -335,7 +335,7 @@ export function NuevoEmbudoDialog({ abierto, onCerrar, marca, onCreado }: { abie
             Cancelar
           </Button>
           <Button disabled={pend || !nombre.trim()} onClick={crear}>
-            Crear
+            {pend ? <><Loader2 className="animate-spin" /> Creando…</> : "Crear"}
           </Button>
         </DialogFooter>
       </DialogContent>

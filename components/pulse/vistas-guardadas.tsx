@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, BookmarkPlus, Check, ChevronDown, Trash2 } from "lucide-react";
+import { Bookmark, BookmarkPlus, Check, ChevronDown, Loader2, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -28,6 +28,7 @@ export function VistasGuardadas() {
   const [abierto, setAbierto] = useState(false);
   const [nombre, setNombre] = useState("");
   const [activa, setActiva] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
 
   const cargar = useCallback(async () => {
     const r = await listarVistasAction({ boardId: s.board.id });
@@ -50,8 +51,10 @@ export function VistasGuardadas() {
   };
 
   const guardar = async () => {
+    if (guardando) return;
     const estado: EstadoVista = { vista: s.vista, busqueda: s.busqueda, filtroPersona: s.filtroPersona, filtros: s.filtros, orden: s.orden, agruparPor: s.agruparPor };
-    const r = await guardarVistaAction({ boardId: s.board.id, nombre, estado: estado as unknown as Record<string, unknown> });
+    setGuardando(true);
+    const r = await guardarVistaAction({ boardId: s.board.id, nombre, estado: estado as unknown as Record<string, unknown> }).finally(() => setGuardando(false));
     if (!r.ok) return toast.error(r.error, { className: "pulse" });
     setNombre("");
     setVistas((vs) => [...vs, r.vista]);
@@ -72,7 +75,7 @@ export function VistasGuardadas() {
         {vistas.length === 0 ? <p className="px-2 pb-2 text-sm text-muted-foreground">Todavía no guardaste ninguna.</p> : null}
         <ul className="flex flex-col">
           {vistas.map((v) => (
-            <li key={v.id} className="group flex items-center gap-1 rounded-md hover:bg-muted">
+            <li key={v.id} className="group flex items-center gap-1 rounded-md transition-colors hover:bg-muted">
               <button type="button" onClick={() => aplicar(v)} className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5 text-left text-sm">
                 {activa === v.id ? <Check className="size-3.5 text-primary" /> : <Bookmark className="size-3.5 text-muted-foreground" />}
                 <span className="truncate">{v.nombre}</span>
@@ -80,7 +83,7 @@ export function VistasGuardadas() {
               <button
                 type="button"
                 title="Borrar vista"
-                className="mr-1 rounded p-1 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive"
+                className="mr-1 rounded p-1 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive focus-visible:opacity-100"
                 onClick={async () => {
                   const r = await eliminarVistaAction({ boardId: s.board.id, id: v.id });
                   if (r.ok) setVistas((vs) => vs.filter((x) => x.id !== v.id));
@@ -93,8 +96,8 @@ export function VistasGuardadas() {
         </ul>
         <div className="mt-2 flex gap-1.5 border-t pt-2">
           <input value={nombre} onChange={(e) => setNombre(e.target.value)} onKeyDown={(e) => e.key === "Enter" && nombre.trim() && guardar()} placeholder="Nombre de la vista actual" className="h-8 min-w-0 flex-1 rounded-md border px-2 text-sm" />
-          <Button size="sm" onClick={guardar} disabled={!nombre.trim()}>
-            <BookmarkPlus /> Guardar
+          <Button size="sm" onClick={guardar} disabled={!nombre.trim() || guardando}>
+            {guardando ? <><Loader2 className="animate-spin" /> Guardando…</> : <><BookmarkPlus /> Guardar</>}
           </Button>
         </div>
       </PopoverContent>
