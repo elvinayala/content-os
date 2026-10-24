@@ -14,7 +14,7 @@ let t = 0;
 const frames = escenas.map((d) => { const f = t + Math.round(d * 0.75); t += d; return f; });
 const mp4 = mp4Arg || `out/fabrica/${id}.mp4`;
 const sel = frames.map((f) => `eq(n\\,${f})`).join("+");
-const cuadrado = src.slice(src.indexOf(`id: "${base}"`)).split("\n")[0].includes('"1:1"');
+const cuadrado = src.slice(src.indexOf(`id: "${base}"`)).split("\n")[0].match(/"(1:1|4:5)"/) != null;
 const vertical = cuadrado || id.endsWith("-9x16") || src.slice(src.indexOf(`id: "${base}"`)).split("\n")[0].includes('"9:16"');
 fs.mkdirSync("out/stills", { recursive: true });
 execFileSync("ffmpeg", ["-v", "error", "-y", "-i", mp4, "-vf", `select='${sel}',scale=${cuadrado ? 480 : vertical ? 360 : 640}:-1,tile=${frames.length}x1`, "-frames:v", "1", `out/stills/hoja-${id}.png`]);

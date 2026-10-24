@@ -246,7 +246,7 @@ http.createServer(async (req, res) => {
     try { const b = JSON.parse(cuerpo || "{}"); ids = b.ids || []; guiones = b.guiones || []; } catch { return responder(res, 400, { ok: false, error: "JSON inválido" }); }
     const idValido = (x) => typeof x === "string" && /^[A-Za-z0-9._-]{1,120}$/.test(x);
     ids = ids.filter(idValido);
-    guiones = guiones.filter((g) => g && idValido(g.id) && Array.isArray(g.escenas) && g.escenas.length && ["9:16", "16:9", "1:1"].includes(g.formato));
+    guiones = guiones.filter((g) => g && idValido(g.id) && Array.isArray(g.escenas) && g.escenas.length && ["9:16", "16:9", "1:1", "4:5"].includes(g.formato));
     if (!ids.length && !guiones.length) return responder(res, 400, { ok: false, error: "Pasa { ids: [...] } o { guiones: [...] } válidos (id, formato 9:16|16:9|1:1, escenas)" });
     if (ids.length + guiones.length > 12) return responder(res, 400, { ok: false, error: "Máximo 12 videos por trabajo" });
     const t = { id: crypto.randomUUID().slice(0, 8), ids, guiones, estado: "en-cola", resultados: [], creado: new Date().toISOString() };

@@ -14,15 +14,16 @@ export const TemaCtx = createContext<TemaMarca | null>(null);
 const useTema = () => useContext(TemaCtx)!;
 const useLienzo = () => {
   const { width, height } = useVideoConfig();
-  const cuad = width === height; // 1:1 (feed): se apila como vertical, con márgenes de feed
+  const cuad = height / width < 1.4; // 1:1 y 4:5 (feed): se apila como vertical, con márgenes de feed
   const v = height > width || cuad;
   // Zona segura: en 9:16 la UI de Reels tapa ~250 px arriba y ~380 abajo.
   return { w: width, h: height, v, cuad, pad: v ? (cuad ? 70 : 80) : 120, top: cuad ? 80 : v ? 250 : 90, bottom: cuad ? 100 : v ? 380 : 90 };
 };
 
+/** `src` = archivo de public/audio/ ("clic.mp3") o de la librería CC0 "sfx/impact/impactSoft_medium_001.ogg" (índice en docs/oficio/sfx-library.md). */
 export const Sfx: React.FC<{ src: string; en?: number; vol?: number }> = ({ src, en = 0, vol = 0.5 }) => (
   <Sequence from={en} durationInFrames={60} layout="none">
-    <Audio src={staticFile(`audio/${src}`)} volume={vol} />
+    <Audio src={staticFile(src.startsWith("sfx/") ? src : `audio/${src}`)} volume={vol} />
   </Sequence>
 );
 

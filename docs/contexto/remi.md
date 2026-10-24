@@ -31,3 +31,13 @@ startCommand del puente para todo el proyecto → la imagen de Remi trae un ataj
 **lotes** `remi.mjs lote <tabla> --plantilla <guion.json>` (un video por fila; `scripts/remi/lote.mjs`, plantillas en
 `data/motion/plantillas/`) · **Hyperframes** (HeyGen, video desde HTML) en `estudio-html/` (fijo 0.8.150, sin telemetría,
 nunca `publish`) · **Brag** (plugin de Claude Code, lanzamientos de 20 s). Cuál usar y las reglas: skill `lanzamiento`.
+
+**Lo de Motion Architect (23/oct, Elvin: "coge lo que no tenemos y añádelo a lo que ya tenemos"):** repo
+`Hainrixz/motion-architect` (MIT, Remotion igual que nosotros) — NO se instaló como plugin (su `/motion` chocaba con el
+nuestro y su agente no sabe nuestras reglas); se tomaron solo las piezas que faltaban: **referencias en video**
+("hazlo como este Reel": `motion/referencias/vision/` + yt-dlp en la Mac + subagente `remi-referencia` → ficha en
+`data/motion/referencias/<slug>.json` traducida a estilo + escenas; método en `motion/docs/referencias.md`), **260 SFX
+CC0** (Kenney) en `motion/public/sfx/` (`<Sfx src="sfx/…ogg">`, índice `docs/oficio/sfx-library.md`), **oficio de
+motion** en `motion/docs/oficio/` (principios + checklist de revisión, tonos ↔ estilos, storyboard, vocabulario,
+estándares, audio al beat) y el **formato 4:5** (1080×1350, feed de IG) en la fábrica y en el servicio de la nube.
+Copia del repo en `~/motion-architect` (solo consulta). Licencias en `motion/docs/oficio/NOTICES.md`.

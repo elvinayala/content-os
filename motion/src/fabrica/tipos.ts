@@ -4,7 +4,11 @@
 import type { MarcaId } from "./temas";
 import type { TemaCliente } from "./cliente";
 
-export type Formato = "9:16" | "16:9" | "1:1";
+export type Formato = "9:16" | "16:9" | "1:1" | "4:5";
+
+/** Tamaño en pixeles de cada formato (4:5 = feed de Instagram, 23/oct). */
+export const dimensiones = (f: Formato) =>
+  f === "16:9" ? { width: 1920, height: 1080 } : f === "9:16" ? { width: 1080, height: 1920 } : f === "4:5" ? { width: 1080, height: 1350 } : { width: 1080, height: 1080 };
 
 /** Un paso de la escena "navegar". Coordenadas en fracción de la captura (0-1). */
 export type PasoNav = { imagen: string; dur: number; cursor?: { x: number; y: number } | null; clic?: boolean; zoom?: { x: number; y: number; w: number; h: number } | null };

@@ -10,15 +10,20 @@ generativa: la IA deforma logos y textos; el código respeta marca, tipografía 
 Este método produjo el 27/sep/2026 más de 80 videos (Level Up, Bori, AI Borinquen, Ritmo, 1000X) que Elvin aprobó.
 
 ## 0. Antes de nada
-1. Marca, producto, ángulo, duración (15 · 20 · 30 · 60 s), formato (16:9 y/o 9:16), anuncio u orgánico, CTA.
+1. Marca, producto, ángulo, duración (15 · 20 · 30 · 60 s), formato (16:9 · 9:16 · 1:1 · 4:5), anuncio u orgánico, CTA.
    Si falta la marca o el producto: UNA pregunta y parar.
 2. Lee `vault/estilo/<marca>.md` (ángulos, enemigos, registro, casos verificados) y `vault/ceo/cerebro-remi.md`.
 3. Si es para un CLIENTE: su logo real (SVG/PNG), colores, tipografía, oferta y casos con OK del cliente.
    Sin logo real = sin logo (jamás inventarlo). Nada de testimonios o números que no dé el cliente.
+4. **¿Trae un video de referencia** ("hazlo como este Reel")? Míralo primero con el motor de visión y saca su ficha
+   (ritmo, cortes, paleta, movimientos, transiciones, audio) traducida a estilo + escenas de la fábrica:
+   **`motion/docs/referencias.md`** (subagente `remi-referencia`, uno por video). Se copia el lenguaje, nunca el contenido.
+5. Antes de escribir el guion, un **storyboard** de una página (escena · dur · texto · movimiento · transición · sonido,
+   plantilla en `motion/docs/oficio/storyboard.md`); si lo pidió Elvin directo y es grande, se lo enseñas antes de renderizar.
 
 ## 1. El taller (`motion/`, proyecto Remotion aparte de la app)
 - `src/fabrica/anuncios.ts` — **cada anuncio es un guion EN DATOS** (no se programa un video a mano):
-  `{ id, marca, formato: "9:16"|"16:9", titulo, angulo, musica?, tomas?, escenas: [{ tipo, dur, … }] }`.
+  `{ id, marca, formato: "9:16"|"16:9"|"1:1"|"4:5", titulo, angulo, musica?, tomas?, escenas: [{ tipo, dur, … }] }`.
   30 fps: 15 s = 450 frames, 20 s = 600, 30 s = 900, 60 s = 1800. **La suma de `dur` tiene que dar exacto.**
   `ambos(g)` genera las dos versiones (AI Borinquen: solo 16:9, regla de Elvin).
 - `src/fabrica/temas.tsx` — una marca = un tema: paleta, fuente, **logo animado** (`Logo`), firma de cierre
@@ -46,6 +51,10 @@ Este método produjo el 27/sep/2026 más de 80 videos (Level Up, Bori, AI Borinq
 - Audio: `node motion/scripts/audio.mjs musica "<estilo, BPM, beat desde el primer segundo, sin voz>" --seg 64`
   (fal stable-audio) y `… sfx "<efecto>" --seg ≥0.5` (ElevenLabs). Normalizar con
   `ffmpeg -af loudnorm=I=-15:TP=-1.5:LRA=11`. ⚠ La música generada a veces **termina antes** de lo pedido (28/sep: dos pistas de 44 s se apagaban a los ~37 s y el cierre quedaba mudo): mide el volumen de los últimos 3 s (`ffmpeg -ss <t> -af volumedetect`) y, si cae, extiéndela repitiendo compases enteros con `acrossfade` (compás = 240/BPM s). Revisa también el audio del MP4 final. **Cada video/campaña puede llevar su propia música** (`musica:`).
+- **Librería de SFX CC0** (Kenney, 260 sonidos: impactos, clicks, whooshes, teclas, UI) en `motion/public/sfx/`:
+  `<Sfx src="sfx/impact/impactSoft_medium_001.ogg" />`. Índice con uso y qué tan agudo es cada uno en
+  `motion/docs/oficio/sfx-library.md` (para pulido, los de riesgo de agudos bajo). Uno por evento importante.
+  Al beat: `frames_por_beat = 1800 / BPM` (ver `docs/oficio/audio-sync.md`).
 - Tomas cinematográficas (opcional): Higgsfield **Cinema Studio Video 3.0** (`cinematic_studio_3_0`, 5 s,
   1080p, sin audio) por su MCP → `motion/public/tomas/` → campo `tomas` del anuncio. Sin caras, sin texto,
   sin logos, nunca presentadas como un cliente real. Revisar 3 cuadros antes de usar.
@@ -97,6 +106,13 @@ node scripts/hoja.mjs <id>                                 # hoja de contacto: 1
 ```
 - **Mirar SIEMPRE la hoja** (y un zoom de las escenas críticas) antes de entregar: logo fiel, texto grande y
   legible, nada cortado, sin palabras sueltas en la última línea, registro correcto, datos verificados.
+  Y la **revisión de movimiento** (`motion/docs/oficio/motion-principles.md`, checklist al final; detalle en
+  `review.md` y `standards.md`): entradas con ease-out (nunca lineal ni ease-in), nada escala desde 0 (arranca en
+  0.9–0.96), una sola cosa grande se mueve a la vez, cada texto en pantalla ≥ 1 s + ~3 cuadros por letra, salidas
+  más rápidas que las entradas (~70 %), zona segura de 9:16 libre. Lo que falle se arregla en la FÁBRICA, no en el video.
+- **Oficio de motion** (`motion/docs/oficio/`, de Motion Architect · MIT): `tones.md` (tonos cinematic, chaotic,
+  deadpan, app-store… ↔ nuestros estilos), `vocabulary.md` (qué es un whip-pan, stagger, match cut… para entender
+  lo que pide Elvin), `standards.md` (duraciones, easing, springs).
 - Entregar: `node motion/scripts/entregar.mjs motion/out/fabrica/<id>.mp4 --marca <m> --titulo "…" --formato "motion 16:9 · 30 s"`
   (Storage + bandeja de Entregas) y mandarle el MP4 a Elvin. Publicar/pautar lo decide Elvin.
 - Subir a Slack con el bot: `node --env-file=.env.local scripts/slack-subir-video.mjs <mp4> --canal <id> --texto "…" [--dry]`.
@@ -116,7 +132,7 @@ node scripts/remi.mjs salud
 node scripts/remi.mjs render <id>… [--entregar --marca <m> --titulo "…"]          # guiones ya escritos en anuncios.ts
 node scripts/remi.mjs render --guion <archivo.json|'JSON'> [--entregar --marca <m>] # guion en JSON, SIN tocar código
 ```
-**Guion en JSON** (lo que usa Max, que no edita código): `{ id, marca, formato: "16:9"|"9:16"|"1:1", titulo, angulo,
+**Guion en JSON** (lo que usa Max, que no edita código): `{ id, marca, formato: "16:9"|"9:16"|"1:1"|"4:5", titulo, angulo,
 escenas: [...], musica?, estilo?, cliente?: { nombre, logoUrl (https o public/, logo REAL), logoCapas?, motivo?, fondo, acento, texto?, acento2?, fuente?, fuenteAcento?, estilos? } }`.
 Con `cliente`, la marca sale del JSON (composición universal **`Motion`** + `src/fabrica/cliente.tsx`). Fuentes
 permitidas: Inter, Montserrat, Poppins, Plus Jakarta Sans, DM Sans, Manrope, Bebas Neue, Sora, Outfit. Copia del
