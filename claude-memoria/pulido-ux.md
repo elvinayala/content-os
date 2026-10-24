@@ -32,5 +32,5 @@ La Granja, Resuelto (Netlify bloqueado). AMBC: parche aplicado al original, go-l
 **24/oct ~2 AM — PUBLICADAS con OK de Elvin («publica Cortex/Bori/Content OS»):** Cortex 137be7f (railway up; aviso a
 María enviado), Bori 04af6b4 (push main; MALLOC_ARENA_MAX=2 puesto; respaldo ~/Respaldos/bori/bori-pre-legal-ux-*.dump con
 pg_dump 18 de libpq), Content OS 574b93e0 (0045 aplicada en Supabase + `npx vercel --prod` desde el worktree limpio: el
-push a main NO despliega solo). Pendiente: AVE_SECRET de Cortex (el servidor usa la clave que estuvo en git; el modo auto
+push a main NO despliega solo). Cortex: AVE_SECRET ya rotado (24/oct; falta cambiar claves de elvin.ayala y entrega_lum). Antes el modo auto
 bloqueó cambiarla por ssh), heybori.ai sin MX (hola@heybori.ai no recibe), AIB SaaS (supabase login + migración 014).

@@ -276,6 +276,6 @@ con 0.25 cada unión entre tomas quedaba con ~0.75 s callados. TopChiro v6 = rec
 
 **24/oct/2026 — seguridad:** `data/.secret` (firma las sesiones) y `data/usuarios.json` estuvieron en git desde el 20/sep;
 la rama pulido-legal-ux-2026-10-24 los saca (000f9df) pero siguen en el historial → si Railway no tiene `AVE_SECRET`,
-cualquiera con el repo puede fabricar cookie de admin. Pendiente de Elvin: `AVE_SECRET` nuevo en Railway + cambiar claves
+cualquiera con el repo puede fabricar cookie de admin. HECHO 24/oct: `AVE_SECRET` aleatorio puesto en Railway (deploy 2b72b496, el proceso lo carga). Falta: cambiar claves
 de elvin.ayala y entrega_lum. Volumen vacío = /login en primer arranque (el primero crea admin): nunca recrear el volumen sin
 sembrar usuarios. Al hacer merge de esa rama en ~/ai-video-editor, respaldar y reponer esos 2 archivos (el merge los borra).
