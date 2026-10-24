@@ -37,3 +37,7 @@ BEGIN
 END $$;--> statement-breakpoint
 CREATE TRIGGER legal_consentimientos_inmutable BEFORE UPDATE OR DELETE ON "legal_consentimientos" FOR EACH ROW EXECUTE FUNCTION legal_consentimientos_inmutable();--> statement-breakpoint
 CREATE TRIGGER legal_consentimientos_sin_truncate BEFORE TRUNCATE ON "legal_consentimientos" FOR EACH STATEMENT EXECUTE FUNCTION legal_consentimientos_inmutable();
+--> statement-breakpoint
+-- Datos personales (correo, teléfono, IP): RLS prendido y sin políticas = la API REST de Supabase (anon/authenticated)
+-- no los ve. La app entra por DATABASE_URL como dueña de la tabla y el respaldo con service_role: ambos lo saltan.
+ALTER TABLE "legal_consentimientos" ENABLE ROW LEVEL SECURITY;

@@ -64,3 +64,50 @@ que no se pudo neutralizar se quitó. Queda por decidir (y subir la versión en 
   (DACO pide días visibles); piezas compradas no instaladas; exclusiones de la garantía de destapes; cancelar o
   reprogramar citas; límite de responsabilidad y seguro; plazos de respuesta y devolución; plazo para borrar leads y
   aplicaciones.
+
+## Cómo publicar (preparado el 24/oct/2026; nada se ha subido)
+
+Rama lista: `worktree-agent-af3189d862b544f7f` (= `integracion-legal-ux-2026-10-24` + landings + neutralización + RLS),
+al día con origin/main; `npm run build` y `npm test` en verde. Orden: **base primero, código después** (si el código
+sale antes, no rompe: sin la tabla, `/f/` guarda igual y la app de clientes/Ritmo no bloquean; solo no se registra).
+
+**a) Revisar Supabase** (con `DATABASE_URL_DIRECT`, puerto 5432, de `.env.local`):
+```sh
+psql "$DATABASE_URL_DIRECT" -c "select table_name from information_schema.tables where table_name in ('legal_consentimientos','pulse_consentimientos');" \
+  -c "select created_at from drizzle.__drizzle_migrations order by created_at desc limit 3;" -c "select current_user;"
+```
+Si `legal_consentimientos` ya existe: NO apliques; compara columnas con `lib/consentimientos/schema.ts`. Si existe
+`pulse_consentimientos` (de una versión anterior), déjala quieta y anótalo aquí. Si el último `created_at` es ≥
+1792815669597, la 0045 ya está registrada.
+
+**b) Aplicar SOLO la 0045** (no `npm run db:migrate`: aplicaría cualquier otra pendiente). En una transacción, y la
+registra en el journal de drizzle para que un `db:migrate` futuro no la repita:
+```sh
+H=$(shasum -a 256 drizzle/0045_consentimientos.sql | cut -d' ' -f1)
+{ echo 'BEGIN;'; sed 's/--> statement-breakpoint//' drizzle/0045_consentimientos.sql; \
+  echo "INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ('$H', 1792815669597);"; echo 'COMMIT;'; } \
+  | psql "$DATABASE_URL_DIRECT" -v ON_ERROR_STOP=1
+```
+Comprueba: `select relrowsecurity from pg_class where relname='legal_consentimientos';` → `t`, y que
+`current_user` del paso (a) sea el dueño (`select tableowner from pg_tables where tablename='legal_consentimientos';`)
+o tenga BYPASSRLS; si no, la app no podría leer ni escribir (quita el RLS con `ALTER TABLE … DISABLE ROW LEVEL SECURITY`).
+Probada en PGlite: aplica, inserta y bloquea DELETE.
+
+**c) Código**: con OK de Elvin, merge de la rama a `main` y `git push origin main` → Vercel despliega solo. Antes,
+`git fetch && git merge origin/main` otra vez (otras sesiones commitean seguido) y `npm run build`.
+
+**d) Verificar** en https://content-os-chi-seven.vercel.app y en ritmo., app., leads. y formularios. levelupmediapr.net:
+- `/terminos`, `/privacidad`, `/privacidad/equipo`, `/reembolsos`, `/cookies`, `/accesibilidad` abren SIN login en
+  cada dominio y no muestran "[PENDIENTE"; `/pulse`, `/ceo`, `/ritmo` siguen pidiendo login.
+- Un formulario `/f/<slug>`: "Empezar" no sigue sin las dos casillas; al enviar aparece la fila en
+  `select tipo, accion, origen, created_at from legal_consentimientos order by created_at desc limit 5;`.
+- App de clientes (link personal desde Pulse): pide aceptar términos y privacidad una vez y luego entra.
+- Ritmo: la bienvenida pide la casilla del aviso del equipo. Portal AutoFlow: la llamada de prueba no arranca sin
+  la casilla. Pulse/Leads: pantallas de carga y estados vacíos nuevos.
+- Logs de Vercel: sin `[legal] no se pudo registrar` ni `consentimientos` con error.
+
+**e) Revertir**: código → `git revert -m 1 <merge>` y push (Vercel vuelve a lo anterior; o "Promote" del deploy
+previo en Vercel). La tabla puede quedarse (nadie la usa sin el código; es solo de agregar). Para quitarla de verdad:
+`DROP TABLE legal_consentimientos;` (los triggers no bloquean DROP) + `DROP FUNCTION legal_consentimientos_hora(),
+legal_consentimientos_inmutable();` + `DELETE FROM drizzle.__drizzle_migrations WHERE created_at = 1792815669597;` —
+solo con OK de Elvin, y antes `/careful` y un respaldo (`pg_dump -t legal_consentimientos`): son pruebas legales.
