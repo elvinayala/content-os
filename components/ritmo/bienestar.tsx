@@ -174,7 +174,7 @@ export function NuevaActividad() {
         <Input className="h-10 w-20" inputMode="numeric" value={minutos} onChange={(e) => setMinutos(e.target.value.replace(/\D/g, ""))} aria-label="Minutos" />
         <span className="text-sm text-muted-foreground">min</span>
         <Button className="ml-auto h-10 rounded-full" onClick={guardar} disabled={guardando}>
-          {guardando ? <Loader2 className="animate-spin" /> : null} Anotar
+          {guardando ? <Loader2 className="animate-spin" /> : null} {guardando ? "Anotando…" : "Anotar"}
         </Button>
       </div>
     </div>

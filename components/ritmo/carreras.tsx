@@ -465,7 +465,7 @@ function FilaCaso({ c }: { c: PostulacionUI }) {
         </select>
         <Input className="h-10 flex-1" value={nota} onChange={(e) => setNota(e.target.value)} placeholder="Nota interna (solo RR.HH.)" />
         <Button onClick={guardar} disabled={!cambiado || cargando} className="h-10 rounded-full">
-          {cargando ? <Loader2 className="animate-spin" /> : <ArrowUpRight className="size-4" />} Guardar
+          {cargando ? <Loader2 className="animate-spin" /> : <ArrowUpRight className="size-4" />} {cargando ? "Guardando…" : "Guardar"}
         </Button>
       </div>
       {c.tipo === "referido" && !c.bonoPagado && estado === "onboarding_completo" && c.estado !== "onboarding_completo" ? (

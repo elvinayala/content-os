@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { actualizarEticoAction, reporteEticoAction } from "@/app/ritmo/actions";
 import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -79,7 +80,12 @@ export interface ReporteUI {
 const ESTADOS: Record<string, string> = { nuevo: "Nuevo", revisando: "Revisando", cerrado: "Cerrado" };
 
 export function BandejaEtica({ reportes }: { reportes: ReporteUI[] }) {
-  if (!reportes.length) return <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">No hay reportes.</p>;
+  if (!reportes.length)
+    return (
+      <EstadoVacio icono={ShieldCheck} titulo="No hay reportes" className="rounded-2xl border border-dashed border-border">
+        Cuando alguien use el canal ético, el reporte llega aquí (y solo tú lo ves).
+      </EstadoVacio>
+    );
   return (
     <div className="flex flex-col gap-3">
       {reportes.map((r) => (

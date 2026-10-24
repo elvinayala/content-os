@@ -22,7 +22,7 @@ export function CrearFicha({ userId }: { userId: string }) {
         if (!r.ok) toast.error(r.error, { className: "ritmo" });
       }}
     >
-      {cargando ? <Loader2 className="animate-spin" /> : <Plus />} Crear ficha
+      {cargando ? <Loader2 className="animate-spin" /> : <Plus />} {cargando ? "Creando…" : "Crear ficha"}
     </Button>
   );
 }

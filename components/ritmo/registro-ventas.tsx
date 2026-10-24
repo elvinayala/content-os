@@ -182,7 +182,7 @@ export function RegistroVentas({ empresa, hoy, ventas, equipo, puedeRegistrar, c
           </Campo>
 
           <Button onClick={guardar} disabled={guardando} className="h-11 rounded-full">
-            {guardando ? <Loader2 className="animate-spin" /> : <Plus className="size-4" />} Registrar venta
+            {guardando ? <Loader2 className="animate-spin" /> : <Plus className="size-4" />} {guardando ? "Registrando…" : "Registrar venta"}
           </Button>
         </div>
       ) : null}

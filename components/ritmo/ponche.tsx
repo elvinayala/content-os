@@ -158,7 +158,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
         </div>
         <Textarea rows={2} maxLength={300} value={nota} onChange={(e) => setNota(e.target.value)} placeholder="Nota (opcional)" />
         <Button onClick={corregir} disabled={cargando} className="h-12 rounded-full">
-          {cargando ? <Loader2 className="animate-spin" /> : null} Enviar
+          {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Enviando…" : "Enviar"}
         </Button>
       </div>
     );
@@ -277,7 +277,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
           </div>
           <DialogFooter>
             <Button onClick={salir} disabled={cargando} className="h-12 w-full rounded-full sm:w-auto sm:px-8">
-              {cargando ? <Loader2 className="animate-spin" /> : null} Marcar salida
+              {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Marcando salida…" : "Marcar salida"}
             </Button>
           </DialogFooter>
         </DialogContent>

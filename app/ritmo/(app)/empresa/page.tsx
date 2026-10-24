@@ -1,7 +1,9 @@
+import { FileText } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Directorio, NuevoItemEmpresa, TarjetaEmpresa } from "@/components/ritmo/empresa";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { contenidoEmpresa, directorio, empresaDe } from "@/lib/desempeno/empresa";
 import { SECCIONES, type SeccionEmpresa } from "@/lib/desempeno/empresa-reglas";
 import { perfilDe } from "@/lib/desempeno/datos";
@@ -56,7 +58,9 @@ export default async function EmpresaPage({ searchParams }: { searchParams: Prom
           ))}
         </div>
       ) : (
-        <div className="panel p-6 text-center text-sm text-muted-foreground">Todavía no hay nada aquí.</div>
+        <EstadoVacio icono={FileText} titulo={`Todavía no hay nada en ${SECCIONES.find((x) => x.id === seccion)?.nombre ?? "esta sección"}`} className="panel">
+          {verTodo ? "Usa el botón de arriba para agregar lo primero: el equipo lo ve en cuanto lo publiques." : "Cuando RR.HH. o la dirección publiquen algo en esta sección, lo vas a ver aquí."}
+        </EstadoVacio>
       )}
       {verTodo && seccion !== "equipo" ? (
         <p className="text-[11px] text-muted-foreground">Ves todo porque eres parte de la dirección: los borradores y lo de cada empresa. Cada empleado ve lo publicado para todos y lo de su empresa.</p>

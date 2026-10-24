@@ -41,7 +41,7 @@ export function CambiarClave() {
         <Input id="otra" type="password" autoComplete="new-password" required minLength={8} value={v.otra} onChange={(e) => setV({ ...v, otra: e.target.value })} className="h-11" />
       </div>
       <Button type="submit" disabled={cargando} className="h-11 rounded-full">
-        {cargando ? <Loader2 className="animate-spin" /> : null} Cambiar clave
+        {cargando ? <Loader2 className="animate-spin" /> : null} {cargando ? "Cambiando…" : "Cambiar clave"}
       </Button>
       <p className="text-xs text-muted-foreground">Se cierran tus sesiones en otros equipos. Si usas la vista maestra, te va a pedir otra vez el código de tu app.</p>
     </form>

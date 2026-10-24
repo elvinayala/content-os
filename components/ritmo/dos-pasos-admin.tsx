@@ -30,7 +30,7 @@ export function DosPasosAdmin({ gente }: { gente: { id: string; nombre: string; 
             <span className="text-xs text-muted-foreground">{g.activada ? "activada" : "pendiente"}</span>
             {g.activada ? (
               <Button size="sm" variant="outline" disabled={cargando === g.id} onClick={() => reiniciar(g.id, g.nombre)} className="rounded-full">
-                {cargando === g.id ? <Loader2 className="animate-spin" /> : <RotateCcw />} Reiniciar
+                {cargando === g.id ? <Loader2 className="animate-spin" /> : <RotateCcw />} {cargando === g.id ? "Reiniciando…" : "Reiniciar"}
               </Button>
             ) : null}
           </li>
