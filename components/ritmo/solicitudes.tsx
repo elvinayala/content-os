@@ -17,7 +17,9 @@ const fecha = (f: string) => new Date(`${f}T12:00:00`).toLocaleDateString("es-PR
 const cuando = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("es-PR", { timeZone: "America/Puerto_Rico", day: "numeric", month: "short" }) : "");
 
 type Tipo = { id: string; nombre: string; conFechas: boolean };
-// Duraciones de una cita médica, en días de 8 h (1 h = 0.125).
+// Las solicitudes que se piden por horas (cita médica y permiso); con fechas y días las demás.
+const PERMISO_POR_HORAS = ["cita_medica", "permiso"];
+// Duraciones de una cita médica o un permiso, en días de 8 h (1 h = 0.125).
 const HORAS_CITA = [
   { v: "0.125", t: "1 hora" },
   { v: "0.25", t: "2 horas" },
@@ -79,16 +81,17 @@ export function NuevaSolicitud({ tipos, saldo, dias, minVacaciones }: { tipos: T
           </div>
         </div>
       ) : null}
-      <select className={select} value={v.tipo} onChange={(e) => { const t = e.target.value; setV((x) => ({ ...x, tipo: t, dias: t === "cita_medica" ? "0.25" : x.dias === "0.25" ? "1" : x.dias, hasta: t === "cita_medica" ? "" : x.hasta })); }}>
+      <select className={select} value={v.tipo} onChange={(e) => { const t = e.target.value; const h = PERMISO_POR_HORAS.includes(t); setV((x) => ({ ...x, tipo: t, dias: h ? "0.25" : x.dias === "0.25" ? "1" : x.dias, hasta: h ? "" : x.hasta })); }}>
         <option value="">¿Qué necesitas?</option>
         {tipos.map((t) => (
           <option key={t.id} value={t.id}>{t.nombre}</option>
         ))}
       </select>
-      {tipo?.id === "cita_medica" ? (
-        // 19/oct: la cita médica va por horas (María pidió 2 h y le contó un día). "Más de un día" abre las fechas y los días.
+      {tipo && PERMISO_POR_HORAS.includes(tipo.id) ? (
+        // 19/oct: la cita médica va por horas (María pidió 2 h y le contó un día); 24/oct: el permiso también (Jessica, igual).
+        // "Más de un día" abre las fechas y los días.
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Día de la cita</span><Input type="date" className="h-11" value={v.desde} onChange={(e) => setV((x) => ({ ...x, desde: e.target.value }))} /></label>
+          <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">{tipo.id === "cita_medica" ? "Día de la cita" : "Día"}</span><Input type="date" className="h-11" value={v.desde} onChange={(e) => setV((x) => ({ ...x, desde: e.target.value }))} /></label>
           <label className="flex flex-col gap-1.5">
             <span className="text-xs text-muted-foreground">¿Cuánto tiempo?</span>
             <select className={select} value={HORAS_CITA.some((h) => h.v === v.dias) ? v.dias : "varios"} onChange={(e) => setV((x) => ({ ...x, dias: e.target.value === "varios" ? "2" : e.target.value, hasta: e.target.value === "varios" ? x.hasta : "" }))}>

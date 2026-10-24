@@ -23,7 +23,7 @@ import { ACTIVIDADES, duracionRutina, rutinaDelDia } from "@/lib/desempeno/biene
 import * as fichas from "@/lib/desempeno/fichas";
 import * as noticias from "@/lib/desempeno/noticias";
 import { CATEGORIAS_NOTICIA, esParaNoticia } from "@/lib/desempeno/noticias-tipos";
-import { errorAnticipacion, puedeDecidir, redondearDias, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
+import { errorAnticipacion, POR_HORAS, puedeDecidir, redondearDias, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import * as viajes from "@/lib/desempeno/viajes";
 import { errorPlan } from "@/lib/desempeno/viajes-reglas";
@@ -547,8 +547,8 @@ export async function crearSolicitudAction(p: { tipo: string; desde: string; has
       hasta = FECHA.test(p.hasta) && p.hasta >= p.desde ? p.hasta : p.desde;
       dias = Number(p.dias);
       if (!Number.isFinite(dias) || dias < 0 || dias > 60) throw new Error("Días inválidos");
-      dias = redondearDias(tipo.id, dias); // cita médica por horas (1/8 de día); lo demás por medio día
-      if (tipo.id === "cita_medica" && dias < 1) hasta = desde; // unas horas = un solo día
+      dias = redondearDias(tipo.id, dias); // cita médica y permiso por horas (1/8 de día); lo demás por medio día
+      if (POR_HORAS.includes(tipo.id) && dias < 1) hasta = desde; // unas horas = un solo día
       if (tipo.id === "cita_medica" && dias <= 0) throw new Error("Pon cuánto tiempo vas a estar fuera"); // un permiso de 0 días (unas horas sin descontar) sigue valiendo
     }
     // 17/oct (Elvin): las vacaciones se piden con mínimo 60 días de anticipación (ya no el mismo mes).

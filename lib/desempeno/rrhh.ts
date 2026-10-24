@@ -226,9 +226,11 @@ export function ausenciaDeSolicitud(s: { tipo: string; desde: string | null; has
   return null;
 }
 
-/** Las citas médicas (y la enfermedad que registra RR.HH.) van por horas: 1/8 de día = 1 h. Lo demás, por medio día. */
+/** Lo que va por horas (1/8 de día = 1 h): citas médicas, enfermedad y permisos (24/oct: Jessica pidió 2 h para vacunar
+ *  a su bebé con un permiso y se le descontó el día entero de vacaciones). Lo demás, por medio día. */
+export const POR_HORAS: readonly string[] = ["cita_medica", "enfermedad", "permiso", "personal"];
 export function redondearDias(tipo: string, dias: number): number {
-  return tipo === "cita_medica" || tipo === "enfermedad" ? Math.round(dias * 8) / 8 : Math.round(dias * 2) / 2;
+  return POR_HORAS.includes(tipo) ? Math.round(dias * 8) / 8 : Math.round(dias * 2) / 2;
 }
 
 /** "2 h" si es menos de un día; si no, "1 día", "1.5 días"… (para tarjetas, ficha y calendario). */

@@ -150,7 +150,11 @@ test("cita médica y enfermedad por horas (1/8 de día); lo demás por medio dí
   assert.equal(redondearDias("cita_medica", 0.3), 0.25);
   assert.equal(redondearDias("enfermedad", 0.125), 0.125);
   assert.equal(redondearDias("vacaciones", 0.25), 0.5);
-  assert.equal(redondearDias("permiso", 1.3), 1.5);
+  // 24/oct (Jessica): el permiso y la ausencia personal que registra también van por horas.
+  assert.equal(redondearDias("permiso", 0.25), 0.25);
+  assert.equal(redondearDias("permiso", 1.3), 1.25);
+  assert.equal(redondearDias("personal", 0.25), 0.25);
+  assert.equal(redondearDias("dia_libre", 0.25), 0.5);
   assert.equal(duracionTexto(0.25), "2 h");
   assert.equal(duracionTexto(0.5), "4 h");
   assert.equal(duracionTexto(1), "1 día");
