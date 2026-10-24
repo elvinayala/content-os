@@ -23,6 +23,7 @@ interface DatosSeguimiento {
   productoTexto?: string | null;
   trato?: string | null;
   ofertaIncorrecta?: string | null;
+  llamadas?: { fathom: number; fecha: string | null; closer: string | null; url: string | null; temperatura: string | null }[];
 }
 
 const TEMP: Record<string, { txt: string; cls: string }> = {
@@ -80,10 +81,30 @@ export function SeguimientoLead({ datos }: { datos: unknown }) {
             </div>
           ))}
       </dl>
-      {s.url && /^https:\/\//.test(s.url) && (
-        <a href={s.url} target="_blank" rel="noreferrer" className="justify-self-start text-primary hover:underline">
-          Ver la llamada en Fathom
-        </a>
+      {(s.llamadas?.length ?? 0) > 1 ? (
+        <div className="grid gap-1">
+          <p className="text-muted-foreground">{s.llamadas!.length} llamadas (lo de arriba es de la última)</p>
+          <ol className="grid gap-0.5">
+            {s.llamadas!.map((l, i) => (
+              <li key={l.fathom} className="flex flex-wrap items-center gap-1.5">
+                <span className="text-muted-foreground">{i + 1}.</span>
+                <span>{[fechaCorta(l.fecha), l.closer && `con ${l.closer}`].filter(Boolean).join(" · ") || "Llamada"}</span>
+                {l.temperatura && TEMP[l.temperatura] && <span className={`rounded-full px-1.5 text-[10px] font-semibold ${TEMP[l.temperatura].cls}`}>{TEMP[l.temperatura].txt}</span>}
+                {l.url && /^https:\/\//.test(l.url) && (
+                  <a href={l.url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                    Fathom
+                  </a>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : (
+        s.url && /^https:\/\//.test(s.url) && (
+          <a href={s.url} target="_blank" rel="noreferrer" className="justify-self-start text-primary hover:underline">
+            Ver la llamada en Fathom
+          </a>
+        )
       )}
     </section>
   );

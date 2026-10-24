@@ -139,3 +139,25 @@ test("después de la nota de Lis: no responde = volver a llamar mañana (3 veces
   assert.equal(sumarDiasHabiles("2026-10-23", 1), "2026-10-26"); // viernes → lunes
   assert.equal(sumarDiasHabiles("2026-10-22", 3), "2026-10-26"); // jueves + 3 = domingo → lunes
 });
+
+test("una llamada nueva va al mismo lead: nombre igual (Lis, 24/oct)", async () => {
+  const { mismoNombre, sumarLlamada, yaTieneLlamada } = await import("../lib/leads/seguimiento-reglas.ts");
+  assert.equal(mismoNombre("José Rivera", "jose rivera"), true);
+  assert.equal(mismoNombre("Juan Carlos Pérez", "Juan Pérez"), true);
+  assert.equal(mismoNombre("María de la Cruz", "MARIA CRUZ"), true);
+  assert.equal(mismoNombre("Juan Pérez", "Juan Rivera"), false);
+  assert.equal(mismoNombre("Pérez Juan", "Juan Pérez"), false); // tiene que empezar igual
+  assert.equal(mismoNombre("Juan", "Juan Pérez"), false); // solo el primer nombre no basta
+  assert.equal(mismoNombre(null, "Juan Pérez"), false);
+
+  const previo = { fathom: 11, fecha: "2026-10-20", closer: "Roger", url: "u1", temperatura: "tibio", notasLis: "x" };
+  const dos = sumarLlamada(previo, { fathom: 22, fecha: "2026-10-24", closer: "Laura", url: "u2", temperatura: "caliente" });
+  assert.deepEqual(dos.map((l) => l.fathom), [11, 22]);
+  const otra = sumarLlamada({ ...previo, llamadas: dos }, { fathom: 22, fecha: "2026-10-24", closer: "Laura", url: "u2", temperatura: "frio" });
+  assert.equal(otra.length, 2); // la misma grabación no se repite
+  assert.equal(otra[1].temperatura, "frio");
+  assert.deepEqual(sumarLlamada(undefined, { fathom: 5, fecha: null, closer: null, url: null, temperatura: null }).length, 1);
+  assert.equal(yaTieneLlamada({ fathom: 22, llamadas: dos }, 11), true);
+  assert.equal(yaTieneLlamada({ fathom: 22 }, 22), true);
+  assert.equal(yaTieneLlamada({ fathom: 22 }, 33), false);
+});

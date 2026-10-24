@@ -690,6 +690,34 @@ export async function leadPorContacto(telefono: string | null, emails: string[],
   return t ?? null;
 }
 
+/**
+ * El lead que ya lleva Lis en SEGUIMIENTO para esta persona, cuando la llamada nueva no calzó con uno abierto por teléfono
+ * ni correo (Lis, 24/oct/2026: "esta quedando dos veces un mismo lead"): primero el de "Seguimiento perdido" con ese
+ * contacto (se reabre); si no, el de SEGUIMIENTO (abierto o perdido) con el mismo nombre — solo si hay UNO, para no
+ * juntar a dos personas distintas que se llaman igual.
+ */
+export async function leadPrevioDeSeguimiento(telefono: string | null, emails: string[], nombres: (string | null | undefined)[], embudo: string, mismoNombre: (a: string, b: string) => boolean): Promise<Trato | null> {
+  const d = await db();
+  const ids = (await d.select({ id: leadsEmbudos.id, nombre: leadsEmbudos.nombre }).from(leadsEmbudos)).filter((e) => clave(e.nombre) === clave(embudo)).map((e) => e.id);
+  if (!ids.length) return null;
+  const tel = normalizarTelefono(telefono);
+  const contacto = [...(tel ? [eq(leadsTratos.telefono, tel)] : []), ...(emails.length ? [inArray(leadsTratos.email, emails.map((e) => e.trim().toLowerCase()))] : [])];
+  if (contacto.length) {
+    const [t] = await d.select().from(leadsTratos).where(and(inArray(leadsTratos.embudoId, ids), eq(leadsTratos.estado, "perdido"), or(...contacto))).orderBy(desc(leadsTratos.updatedAt)).limit(1);
+    if (t) return t;
+  }
+  const buscados = nombres.filter((n): n is string => !!n?.trim());
+  if (!buscados.length) return null;
+  const candidatos = await d
+    .select()
+    .from(leadsTratos)
+    .where(and(inArray(leadsTratos.embudoId, ids), inArray(leadsTratos.estado, ["abierto", "perdido"]), gte(leadsTratos.updatedAt, new Date(Date.now() - 180 * 86_400_000))));
+  const iguales = candidatos.filter((t) => buscados.some((n) => mismoNombre(t.nombre, n)));
+  const abiertos = iguales.filter((t) => t.estado === "abierto");
+  if (abiertos.length === 1) return abiertos[0];
+  return !abiertos.length && iguales.length === 1 ? iguales[0] : null;
+}
+
 /** Busca si este contacto existe como trato abierto en la OTRA marca (para advertir de duplicados cross-brand). */
 export async function tratoEnOtraMarca(telefono: string | null, email: string | null, marcaActual: Marca): Promise<Trato | null> {
   const laOtraMarca: Marca = marcaActual === "level_up" ? "ai_borinquen" : "level_up";
@@ -748,6 +776,8 @@ export async function ingestarLead(v: {
   nombreManda?: boolean;
   /** Dueño por id (gana sobre `duenoNombre`). */
   duenoId?: string | null;
+  /** El lead que hay que actualizar, ya encontrado (p. ej. por nombre en SEGUIMIENTO): no se busca por teléfono/correo. */
+  tratoId?: string | null;
 }): Promise<{ id: string; nuevo: boolean }> {
   const emb = await embudoPorNombre(v.marca, v.embudo);
   if (!emb) throw new Error("sin-embudos");
@@ -760,7 +790,7 @@ export async function ingestarLead(v: {
   }
   const telefono = normalizarTelefono(v.telefono);
   const email = v.email?.trim().toLowerCase() || null;
-  const ya = await buscarAbierto(v.marca, telefono, email);
+  const ya = (v.tratoId ? (await d.select().from(leadsTratos).where(eq(leadsTratos.id, v.tratoId)).limit(1))[0] : null) ?? (await buscarAbierto(v.marca, telefono, email));
   if (ya) {
     const cambios: Record<string, unknown> = { updatedAt: new Date(), datos: { ...(ya.datos ?? {}), ...(v.datos ?? {}) } };
     if (!ya.negocio && v.negocio) cambios.negocio = v.negocio;

@@ -9,10 +9,10 @@ import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
 
 import { slugDeMarca, type Marca } from "./reglas";
-import { actividadesAbiertas, asegurarEtapa, cerrarCitasPasadas, cerrarTrato, clienteActual, completarActividad, contarActividades, crearActividad, crearEmbudo, embudoPorNombre, ingestarLead, leadPorContacto, obtenerTrato, registrarWebhook } from "./repo";
+import { actividadesAbiertas, asegurarEtapa, cerrarCitasPasadas, cerrarTrato, clienteActual, completarActividad, contarActividades, crearActividad, crearEmbudo, embudoPorNombre, ingestarLead, leadPorContacto, leadPrevioDeSeguimiento, obtenerTrato, registrarWebhook } from "./repo";
 import { listarRubros } from "./rubros";
 import { rubroDeCatalogo } from "./rubros-reglas";
-import { closerDeFathom, esContactoPendiente, nombreCloser, PRIMER_CONTACTO, recomendar, siguienteTrasNota, sumarDiasHabiles, temperaturaDe, VOLVER_A_LLAMAR, EMBUDO_SEGUIMIENTO, ETAPA_PERDIDO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, OBJECIONES, SERVICIOS, vaASeguimiento, type LecturaLlamada } from "./seguimiento-reglas";
+import { closerDeFathom, esContactoPendiente, nombreCloser, PRIMER_CONTACTO, recomendar, siguienteTrasNota, sumarDiasHabiles, temperaturaDe, VOLVER_A_LLAMAR, EMBUDO_SEGUIMIENTO, ETAPA_PERDIDO, etapaDeLectura, ETAPAS_SEGUIMIENTO, leerLecturaLlamada, mismoNombre, OBJECIONES, SERVICIOS, sumarLlamada, vaASeguimiento, yaTieneLlamada, type LecturaLlamada } from "./seguimiento-reglas";
 
 // Fathom → SEGUIMIENTO (Elvin, 20/oct/2026): "Luego de que cierra la llamada, que Fathom tiene ya la
 // información, pasar el contacto a Pulse, que se pase automático." Cuando un closer (Roger, Laura)
@@ -130,11 +130,15 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
   // Si el closer ya lo marcó ganado en Leads, compró aunque la llamada no lo diga claro.
   const ganado = await leadPorContacto(lectura.telefono, emails, "ganado");
   if (ganado) return `ya ganado en Leads (${ganado.id})`;
-  const ya = await leadPorContacto(lectura.telefono, emails);
+  // Si no calza por teléfono/correo con uno abierto, el que ya lleva Lis en SEGUIMIENTO (Lis, 24/oct: una persona
+  // puede tener varias llamadas y todo va en el mismo lead): reabre su "Seguimiento perdido" o lo encuentra por nombre.
+  const nombresLlamada = [lectura.nombre, ...(r.calendar_invitees ?? []).filter((i) => i.is_external !== false && !delEquipo.has((i.email ?? "").toLowerCase())).map((i) => i.name)];
+  const ya = (await leadPorContacto(lectura.telefono, emails)) ?? (await leadPrevioDeSeguimiento(lectura.telefono, emails, nombresLlamada, EMBUDO_SEGUIMIENTO, mismoNombre));
   const marca: Marca = (ya?.marca as Marca | undefined) ?? lectura.marca ?? "level_up";
   fijarMarca(marca);
   const fathomId = Number(r.recording_id);
-  if ((ya?.datos as { seguimiento?: { fathom?: number } } | null)?.seguimiento?.fathom === fathomId) return `ya estaba (${ya!.id})`;
+  const previo = (ya?.datos as { seguimiento?: unknown } | null)?.seguimiento;
+  if (yaTieneLlamada(previo, fathomId)) return `ya estaba (${ya!.id})`;
   const telefono = ya?.telefono ?? lectura.telefono;
   if (!ya && telefono) {
     const cliente = await clienteActual(marca, telefono);
@@ -151,6 +155,8 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
     r.recorded_by?.name?.trim() ??
     "el closer";
   const url = r.share_url || r.url || null;
+  const fecha = (r.recording_start_time ?? new Date().toISOString()).slice(0, 10);
+  const llamadas = sumarLlamada(previo, { fathom: fathomId, fecha, closer, url, temperatura: lectura.temperatura });
   // Las notas que Lis traía del Excel se quedan en el panel aunque llegue una llamada nueva.
   const notasLis = (ya?.datos as { seguimiento?: { notasLis?: string } } | null)?.seguimiento?.notasLis;
   const rec = recomendar({ ...lectura, industria: lectura.industria ?? ((ya?.datos as { nicho?: string } | null)?.nicho ?? null) });
@@ -159,8 +165,9 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
     fuente: "fathom",
     fathom: fathomId,
     url,
-    fecha: (r.recording_start_time ?? new Date().toISOString()).slice(0, 10),
+    fecha,
     closer,
+    llamadas,
     servicios: lectura.servicios,
     objecion: lectura.objecion,
     temperatura: lectura.temperatura,
@@ -178,7 +185,7 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
   };
   const datosNicho = lectura.industria && !(ya?.datos as { nicho?: string } | null)?.nicho ? { nicho: lectura.industria } : {};
   const nota = [
-    `📞 Llamada con ${closer} (Fathom): no cerró → SEGUIMIENTO · ${etapa}`,
+    `📞 ${llamadas.length > 1 ? `Llamada ${llamadas.length} (otra vez)` : "Llamada"} con ${closer} (Fathom): no cerró → SEGUIMIENTO · ${etapa}`,
     rec.prioridad === "super" ? `🔥 SÚPER PRIORITARIO: ${rec.prioridadPor}` : rec.prioridad ? `⭐ Alta intención: ${rec.prioridadPor}` : null,
     lectura.razon ? `Por qué no cerró: ${lectura.razon}` : null,
     rec.productoTexto ? `Qué ofrecerle: ${rec.productoTexto}. ${rec.trato}` : null,
@@ -202,6 +209,7 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
     forzarDueno: true,
     nota,
     datos: { ...datosNicho, seguimiento },
+    tratoId: ya?.id ?? null,
   });
   // Súper prioritario: Elvin también lo quiere ver (20/oct). Aviso a él (Telegram/Slack del CEO), no al equipo.
   if (rec.prioridad === "super") {
@@ -226,6 +234,8 @@ async function procesar(r: ReunionFathom, fijarMarca: (m: Marca) => void): Promi
   // Lis (20/oct): al otro día de la demo lo llama para indagar la objeción real; con su nota se pone la próxima fecha
   // (trasNotaDeSeguimiento). Tipo "whatsapp", no "llamada": las "llamada" son las citas de los closers en la Arena.
   if (lis) {
+    // Llamada otra vez: el contacto que quedaba pendiente de la anterior ya no aplica (no dos "1ª llamada" a la vez).
+    if (!nuevo) for (const a of await actividadesAbiertas(id)) if (esContactoPendiente(a.asunto)) await completarActividad(a.id, true);
     await crearActividad(id, { tipo: "whatsapp", asunto: `${PRIMER_CONTACTO}${lectura.proximoPaso ? ` · ${lectura.proximoPaso}` : ""}`.slice(0, 200), venceAt: diaALas10(1), asignadoId: lis }, lis);
   }
   return `${nuevo ? "nuevo" : "movido"} ${id} → ${etapa}`;

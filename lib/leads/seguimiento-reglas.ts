@@ -367,3 +367,47 @@ export function etapaDeLectura(l: LecturaLlamada): string {
 export function vaASeguimiento(l: LecturaLlamada | null): boolean {
   return !!l && l.esVenta && l.compro !== "si";
 }
+
+// Un mismo lead puede tener varias llamadas (Lis, 24/oct/2026): "las llamadas de seguimiento no las crees como un
+// nuevo lead, hay que agregar la info de Fathom en el hilo que ya se lleva". La 2ª llamada a veces es fuera de
+// calendario (sin correo) y el teléfono casi nunca se dice: si no calza por teléfono ni correo, se busca en
+// SEGUIMIENTO por el nombre. Nombre "igual" = mismas palabras sin tildes ni mayúsculas, con al menos nombre y
+// apellido; si uno trae más (segundo nombre, segundo apellido) basta con que traiga todas las del otro y empiece igual.
+const palabras = (s: string | null | undefined) =>
+  sinTildes(String(s ?? ""))
+    .replace(/[^a-z0-9ñ\s]/g, " ")
+    .split(/\s+/)
+    .filter((p) => p.length > 1 && !["de", "del", "la", "las", "los", "y"].includes(p));
+
+export function mismoNombre(a: string | null | undefined, b: string | null | undefined): boolean {
+  const pa = palabras(a);
+  const pb = palabras(b);
+  const [corto, largo] = pa.length <= pb.length ? [pa, pb] : [pb, pa];
+  if (corto.length < 2 || corto[0] !== largo[0]) return false;
+  return corto.every((p) => largo.includes(p));
+}
+
+export interface LlamadaSeguimiento {
+  fathom: number;
+  fecha: string | null;
+  closer: string | null;
+  url: string | null;
+  temperatura: string | null;
+}
+
+/** Las llamadas que ya tiene el lead (las de antes de esta lista cuentan como una) + la nueva, sin repetir, por fecha. */
+export function sumarLlamada(previo: unknown, nueva: LlamadaSeguimiento): LlamadaSeguimiento[] {
+  const p = (previo && typeof previo === "object" ? previo : {}) as Partial<LlamadaSeguimiento> & { llamadas?: LlamadaSeguimiento[] };
+  const antes: LlamadaSeguimiento[] = Array.isArray(p.llamadas)
+    ? p.llamadas
+    : typeof p.fathom === "number"
+      ? [{ fathom: p.fathom, fecha: p.fecha ?? null, closer: p.closer ?? null, url: p.url ?? null, temperatura: p.temperatura ?? null }]
+      : [];
+  return [...antes.filter((l) => l.fathom !== nueva.fathom), nueva].sort((x, y) => String(x.fecha ?? "").localeCompare(String(y.fecha ?? "")));
+}
+
+/** ¿Esta grabación de Fathom ya se metió en el lead? */
+export function yaTieneLlamada(previo: unknown, fathom: number): boolean {
+  const p = (previo && typeof previo === "object" ? previo : {}) as { fathom?: number; llamadas?: { fathom?: number }[] };
+  return p.fathom === fathom || (Array.isArray(p.llamadas) && p.llamadas.some((l) => l.fathom === fathom));
+}

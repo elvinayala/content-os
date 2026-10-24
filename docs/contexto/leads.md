@@ -86,6 +86,10 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   `/api/fathom`, cada llamada de cierre (Roger/Laura, primer intento) corre `seguimientoDesdeFathom` en `after()`:
   Sonnet (`LEADS_SEGUIMIENTO_MODEL`) lee resumen + transcripción → si no compró, mueve el lead que ya existía (por
   email del invitado o teléfono, en cualquier marca; si ya está ganado o es cliente, nada) o lo crea, en la columna
+  [**Varias llamadas = un solo lead** (Lis, 24/oct): si no calza por teléfono/correo, `leadPrevioDeSeguimiento` busca
+  en SEGUIMIENTO el "Seguimiento perdido" con ese contacto (se reabre) o el lead con el mismo nombre (`mismoNombre`:
+  nombre y apellido, sin tildes; solo si hay UNO, homónimos no se juntan) y `ingestarLead({ tratoId })` actualiza ese.
+  Cada grabación queda en `datos.seguimiento.llamadas` (la ficha las lista) y la nota dice "Llamada N (otra vez)".]
   de su temperatura, con `datos.seguimiento` (closer, servicio, objeción, feedback, próximo paso, presión, link) +
   nota en el historial + actividad "whatsapp" **"1ª llamada: indagar la objeción real"** para Lis al otro día hábil
   (L-V, 10 AM) y la cita del closer ya pasada queda hecha (no sale "Vencido"). **Su nota manda** (`notaAction` →
