@@ -495,7 +495,9 @@ async function procesar(token, chat, texto, st) {
   // "ok 12" / "sí #12 pero sin tocar X" / "no 12 todavía no" → decisión sobre una solicitud del equipo.
   const dec = ES_NICO && t.match(/^(ok|okay|s[ií]|dale|aprob\w*|no|rechaz\w*)\s*#?(\d+)\b\s*([\s\S]*)$/i);
   // Solo si ese número es de verdad una solicitud abierta; si no, es un mensaje normal ("no 3 veces…").
-  if (dec && (await esperandoOk().catch(() => [])).some((x) => x.id === Number(dec[2]))) return resolverSolicitud(token, chat, st, Number(dec[2]), !/^(no|rechaz)/i.test(dec[1]), dec[3].trim());
+  // 24/oct: se mira la solicitud misma (antes, la lista de esperando-ok traía solo las 50 más viejas y "ok 398" no entraba).
+  const decSol = dec ? await buzonObtener(Number(dec[2])).catch(() => null) : null;
+  if (decSol && EQUIPO_NICO.has(decSol.de) && ["esperando-ok", "en-curso", "pendiente"].includes(decSol.estado)) return resolverSolicitud(token, chat, st, Number(dec[2]), !/^(no|rechaz)/i.test(dec[1]), dec[3].trim());
   if (ES_NICO && t === "/plataformas") { try { const inv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/plataformas.json"), "utf8")); return enviar(token, chat, inv.plataformas.map((p) => `- ${p.nombre}${p.critico ? " 🔴crítica" : ""}${p.prod ? ` · ${p.prod}` : ""}`).join("\n")); } catch { return enviar(token, chat, "No pude leer data/plataformas.json."); } }
   if (ES_LOLA && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Soy Lola, tu creadora de contenido con IA. Pídeme flyers, artes, videos (fal.ai) o guiones para cualquiera de tus marcas, por ejemplo:\n- \"3 flyers para AI Borinquen, ángulo cuánto dinero está perdiendo, 4:5\"\n- \"Video UGC de Level Up contra el botón azul, 9:16\"\n- \"Guion de Shadow sobre operadores, estructura fija\"\n- \"Pack de la semana de Resuelto: guion + flyer + video\"\n\nLos flyers salen con tu guía: minimalistas, elegantes, un título, bullets de beneficio y un CTA claro, con el logo real. Todo queda en tu bandeja de Entregas para que lo apruebes; no se lo mando a nadie. Tope por pedido: 8 imágenes y 3 videos.\n/pendientes — cola de renders\n/nuevo — conversación nueva");
   if (ES_LOLA && t === "/pendientes") { try { const q = JSON.parse(fs.readFileSync(path.join(ROOT, "data/pedidos-lola.json"), "utf8")); const pend = (q.pedidos || []).filter((x) => x.estado === "pendiente"); return enviar(token, chat, pend.length ? pend.map((x) => `- ${x.marca} · ${x.tipo}: ${x.pedido.slice(0, 80)} (${x.fecha.slice(0, 10)})`).join("\n") : "Sin renders pendientes."); } catch { return enviar(token, chat, "Sin renders pendientes."); } }
@@ -843,7 +845,14 @@ async function diagnosticarSolicitud(token, chatCEO, st, m) {
   const pedido = m.texto.replace(/^\[Solicitud del equipo[^\]]*\]\n?/, "").trim();
   try { await buzonMarcar(m.id, "en-curso"); } catch {}
   LOG("solicitud ›", `de ${m.de} #${m.id}`, pedido.slice(0, 80));
-  const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]${refSlack(m.texto) ? " (vino del canal de Nico; si es la respuesta a una pregunta tuya o sigue un pedido anterior del mismo hilo, júntalos en un solo plan)" : ""}${lineaPlataforma(m.texto)}\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
+  // 24/oct: una respuesta en el hilo de una solicitud abierta NO es otra solicitud (Lis: #398 → #405 → #409 → #410, y
+  // Nico preguntándole "¿qué decía tu 398?"). Se diagnostica junto con lo anterior del hilo y las viejas se cierran.
+  const ref = refSlack(m.texto);
+  const previas = ref ? (await esperandoOk().catch(() => [])).filter((x) => x.id < m.id && refSlack(x.texto)?.hilo === ref.hilo) : [];
+  const antes = previas.length
+    ? `\nYA HABÍA EN ESTE MISMO HILO (es la MISMA solicitud: junta todo en UN solo plan y no vuelvas a preguntar lo que ya está contestado):\n${previas.map((x) => `· #${x.id} ${NOMBRES[x.de] || x.de}: ${x.texto.replace(/^\[Solicitud del equipo[^\]]*\]\n?/, "").trim().slice(0, 800)}\n  tu plan de entonces: ${(x.respuesta || "").slice(0, 1200)}`).join("\n")}\nLO NUEVO QUE ESCRIBIÓ:`
+    : "";
+  const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]${refSlack(m.texto) ? " (vino del canal de Nico; si es la respuesta a una pregunta tuya o sigue un pedido anterior del mismo hilo, júntalos en un solo plan)" : ""}${lineaPlataforma(m.texto)}${antes}\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
   const r = await turnoNico(prompt, { st, soloLectura: true, origen: `solicitud:${m.id}:${m.de}` });
   const plan = (r.out || "").trim() || `No pude diagnosticarlo (${(r.err || "sin salida").slice(0, 200)}). Lo puedo revisar con más calma si me lo apruebas igual.`;
   if (plataformaDe(m.texto) && /^\s*NO_ES_PEDIDO\b/.test(plan)) {
@@ -852,7 +861,8 @@ async function diagnosticarSolicitud(token, chatCEO, st, m) {
     return;
   }
   try { await buzonMarcar(m.id, "esperando-ok", plan.slice(0, 4000)); } catch (e) { LOG("solicitud marcar:", e.message.slice(0, 120)); }
-  const aviso = `🟡 ${quien} solicitó un cambio${plataformaDe(m.texto) ? ` en ${plataformaDe(m.texto)}` : ""} (#${m.id}):\n“${pedido.slice(0, 600)}”\n\n${plan}\n\n👉 Para que lo haga: ok ${m.id}\n✋ Para no hacerlo: no ${m.id} (puedes añadir una nota)\n(También sirve en Slack: "nico ok ${m.id}")`;
+  for (const x of previas) await buzonMarcar(x.id, "atendido", `Unida a #${m.id} (respuesta en el mismo hilo).`).catch(() => {});
+  const aviso = `🟡 ${quien} solicitó un cambio${plataformaDe(m.texto) ? ` en ${plataformaDe(m.texto)}` : ""} (#${m.id}${previas.length ? `, reemplaza ${previas.map((x) => `#${x.id}`).join(", ")}` : ""}):\n“${pedido.slice(0, 600)}”\n\n${plan}\n\n👉 Para que lo haga: ok ${m.id}\n✋ Para no hacerlo: no ${m.id} (puedes añadir una nota)\n(También sirve en Slack: "nico ok ${m.id}")`;
   if (chatCEO) await enviar(token, chatCEO, aviso).catch(() => {});
   await slackEspejo(`[Nico] ${aviso}`);
   if (plataformaDe(m.texto)) await dmEquipo(m.de, `Recibido ✅ (solicitud #${m.id}). Le pasé el plan a Elvin; cuando dé el OK lo hago y te aviso en este hilo.`, refSlack(m.texto));

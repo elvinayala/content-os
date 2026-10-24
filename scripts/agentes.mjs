@@ -8,7 +8,9 @@
 //                                                              agente (sofi | nico | max | lola | elvin)
 //   node scripts/agentes.mjs buzon [agente]                    mis mensajes pendientes (YO = PUENTE_BOT; sin él = "mac")
 //   node scripts/agentes.mjs atendido <id> ["<respuesta>"]    marca un mensaje como atendido (y
-//                                                              la respuesta vuelve al buzón del que preguntó)
+//                                                              la respuesta vuelve al buzón del que preguntó;
+//                                                              si es del equipo, se le contesta en su hilo de
+//                                                              Slack — --sin-avisar para no hacerlo)
 //   node scripts/agentes.mjs historial [agente] [n]            últimos mensajes (panel)
 //   node scripts/agentes.mjs equipo                            directorio del equipo humano (Slack)
 //   node scripts/agentes.mjs slack <nombre|Uxxxx> "<texto>"    DM por Slack a alguien del equipo
@@ -145,8 +147,23 @@ export async function obtener(id) {
 }
 // Solicitudes del equipo (Carilin/Aure → Nico) que esperan el OK de Elvin.
 export async function esperandoOk() {
-  const j = await api("GET", { estado: "esperando-ok", para: "nico" });
-  return j.mensajes || [];
+  // 24/oct: la API devolvía las 50 MÁS VIEJAS (desde septiembre) y las de octubre no salían en /solicitudes ni
+  // se podían aprobar con "ok <id>". Ahora pide 200 (la API las da de la más nueva a la más vieja) y las ordena.
+  const j = await api("GET", { estado: "esperando-ok", para: "nico", ultimos: 200 });
+  return (j.mensajes || []).sort((a, b) => a.id - b.id);
+}
+
+// 24/oct: cerrar una solicitud del equipo con `atendido` no le avisaba a la persona (Carilin #365/#393, Aure #378:
+// "atendido" en el buzón y nada en su hilo). Ahora se le contesta en el hilo del canal (o por DM), firmado Nico.
+async function avisarSolicitante(orig, id, respuesta) {
+  const token = env("SLACK_BOT_TOKEN"); if (!token) return false;
+  const persona = resolverPersona(orig.de); if (!persona) return false;
+  const ref = String(orig.texto).match(/^\[Solicitud del equipo[^\]]*· canal (\S+) · hilo ([\d.]+)\]/);
+  const texto = `${ref ? `<@${persona.id}> ` : ""}Tu solicitud #${id}: ${respuesta.replace(/\n?— ?Nico\s*$/, "")}\n— Nico`.slice(0, 3900);
+  try {
+    const r = await fetch("https://slack.com/api/chat.postMessage", { method: "POST", headers: { "Content-Type": "application/json; charset=utf-8", Authorization: `Bearer ${token}` }, body: JSON.stringify({ ...(ref ? { channel: ref[1], thread_ts: ref[2] } : { channel: persona.id }), text: texto, username: "Nico · Plataformas" }), signal: AbortSignal.timeout(10000) });
+    return Boolean((await r.json()).ok);
+  } catch { return false; }
 }
 
 // ---- CLI ----
@@ -175,8 +192,10 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
       if (!m.length) console.log(`Buzón de ${NOMBRE[quien] || quien}: vacío.`);
       for (const x of m) console.log(`#${x.id} · de ${NOMBRE[x.de] || x.de} · ${String(x.creado_el).slice(0, 16)}${x.hilo ? ` · responde a #${x.hilo}` : ""}\n${x.texto}\n`);
     } else if (cmd === "atendido") {
-      const id = Number(rest[0]); const respuesta = rest.slice(1).join(" ").trim();
-      if (!id) throw new Error('Uso: atendido <id> ["<respuesta>"]');
+      const sinAvisar = rest.includes("--sin-avisar");
+      const args = rest.filter((x) => x !== "--sin-avisar");
+      const id = Number(args[0]); const respuesta = args.slice(1).join(" ").trim();
+      if (!id) throw new Error('Uso: atendido <id> ["<respuesta>"] [--sin-avisar]');
       await marcar(id, "atendido", respuesta || undefined);
       let nota = "";
       if (respuesta) {
@@ -184,7 +203,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
         // Solo los agentes tienen buzón: a Carilin/Aure (solicitudes del equipo) les avisa el puente por Slack.
         // Antes esto intentaba dejarle la respuesta a "aure" y fallaba con agente-desconocido (#41, #42 del 25/sep).
         if (orig && orig.de !== YO && CON_BUZON.has(orig.de)) await enviarMensaje(YO, orig.de, respuesta, id);
-        else if (orig && orig.de !== YO) nota = ` (a ${NOMBRE[orig.de] || orig.de} le llega por Slack cuando termine el puente)`;
+        else if (orig && orig.de !== YO && !sinAvisar) nota = (await avisarSolicitante(orig, id, respuesta)) ? ` (a ${NOMBRE[orig.de] || orig.de} se le contestó en Slack)` : ` (no pude avisarle a ${NOMBRE[orig.de] || orig.de} por Slack)`;
       }
       console.log(`✓ #${id} atendido${respuesta ? " y respondido" : ""}.${nota}`);
     } else if (cmd === "historial") {

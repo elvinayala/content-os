@@ -16,7 +16,7 @@ import { secretoValido } from "@/lib/pulse/seguridad";
 //   GET  /api/agentes?ultimos=50                   → historial (para el panel)
 //   POST /api/agentes  { de, para, texto, hilo? } → deja un mensaje
 //   POST /api/agentes  { id, estado, respuesta? } → marca atendido / responde
-//   GET  /api/agentes?estado=esperando-ok          → solicitudes del equipo esperando OK de Elvin
+//   GET  /api/agentes?estado=esperando-ok          → solicitudes del equipo esperando OK de Elvin (las más nuevas primero)
 //   GET  /api/agentes?id=123                        → un mensaje
 // Auth: header x-cron-secret (o ?secret=) = CRON_SECRET, igual que /api/snapshot.
 export const dynamic = "force-dynamic";
@@ -110,8 +110,8 @@ export async function GET(req: NextRequest) {
   const estado = req.nextUrl.searchParams.get("estado") ?? "";
   if (estado) {
     const r = para
-      ? await d.execute(sql`SELECT * FROM agentes_mensajes WHERE estado = ${estado} AND para = ${para} ORDER BY id ASC LIMIT ${ultimos}`)
-      : await d.execute(sql`SELECT * FROM agentes_mensajes WHERE estado = ${estado} ORDER BY id ASC LIMIT ${ultimos}`);
+      ? await d.execute(sql`SELECT * FROM agentes_mensajes WHERE estado = ${estado} AND para = ${para} ORDER BY id DESC LIMIT ${ultimos}`)
+      : await d.execute(sql`SELECT * FROM agentes_mensajes WHERE estado = ${estado} ORDER BY id DESC LIMIT ${ultimos}`);
     return NextResponse.json({ ok: true, mensajes: filas(r) });
   }
   if (para && pendientes) {

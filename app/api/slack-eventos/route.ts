@@ -448,7 +448,9 @@ export async function POST(req: NextRequest) {
         await postearRespuesta(
           channel,
           id
-            ? `Recibido ✅ (solicitud #${id}). La reviso y le paso el plan a Elvin; cuando dé el OK la hago y te aviso en este hilo.\n— Nico`
+            ? ev.thread_ts && ev.thread_ts !== ev.ts
+              ? `Anotado ✅ Lo sumo a lo que pediste en este hilo (ahora va como #${id}) y le paso el plan completo a Elvin.\n— Nico`
+              : `Recibido ✅ (solicitud #${id}). La reviso y le paso el plan a Elvin; cuando dé el OK la hago y te aviso en este hilo.\n— Nico`
             : "No pude registrar tu solicitud ahora mismo. Vuelve a mandarla en un momento, por favor.\n— Nico",
           raiz,
           false,

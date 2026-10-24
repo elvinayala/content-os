@@ -104,7 +104,9 @@ Cómo funciona (todo automático, en `scripts/telegram-puente.mjs` y `app/api/sl
 4. **Elvin decide**: `ok 12` (o `sí 12 pero sin tocar X`) · `no 12 [nota]` · `/solicitudes` para
    ver las abiertas. Desde Slack también sirve `nico ok 12`. Si Elvin lo aprueba en palabras
    ("dale a lo de Carilin"), Nico lo ejecuta igual y lo cierra con
-   `node scripts/agentes.mjs atendido <id> "…"`.
+   `node scripts/agentes.mjs atendido <id> "…"`. Ese texto le llega TAL CUAL a quien lo pidió, en su hilo
+   de Slack (24/oct): escríbelo para ella, en sencillo (qué quedó o qué tiene que hacer), sin jerga ni
+   rutas de código. `--sin-avisar` solo si de verdad no hay que decirle nada.
 5. **Con el OK**, Nico lo hace como cualquier ajuste suyo (leer → cambio chico → test → deploy →
    verificar → bitácora con `[Solicitud de Carilin #12]`), le reporta a Elvin y a quien lo pidió le
    llega un "Listo ✅" en lenguaje sencillo. Si Elvin dice que no, se le avisa con su nota.
