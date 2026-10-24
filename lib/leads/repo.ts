@@ -642,12 +642,14 @@ export async function contarActividades(tratoId: string, prefijo: string): Promi
   return r?.n ?? 0;
 }
 
-/** Seguimientos pendientes (vencidos + hoy + próximos 7 días) para la pantalla de Actividades. */
-export async function actividadesPendientes(marca: Marca, asignadoId?: string | null) {
+/** Seguimientos pendientes (vencidos + hoy + próximos 7 días) para la pantalla de Actividades.
+ *  Con embudoId, solo los de ese embudo (Lis, 23/oct: en SEGUIMIENTO no le salgan las de setters ni closers). */
+export async function actividadesPendientes(marca: Marca, asignadoId?: string | null, embudoId?: string | null) {
   const d = await db();
   const hasta = new Date(Date.now() + 7 * 86_400_000);
   const conds = [eq(leadsTratos.marca, marca), eq(leadsActividades.hecha, false), lt(leadsActividades.venceAt, hasta)];
   if (asignadoId) conds.push(eq(leadsActividades.asignadoId, asignadoId));
+  if (embudoId) conds.push(eq(leadsTratos.embudoId, embudoId));
   return d
     .select({ id: leadsActividades.id, tipo: leadsActividades.tipo, asunto: leadsActividades.asunto, venceAt: leadsActividades.venceAt, tratoId: leadsTratos.id, trato: leadsTratos.nombre, negocio: leadsTratos.negocio, telefono: leadsTratos.telefono, asignado: pulseUsers.nombre })
     .from(leadsActividades)

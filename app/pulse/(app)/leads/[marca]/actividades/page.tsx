@@ -10,8 +10,8 @@ export const metadata = { title: "Leads · Actividades · Pulse" };
 export default async function LeadsActividades({ params, searchParams }: { params: Promise<{ marca: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { marca } = await params;
   const c = await contextoLeads(marca, await searchParams);
-  // Por defecto, las de la persona; "Todos" en el filtro de dueño muestra las del equipo.
-  const filas = await actividadesPendientes(c.m.marca, c.dueno === null ? null : c.dueno || c.u.id);
+  // Por defecto, las de la persona; "Todos" en el filtro de dueño muestra las del equipo. Solo las del embudo elegido.
+  const filas = await actividadesPendientes(c.m.marca, c.dueno === null ? null : c.dueno || c.u.id, c.embudo?.id);
   return (
     <div className="pulse flex h-svh flex-col bg-background">
       <header className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
