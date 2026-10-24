@@ -74,6 +74,12 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
   const [cargando, setCargando] = useState(false);
   const [bloqueos, setBloqueos] = useState("");
   const [valores, setValores] = useState<Record<string, string>>({});
+  // Error de la salida DENTRO del formulario (24/oct, Ángela: el toast se iba en 4 s y el "0" gris de ejemplo parecía un 0
+  // escrito, así que la salida no pasaba y no entendía por qué). `marcar` = casillas vacías a resaltar.
+  const [errorSalida, setErrorSalida] = useState<string | null>(null);
+  const [marcar, setMarcar] = useState(false);
+  const vacio = (id: string) => (valores[id] ?? "").trim() === "";
+  const vacios = estado.manual.filter((m) => vacio(m.id));
   const [horaSalida, setHoraSalida] = useState("18:00");
   const [nota, setNota] = useState("");
   const abierto = estado.abiertoHoy;
@@ -108,13 +114,19 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
     const datos: Record<string, number> = {};
     const detalles: Record<string, string> = {};
     for (const m of estado.manual) {
-      if (valores[m.id]) datos[m.id] = Number(valores[m.id]);
+      if (!vacio(m.id)) datos[m.id] = Number(valores[m.id]);
       if (valores[`${m.id}__detalle`]?.trim()) detalles[m.id] = valores[`${m.id}__detalle`];
     }
     const r = await salirAction({ bloqueos, datos, detalles, huella: await huellaEquipo(), pista: pistaEquipo() });
     setCargando(false);
-    if (!r.ok) return toast.error(r.error, aviso);
+    if (!r.ok) {
+      setErrorSalida(r.error);
+      setMarcar(r.error.startsWith("Te falta"));
+      return;
+    }
     navigator.vibrate?.(15);
+    setErrorSalida(null);
+    setMarcar(false);
     setAbrir(false);
     setBloqueos("");
     setValores({});
@@ -241,7 +253,16 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
       {otraZona ? <p className="-mt-3 text-center text-[11px] text-muted-foreground">Las horas salen en tu hora ({otraZona}); entre paréntesis, la de Puerto Rico, que es la que usa Ritmo para tu horario.</p> : null}
       {seguridad && !seguridad.exento ? <PoncheManual pendientes={seguridad.manualPendientes} discreto /> : null}
 
-      <Dialog open={abrir} onOpenChange={setAbrir}>
+      <Dialog
+        open={abrir}
+        onOpenChange={(o) => {
+          setAbrir(o);
+          if (o) {
+            setErrorSalida(null);
+            setMarcar(false);
+          }
+        }}
+      >
         <DialogContent className="ritmo sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Marcar salida</DialogTitle>
@@ -259,22 +280,32 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
                   {m.dinero ? (
                     <div className="relative">
                       <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                      <Input id={m.id} type="number" inputMode="decimal" min={0} max={1000000} step="0.01" className="h-11 w-36 pl-6 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
+                      <Input id={m.id} type="number" inputMode="decimal" min={0} max={1000000} step="0.01" className={cn("h-11 w-36 pl-6 text-right", marcar && vacio(m.id) && "border-red-400 ring-2 ring-red-400/40")} value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} aria-invalid={marcar && vacio(m.id)} />
                     </div>
                   ) : (
-                    <Input id={m.id} type="number" inputMode="numeric" min={0} max={50} className="h-11 w-24 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
+                    <Input id={m.id} type="number" inputMode="numeric" min={0} max={500} className={cn("h-11 w-24 text-right", marcar && vacio(m.id) && "border-red-400 ring-2 ring-red-400/40")} value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} aria-invalid={marcar && vacio(m.id)} />
                   )}
                 </div>
                 {m.detalle && Number(valores[m.id] || 0) > 0 ? (
-                  <Input className="h-10" maxLength={300} value={valores[`${m.id}__detalle`] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [`${m.id}__detalle`]: e.target.value }))} placeholder={m.detalle} />
+                  <Input className={cn("h-10", marcar && !valores[`${m.id}__detalle`]?.trim() && "border-red-400 ring-2 ring-red-400/40")} maxLength={300} value={valores[`${m.id}__detalle`] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [`${m.id}__detalle`]: e.target.value }))} placeholder={m.detalle} />
                 ) : null}
               </div>
             ))}
+            {estado.manual.length && vacios.length ? (
+              <button type="button" onClick={() => setValores((v) => ({ ...v, ...Object.fromEntries(vacios.map((m) => [m.id, "0"])) }))} className="self-start text-xs text-primary underline-offset-2 hover:underline">
+                {vacios.length === estado.manual.length ? "Hoy no tuve ninguno: poner 0 en todos" : `Lo que dejé vacío fue 0 (${vacios.length})`}
+              </button>
+            ) : null}
             <div className="flex flex-col gap-2">
               <Label htmlFor="bloqueos">¿Algún bloqueo? (opcional)</Label>
               <Textarea id="bloqueos" rows={3} maxLength={1000} value={bloqueos} onChange={(e) => setBloqueos(e.target.value)} placeholder="Ej.: espero acceso a la cuenta de Meta de un cliente" />
             </div>
           </div>
+          {errorSalida ? (
+            <p role="alert" className="flex gap-2 rounded-xl bg-red-500/10 p-3 text-sm text-red-200 ring-1 ring-red-400/30">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" /> {errorSalida}
+            </p>
+          ) : null}
           <DialogFooter>
             <Button onClick={salir} disabled={cargando} className="h-12 w-full rounded-full sm:w-auto sm:px-8">
               {cargando ? <Loader2 className="animate-spin" /> : null} Marcar salida

@@ -44,6 +44,17 @@ async function envolver<T extends object>(fn: () => Promise<T>): Promise<R<T>> {
   }
 }
 
+/** Ponche que falló (24/oct, Ángela: "no me deja marcar" varios días y no quedaba rastro del porqué): deja el error en la
+ *  bitácora para poder ayudar. Nunca rompe la respuesta. */
+async function poncheConRastro<T extends object>(tipo: string, fn: () => Promise<T>): Promise<R<T>> {
+  const r = await envolver(fn);
+  if (!r.ok)
+    await requiereUsuario()
+      .then(async (u) => datos.evento({ userId: u.id, actorId: u.id, tipo: "ponche-fallido", datos: { accion: tipo, error: r.error.slice(0, 300) }, ip: (await contexto()).ip }))
+      .catch(() => 0);
+  return r;
+}
+
 async function contexto() {
   const h = await headers();
   return { ip: h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip"), ua: h.get("user-agent") };
@@ -52,7 +63,7 @@ async function contexto() {
 // ─── Ponche (cada quien el suyo) ──────────────────────────────────────────────────────────────
 
 export async function entrarAction(huella?: string | null, pista?: PistaEquipo | null) {
-  return envolver(async () => {
+  return poncheConRastro("entrada", async () => {
     const u = await requiereUsuario();
     // La dirección (admin/editoras) puede ponchar sin perfil: es opcional y no cuenta en ningún reporte.
     const direccion = u.rol === "admin" || u.rol === "editor";
@@ -65,7 +76,7 @@ export async function entrarAction(huella?: string | null, pista?: PistaEquipo |
 }
 
 export async function salirAction(r: { bloqueos: string; datos: Record<string, number>; detalles?: Record<string, string>; huella?: string | null; pista?: PistaEquipo | null }) {
-  return envolver(async () => {
+  return poncheConRastro("salida", async () => {
     const u = await requiereUsuario();
     const { redNueva } = await seguridad.verificarParaPonchar(u, r.huella, r.pista);
     const perfil = await datos.perfilDe(u.id);
@@ -75,16 +86,17 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
     const enDinero = new Set(manualPuesto.filter((m) => m.dinero).map((m) => m.id));
     const limpios: Record<string, number> = {};
     for (const [k, v] of Object.entries(r.datos ?? {})) {
-      if (!permitidos.has(k) || !Number.isFinite(v) || v < 0) continue;
-      if (enDinero.has(k)) {
-        if (v <= 1_000_000) limpios[k] = Math.round(v * 100) / 100;
-      } else if (v <= 50) limpios[k] = Math.round(v);
+      if (!permitidos.has(k)) continue;
+      // Un número fuera de rango se dice tal cual (antes se descartaba callado y la salida pedía "completa tus KPIs").
+      const tope = enDinero.has(k) ? 1_000_000 : 500;
+      if (!Number.isFinite(v) || v < 0 || v > tope) throw new Error(`Revisa el número de ${manualPuesto.find((m) => m.id === k)?.nombre ?? k}`);
+      limpios[k] = enDinero.has(k) ? Math.round(v * 100) / 100 : Math.round(v);
     }
     const detalles: Record<string, string> = {};
     for (const [k, v] of Object.entries(r.detalles ?? {})) if (permitidos.has(k) && typeof v === "string" && v.trim()) detalles[k] = v.trim().slice(0, 300);
     // Sin los KPIs del día no se marca la salida (Elvin, 29/sep).
     const falta = faltanEnSalida(puestoPorId(perfil?.puesto ?? "")?.manual ?? [], { datos: limpios, detalles }, await datos.reporteDe(u.id, fechaPR(Date.now())));
-    if (falta.length) throw new Error(`Antes de marcar la salida, completa tus KPIs de hoy (si fue 0, pon 0): ${falta.join(" · ")}`);
+    if (falta.length) throw new Error(`Te falta: ${falta.join(" · ")}. Si hoy no hubo, escribe 0 en la casilla.`);
     await datos.salir(u.id, await contexto(), { bloqueos: r.bloqueos?.trim().slice(0, 1000) || null, datos: limpios, detalles });
     refresh();
     return { redNueva: !!redNueva };
@@ -129,7 +141,7 @@ export async function guardarWifiAction(nombre: string) {
 
 /** Salir a almorzar (1 hora, entre las 11:00 AM y las 2:00 PM PR). Volver = entrarAction. */
 export async function almuerzoAction(huella?: string | null, pista?: PistaEquipo | null) {
-  return envolver(async () => {
+  return poncheConRastro("almuerzo", async () => {
     const u = await requiereUsuario();
     const { redNueva } = await seguridad.verificarParaPonchar(u, huella, pista);
     const est = await datos.estadoPonche(u.id, true);
