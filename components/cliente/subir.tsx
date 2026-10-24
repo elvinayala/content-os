@@ -52,7 +52,7 @@ export function SubirArchivos() {
   return (
     <>
       <input ref={input} type="file" accept="image/*,video/*,application/pdf" multiple className="hidden" onChange={(e) => subir(e.target.files)} />
-      <button onClick={() => input.current?.click()} disabled={!!estado} className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-70">
+      <button onClick={() => input.current?.click()} disabled={!!estado} aria-busy={!!estado} className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/85 disabled:opacity-70 disabled:hover:bg-primary">
         {estado ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />} {estado ?? "Subir fotos o videos"}
       </button>
     </>

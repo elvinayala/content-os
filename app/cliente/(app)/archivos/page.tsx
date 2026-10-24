@@ -1,7 +1,9 @@
-import { FileText, Film, Image as ImageIcon, File as FileIcon } from "lucide-react";
+import { CloudOff, FileText, Film, FolderOpen, Image as ImageIcon, File as FileIcon, RotateCw } from "lucide-react";
 
 import { BotonSlack } from "@/components/cliente/piezas";
 import { SubirArchivos } from "@/components/cliente/subir";
+import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { driveListo, listarArchivos } from "@/lib/clientes-app/archivos";
 import { agrupar, tamano, tipoDe, type ArchivoDrive } from "@/lib/clientes-app/archivos-reglas";
 import { fichaCliente } from "@/lib/clientes-app/datos";
@@ -36,7 +38,7 @@ export default async function ArchivosPage() {
       {grupos && v.modo === "cliente" ? <SubirArchivos /> : null}
 
       {f.acuerdo ? (
-        <a href="/cliente/acuerdo" target="_blank" className="panel flex items-center gap-3 p-3">
+        <a href="/cliente/acuerdo" target="_blank" className="panel flex items-center gap-3 p-3 transition-colors hover:border-primary/40">
           <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/25">
             <FileText className="size-5" />
           </span>
@@ -49,8 +51,8 @@ export default async function ArchivosPage() {
 
       {grupos ? (
         grupos.length ? (
-          grupos.map((g) => (
-            <section key={g.carpeta} className="flex flex-col gap-2">
+          grupos.map((g, i) => (
+            <section key={g.carpeta} className="entra-suave flex flex-col gap-2" style={{ "--i": i } as React.CSSProperties}>
               <h2 className="lu-titulo text-sm font-semibold">{g.carpeta}</h2>
               <ul className="panel divide-y divide-border/60">
                 {g.archivos.map((a) => (
@@ -60,12 +62,31 @@ export default async function ArchivosPage() {
             </section>
           ))
         ) : (
-          <p className="panel p-5 text-sm text-muted-foreground">Tu carpeta está vacía todavía. Aquí van a aparecer tu estrategia, tus creativos y tus reportes a medida que el equipo los prepare.</p>
+          <EstadoVacio className="panel" icono={FolderOpen} titulo="Tu carpeta está vacía todavía">
+            Aquí van a aparecer tu estrategia, tus creativos y tus reportes a medida que el equipo los prepare.
+            {v.modo === "cliente" ? " Si tienes fotos o videos para tus anuncios, súbelos arriba." : ""}
+          </EstadoVacio>
         )
+      ) : error ? (
+        <EstadoVacio
+          className="panel"
+          tipo="error"
+          icono={CloudOff}
+          titulo="No pudimos abrir tu carpeta ahora mismo"
+          accion={
+            <Button asChild variant="outline" className="rounded-full">
+              <a href="/cliente/archivos">
+                <RotateCw /> Reintentar
+              </a>
+            </Button>
+          }
+        >
+          Suele ser algo pasajero. Intenta en un rato; si sigue igual, escríbenos por Slack.
+        </EstadoVacio>
       ) : (
-        <p className="panel p-5 text-sm text-muted-foreground">
-          {error ? "No pudimos abrir tu carpeta ahora mismo. Intenta en un rato." : "Tus archivos van a aparecer aquí muy pronto. Mientras tanto, tu equipo te los comparte por Slack."}
-        </p>
+        <EstadoVacio className="panel" icono={FolderOpen} titulo="Tus archivos van a aparecer aquí muy pronto">
+          Mientras tanto, tu equipo te los comparte por Slack.
+        </EstadoVacio>
       )}
       <BotonSlack url={f.slackUrl} />
     </div>
@@ -76,7 +97,7 @@ function Fila({ a }: { a: ArchivoDrive }) {
   const I = ICONO[tipoDe(a.mime)];
   return (
     <li>
-      <a href={`/cliente/archivo/${a.id}`} target="_blank" className="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.03]">
+      <a href={`/cliente/archivo/${a.id}`} target="_blank" className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.03]">
         <I className="size-5 shrink-0 text-primary" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm">{a.nombre}</span>

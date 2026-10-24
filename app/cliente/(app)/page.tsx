@@ -55,10 +55,10 @@ export default async function InicioCliente() {
           </div>
         </div>
         {f.equipo.length ? (
-          <Link href="/cliente/cuenta" className="panel group flex flex-col gap-3 p-4">
+          <Link href="/cliente/cuenta" className="panel group flex flex-col gap-3 p-4 transition-colors hover:border-primary/40">
             <div className="flex items-center justify-between">
               <p className="ceja">Tu equipo</p>
-              <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+              <ChevronRight className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
             </div>
             {f.equipo.slice(0, 2).map((p) => (
               <PersonaFila key={`${p.rol}-${p.nombre}`} p={p} />

@@ -40,7 +40,7 @@ export function PersonaFila({ p, conAgenda = false }: { p: PersonaEquipo; conAge
         <p className="text-xs text-muted-foreground">{p.rol}</p>
       </div>
       {conAgenda && p.agenda ? (
-        <a href={p.agenda} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
+        <a href={p.agenda} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/85">
           <CalendarDays className="size-3.5" /> Agendar
         </a>
       ) : null}

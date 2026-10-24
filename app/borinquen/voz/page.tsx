@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 
 export const metadata = { title: "Agentes de Voz · Bori" };
 export const dynamic = "force-dynamic";
@@ -30,7 +31,7 @@ export default async function VoiceStudioPage() {
     <>
       <PageHeader
         titulo="Voice Studio"
-        descripcion="Creá y afiná agentes de voz con el preset de baja latencia."
+        descripcion="Crea y afina agentes de voz con el preset de baja latencia."
       >
         <Button size="sm" asChild>
           <Link href="/borinquen/crear?tipo=voz">
@@ -64,12 +65,29 @@ export default async function VoiceStudioPage() {
               Generación preventiva ON · presupuesto ~{totalPresupuestoMs()}ms voz-a-voz ·{" "}
               {retell?.disponible
                 ? "Retell conectado."
-                : "Modo local (poné RETELL_API_KEY para crearlos en Retell)."}
+                : "Modo local (pon RETELL_API_KEY para crearlos en Retell)."}
             </p>
           </CardContent>
         </Card>
 
         {/* Lista de agentes */}
+        {agentes.length === 0 ? (
+          <Card className="bg-gradient-to-b from-card to-background/40">
+            <EstadoVacio
+              icono={AudioLines}
+              titulo="Todavía no tienes agentes de voz"
+              accion={
+                <Button size="sm" asChild>
+                  <Link href="/borinquen/crear?tipo=voz">
+                    <Plus className="size-4" /> Crear agente de voz
+                  </Link>
+                </Button>
+              }
+            >
+              Crea uno con el preset de arriba: contesta llamadas 24/7 en español de Puerto Rico.
+            </EstadoVacio>
+          </Card>
+        ) : null}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {agentes.map((a) => {
             const est = ESTADO_STYLE[a.estado];

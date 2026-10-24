@@ -1,9 +1,12 @@
+import { Users } from "lucide-react";
+
 import { leerPipeline } from "@/lib/pipedrive";
 import { formatUSD } from "@/lib/format";
 import type { EtapaLead, LeadPipeline } from "@/lib/types";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 
 export const metadata = { title: "CRM · Bori" };
 export const dynamic = "force-dynamic";
@@ -46,6 +49,13 @@ export default async function CrmPage() {
           <Resumen label="Total en board" valor={String(leads.length)} />
         </div>
 
+        {leads.length === 0 ? (
+          <Card className="bg-gradient-to-b from-card to-background/40">
+            <EstadoVacio compacto icono={Users} titulo="Todavía no hay leads de AI Borinquen">
+              Cuando un agente capture un lead (o entre uno en Pipedrive), aparece aquí en su etapa.
+            </EstadoVacio>
+          </Card>
+        ) : null}
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {COLUMNAS.map((col) => {
             const items = porEtapa(col.etapa);
