@@ -116,6 +116,9 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
 - **Bloqueos por persona** (`pulse_board_bloqueos`, migración 0024): un tablero público que alguien NO ve
   (`boardsVisibles`/`puedeVerBoard`, afecta sidebar, ⌘K, Preguntarle al CRM y archivos; admins no se bloquean).
   María García tiene bloqueado AI BORINQUEN. Sin UI todavía: se agrega por SQL.
+  **Quién entra a un tablero privado** (24/oct, Aure): menú del tablero → "Acceso…" (admin: todo) o "Quién puede
+  verlo…" (editoras, solo en privados que ya ven: no lo vuelven público ni se quitan a sí mismas). Yaileen: HR LEVEL UP
+  MEDIA y Solicitudes HR (24/oct).
 - **SOPs** (27/sep, pedido de Elvin, prioridad hasta el vie 2/oct): tableros **SOPs · Level Up** (público) y **SOPs · AI
   Borinquen** (privado), primeros en la barra; un grupo por departamento con su "SOP principal" (responsable Carilin o
   Aure), estados Por hacer → Rehaciendo → En revisión → Publicado; publicar EXIGE "Reunión con el departamento" y "Fecha de
