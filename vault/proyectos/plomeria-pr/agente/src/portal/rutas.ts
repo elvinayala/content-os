@@ -66,7 +66,7 @@ input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10
 .muted{color:var(--ink2)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-size:12.5px;color:var(--ink2);display:block;margin:8px 0 4px}`;
 
 function pagina(titulo: string, yo: staff.Staff | null, activo: string, cuerpo: string) {
-  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["ventas", "/portal/ventas", "Ventas"], ["plomeros", "/portal/plomeros", "Plomeros"], ["mensajes", "/portal/mensajes", "Mensajes" + (chat.totalSinLeerEquipo() ? ` (${chat.totalSinLeerEquipo()})` : "")], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["resumen", "/portal/resumen", "Resumen"], ["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
+  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["ventas", "/portal/ventas", "Ventas"], ["plomeros", "/portal/plomeros", "Plomeros"], ["mensajes", "/portal/mensajes", "Mensajes" + (chat.totalSinLeerEquipo() ? ` (${chat.totalSinLeerEquipo()})` : "")], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["mapa", "/portal/mapa", "Mapa"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["resumen", "/portal/resumen", "Resumen"], ["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
   return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}${yo ? `<main>${cuerpo}</main>` : cuerpo}
 <script>function post(u,b,msg){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(r=>r.json()).then(j=>{if(j.ok){if(msg)alert(msg);location.reload()}else alert(j.motivo||'No se pudo')})}</script></body></html>`;
 }
@@ -518,6 +518,97 @@ portal.get("/portal/areas", requerir(), (req, res) => {
   }).join("");
   res.type("html").send(pagina("Áreas", yo, "areas", `<h1>Áreas</h1><p class="sub">Los 8 territorios. Donde hay plomero activo, el agente agenda y salen anuncios; donde no, el cliente queda en lista de espera.</p>
 <div class="card"><table><tr><th>Territorio · pueblos</th><th>Plomeros activos</th><th>Trabajos</th><th>Clientes en espera</th><th>Candidatos en proceso</th></tr>${filas}</table></div>`));
+});
+
+// ── Mapa de cobertura (24/oct/2026, #399 de Aure): los 78 pueblos; verde = personal activo, rojo = pueblo de una zona sin
+// nadie, gris = fuera de las 8 zonas. Se arma con los datos vivos en cada visita: dar de alta a alguien lo pone en el mapa.
+// Contorno de los pueblos: data/mapa-pr.json (Census vía plotly/datasets, ya proyectado a SVG). Solo staff: nombre, oficio
+// y pueblo; el teléfono no sale aquí (está en la ficha).
+const MAPA = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "mapa-pr.json"), "utf8")) as { ancho: number; alto: number; municipios: { nombre: string; d: string; x: number; y: number }[] };
+const sinAcento = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z ]/g, "").trim();
+const puebloDelMapa = (municipio?: string) => {
+  const m = sinAcento(municipio ?? ""); if (!m) return undefined;
+  return MAPA.municipios.find((x) => sinAcento(x.nombre) === m) ?? MAPA.municipios.find((x) => m.includes(sinAcento(x.nombre)));
+};
+portal.get("/portal/mapa", requerir(), (req, res) => {
+  const yo = (req as any).yo;
+  type Persona = { nombre: string; oficio: string; pueblo: string; href: string };
+  const gente = new Map<string, Persona[]>(); // pueblo del mapa → personal activo
+  const sinPueblo: Persona[] = [];
+  const poner = (municipio: string | undefined, p: Omit<Persona, "pueblo">) => {
+    const m = puebloDelMapa(municipio);
+    if (!m) { sinPueblo.push({ ...p, pueblo: municipio || "sin pueblo" }); return; }
+    gente.set(m.nombre, [...(gente.get(m.nombre) ?? []), { ...p, pueblo: m.nombre }]);
+  };
+  for (const p of plomeros()) if (p.estado === "activo" && p.id !== DEMO_ID) poner(p.municipio, { nombre: p.nombre, oficio: NOMBRE_OFICIO[oficioCampo(p)], href: `/portal/plomeros/${u(p.id)}` });
+  // Contratistas verificados: en el primer pueblo que dicen cubrir
+  for (const c of almacen.contratistas()) if (c.estado === "verified" || c.estado === "preferido") poner(c.zonas[0], { nombre: c.nombre, oficio: "Contratista" + (c.empresa ? ` · ${c.empresa}` : ""), href: `/portal/clientes/${u(c.contactoId)}` });
+  const cand = almacen.candidatos().filter((c) => !["descartado", "activo"].includes(c.estado));
+  const enProceso = (pueblo: string) => cand.filter((c) => puebloDelMapa(c.municipio)?.nombre === pueblo).length;
+
+  const zonaDe = (pueblo: string) => territorios.territorios.find((t) => t.municipios.some((x) => sinAcento(x) === sinAcento(pueblo)));
+  const pueblos = MAPA.municipios.map((m) => {
+    const z = zonaDe(m.nombre); const g = gente.get(m.nombre) ?? [];
+    return { ...m, zona: z ? `${z.id} · ${z.nombre}` : "", zid: z?.id ?? "", gente: g, cand: enProceso(m.nombre), estado: g.length ? "ok" : z ? "falta" : "fuera" };
+  });
+  const totalGente = [...gente.values()].reduce((n, g) => n + g.length, 0) + sinPueblo.length;
+  const cubiertos = pueblos.filter((p) => p.estado === "ok").length;
+  const faltan = pueblos.filter((p) => p.estado === "falta");
+
+  // Etiqueta de cada zona en el centro de sus pueblos
+  const etiquetasZona = territorios.territorios.map((t) => {
+    const ps = pueblos.filter((p) => p.zid === t.id); if (!ps.length) return "";
+    const x = ps.reduce((s, p) => s + p.x, 0) / ps.length, y = ps.reduce((s, p) => s + p.y, 0) / ps.length;
+    return `<text class="tz" x="${x.toFixed(1)}" y="${y.toFixed(1)}">${e(t.id)}</text>`;
+  }).join("");
+  const svg = `<svg viewBox="0 0 ${MAPA.ancho} ${MAPA.alto}" class="mapa" role="img" aria-label="Mapa de cobertura de Resuelto en Puerto Rico">
+${pueblos.map((p, i) => `<path d="${p.d}" class="p ${p.estado}" data-i="${i}" tabindex="0"><title>${e(p.nombre)}${p.zona ? " · " + e(p.zona) : " · fuera de zona"}</title></path>`).join("")}
+<g class="nombres">${pueblos.map((p) => `<text x="${p.x}" y="${p.y + (p.gente.length ? 9 : 2)}">${e(p.nombre)}</text>`).join("")}</g>
+<g class="zonas">${etiquetasZona}</g>
+${pueblos.map((p, i) => p.gente.length ? `<g class="pt" data-i="${i}" tabindex="0"><circle cx="${p.x}" cy="${p.y}" r="${p.gente.length > 1 ? 6 : 4.5}"/>${p.gente.length > 1 ? `<text x="${p.x}" y="${p.y + 2.3}">${p.gente.length}</text>` : ""}</g>` : "").join("")}
+</svg>`;
+
+  const filas = territorios.territorios.map((t) => {
+    const ps = pueblos.filter((p) => p.zid === t.id); const g = ps.flatMap((p) => p.gente);
+    const porOficio = Object.entries(g.reduce<Record<string, number>>((a, p) => ((a[p.oficio.split(" · ")[0]] = (a[p.oficio.split(" · ")[0]] ?? 0) + 1), a), {})).map(([o, n]) => `${n} ${e(o.toLowerCase())}`).join(" · ");
+    const sin = ps.filter((p) => p.estado === "falta");
+    return `<tr><td><b>${e(t.id)} · ${e(t.nombre)}</b><div class="muted">${ps.length} pueblos</div></td><td><b>${g.length}</b>${porOficio ? `<div class="muted">${porOficio}</div>` : ""}</td><td>${ps.length - sin.length} de ${ps.length}</td><td>${sin.length ? sin.map((p) => `<span class="tag warn">${e(p.nombre)}</span>`).join(" ") : '<span class="tag ok">todos cubiertos</span>'}</td></tr>`;
+  }).join("");
+
+  const datos = JSON.stringify(pueblos.map((p) => ({ n: p.nombre, z: p.zona, s: p.estado, c: p.cand, g: p.gente.map((x) => ({ n: x.nombre, o: x.oficio, h: x.href })) }))).replace(/</g, "\\u003c");
+  res.type("html").send(pagina("Mapa", yo, "mapa", `<style>
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}@media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}.kpi b{display:block;font-family:Sora,system-ui;font-size:28px;line-height:1.1}.kpi span{color:var(--ink2);font-size:13px}
+.mapa-g{display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start}@media(max-width:1400px){.mapa-g{grid-template-columns:1fr}}
+.mapa{width:100%;height:auto;display:block}
+.mapa .p{stroke:#fff;stroke-width:.6;cursor:pointer;transition:filter .15s}.mapa .p:hover,.mapa .p:focus,.mapa .p.sel{filter:brightness(.9);stroke:var(--navy);stroke-width:1.2;outline:none}
+.mapa .p.ok{fill:#BFE8D2}.mapa .p.falta{fill:#F8CFC2}.mapa .p.fuera{fill:#E9ECEF}
+.mapa .nombres text{font-size:5.2px;fill:#41505C;text-anchor:middle;pointer-events:none;font-weight:600}
+.mapa .tz{font-family:Sora,system-ui;font-size:15px;font-weight:800;fill:var(--navy);opacity:.28;text-anchor:middle;pointer-events:none}
+.mapa .pt{cursor:pointer}.mapa .pt circle{fill:#1F9D6B;stroke:#fff;stroke-width:1.4}.mapa .pt text{font-size:6px;font-weight:800;fill:#fff;text-anchor:middle;pointer-events:none}.mapa .pt:hover circle,.mapa .pt:focus circle{fill:#17805A;outline:none}
+.sin-nombres .nombres{display:none}
+.ley{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-top:10px;align-items:center}.ley i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}.ley .dot{border-radius:50%;background:#1F9D6B}
+#panel h3{font-family:Sora,system-ui;font-size:19px;margin-bottom:2px}#panel .persona{padding:10px 0;border-top:1px solid var(--line)}#panel .persona:first-of-type{border-top:0}
+</style>
+<h1>Mapa de cobertura</h1><p class="sub">Dónde tenemos personal activo y dónde falta reclutar. Se actualiza solo: cuando alguien queda activo en Plomeros (o un contratista queda verificado), aparece aquí en su pueblo.</p>
+<div class="kpis"><div class="kpi"><b>${totalGente}</b><span>personas activas</span></div><div class="kpi"><b>${cubiertos} <small style="font-size:15px;color:var(--ink2)">de 78</small></b><span>pueblos con personal</span></div><div class="kpi"><b style="color:var(--warn)">${faltan.length}</b><span>pueblos de nuestras zonas sin nadie</span></div><div class="kpi"><b>${territorios.territorios.filter((t) => pueblos.some((p) => p.zid === t.id && p.estado === "ok")).length} <small style="font-size:15px;color:var(--ink2)">de ${territorios.territorios.length}</small></b><span>zonas con al menos uno</span></div></div>
+<div class="mapa-g"><div class="card" id="caja">${svg}
+<div class="ley"><span><i class="dot"></i>Personal activo (el número = cuántos)</span><span><i style="background:#BFE8D2"></i>Pueblo cubierto</span><span><i style="background:#F8CFC2"></i>Sin personal (hay que reclutar)</span><span><i style="background:#E9ECEF"></i>Fuera de las 8 zonas</span><label style="margin:0;display:flex;gap:6px;align-items:center;font-size:13px;width:auto"><input type="checkbox" id="ver-nombres" checked style="width:auto"> Nombres de pueblos</label></div></div>
+<div class="card" id="panel"><h3>Toca un pueblo</h3><p class="muted">Te digo a qué zona pertenece, quién trabaja ahí y si hay candidatos en proceso.</p></div></div>
+${sinPueblo.length ? `<div class="card" style="margin-top:14px"><b>Activos sin pueblo reconocido</b> (no salen en el mapa; corrige el pueblo en su ficha): ${sinPueblo.map((p) => `<a href="${p.href}">${e(p.nombre)}</a> (${e(p.pueblo)})`).join(", ")}</div>` : ""}
+<h2>Resumen por zona</h2><div class="card"><table><tr><th>Zona</th><th>Personal activo</th><th>Pueblos cubiertos</th><th>Pueblos que faltan</th></tr>${filas}</table></div>
+<script>
+var D=${datos};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function ver(i){var p=D[i];document.querySelectorAll('.mapa .p.sel').forEach(function(x){x.classList.remove('sel')});var el=document.querySelector('.mapa .p[data-i="'+i+'"]');if(el)el.classList.add('sel');
+var h='<h3>'+esc(p.n)+'</h3><p class="muted">'+(p.z?'Zona '+esc(p.z):'Fuera de las 8 zonas')+'</p>';
+if(p.g.length)h+='<div style="margin-top:10px">'+p.g.map(function(x){return '<div class="persona"><a href="'+esc(x.h)+'"><b>'+esc(x.n)+'</b></a><div class="muted">'+esc(x.o)+' · '+esc(p.n)+'</div></div>'}).join('')+'</div>';
+else h+='<p style="margin-top:12px"><span class="tag '+(p.s==='falta'?'warn':'mute')+'">'+(p.s==='falta'?'Sin personal: hay que reclutar':'Sin personal')+'</span></p>';
+if(p.c)h+='<p style="margin-top:12px"><a href="/portal/vacantes">'+p.c+(p.c===1?' candidato':' candidatos')+' en proceso aquí →</a></p>';
+document.getElementById('panel').innerHTML=h}
+document.querySelectorAll('.mapa [data-i]').forEach(function(el){var f=function(){ver(+el.getAttribute('data-i'))};el.addEventListener('click',f);el.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();f()}})});
+document.getElementById('ver-nombres').addEventListener('change',function(){document.getElementById('caja').classList.toggle('sin-nombres',!this.checked)});
+</script>`));
 });
 
 // ── Enlaces: todo lo que se usa, en un solo sitio ──
