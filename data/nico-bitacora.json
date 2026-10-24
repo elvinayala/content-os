@@ -611,6 +611,15 @@
       "verificado": "Commit a06b5a0 pusheado a GitHub. Deploy a Vercel completado (HTTP 200 en content-os-chi-seven.vercel.app/login). Función tratoEnOtraMarca() integrada en el flujo de ficha de lead con aviso amarillo en la página.",
       "commit": "a06b5a0",
       "pendienteElvin": null
+    },
+    {
+      "fecha": "2026-10-24T20:00:00Z",
+      "plataforma": "cortex",
+      "que": "[Solicitud de María del Carmen #439] Med Spa Infusion Med Billing House Inc (20261024-175047-c0328-16tomas). Causas reales: (1) bug del editor: en startTrim (editor.html) el 'antes' y el TL nuevo eran el MISMO objeto, así que al estirar el final de una toma (María alargó c4 +1.2 s y c8 +1.28 s en la v2 para devolver '…y criterios médicos.' y '…al frente a la sala de emergencia') los subtítulos, b-roll y sfx se quedaban quietos mientras las tomas siguientes se corrían: subtítulos 1.2 s adelantados desde c5 y 2.5 s en el cierre (por eso 'c5, c6 y c7 corridas'); (2) lo devuelto a mano nunca recibía subtítulo; (3) la nota de v7 'reestablece los subtítulos' no activó ningún cambio y Cortex recompuso desde el corte (que ya traía el desfase) y además botó cosas de la v6 de María (un b-roll y colores de 5 subtítulos); (4) descentrada: en la v1 Apple Vision (Mac) devolvió vacío en las tomas 2-4 (y solo hasta el s 53 en la 1) y Cortex dejó esas tomas con recorte fijo al centro (clienta a ~22-35 % del ancho). Arreglos de código: aplicarRecorte en el editor (copia aparte del antes), palabras_devueltas en edicion_manual.aplicar (las palabras del tramo devuelto entran con subtítulo), caras_de_apple en pipeline (toma sin caras de la Mac o con < 80 % de cobertura → YuNet). Reparación del video: v8 y v9 sobre la v6 de María (sus b-roll, letra elegante y colores intactos): subtítulos re-sincronizados con la misma función del editor, 'criterios médicos' y 'frente a la sala de emergencia' subtitulados, tarjeta y cursor del CTA corridos con la voz, encuadre recalculado (YuNet) solo en c4-c10. Respaldos sin borrar: analysis/faces.antes-n439.json, analysis/face_size.antes-n439.json, timeline.corte.antes-n439.json (el corte también quedó corregido para notas futuras). La v7 sigue disponible.",
+      "porque": "María del Carmen reportó subtítulos desfasados, c5-c7 corridas y la clienta descentrada en la v7; ya había intentado arreglarlo por el chat de Cortex y a mano. Elvin aprobó #439.",
+      "verificado": "Medido sobre los timelines reales: desfase por toma 0 s en todas (antes -1.2/-2.48/-2.97 s). QA de Cortex v9: 90 pass, sincronía medida p50 90 ms / p95 208 ms / peor 0.21 s (v7: 'sin medida'; v8 sin las palabras devueltas: peor 1.08 s). Cuadros v7 vs v9 revisados: en 0:37 la tarjeta ya no entra antes de la frase, en 0:45 la clienta pasa de ~35 % del ancho a centrada con acercamiento. Tests: 7 nuevos (2 del editor en node que fallan con el código viejo, 3 de caras, 2 de palabras devueltas); suite 924 passed, 3 failed preexistentes del sandbox (cv2/ffmpeg). Sin reglas aprendidas nuevas por mis ediciones. Código en prod por SSH (md5 idéntico a 082712f en editor.html, pipeline.py y edicion_manual.py; imports OK); health 200; 0 renders en cola antes y después. Copia de trabajo en /data/nico439 borrada.",
+      "commit": "082712f",
+      "pendienteElvin": "Deploy formal de Cortex (railway up desde main 082712f): mi RAILWAY_API_TOKEN sigue sin acceso al proyecto cortex, así que puse los 3 archivos en el contenedor por SSH. El editor (lo que María usa) ya está en vivo; el arreglo de palabras devueltas y de caras en el proceso web entra cuando ese proceso reinicie, y el vigilante ya lo usa. OJO: si Railway reinicia el contenedor sin un deploy nuevo, vuelve a la imagen vieja y se pierde el parche: hay que correr el deploy desde main."
     }
   ],
   "pendientesElvin": [
@@ -652,7 +661,7 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite).",
     {
-      "que": "Cortex: mi RAILWAY_API_TOKEN no tiene acceso al proyecto cortex (Unauthorized en railway logs/status) y el SSH a railway-cortex da timeout desde este entorno (puerto 22 bloqueado de salida). Sin esto no puedo desplegar fixes de Cortex ni leer sus datos de producción.",
+      "que": "Cortex: mi RAILWAY_API_TOKEN no tiene acceso al proyecto cortex (Unauthorized). El SSH sí funciona con ssh -F $HOME/.ssh/config railway-cortex (24/oct). Sin token no puedo hacer railway up: el #439 (082712f) quedó en vivo por SSH y se pierde si el contenedor reinicia sin un deploy desde main. Hace falta un Project Token de Railway para cortex (94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b) o que Elvin corra el deploy desde la Mac.",
       "desde": "2026-10-21",
       "plataforma": "cortex",
       "estado": "pendiente"
