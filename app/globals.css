@@ -980,6 +980,62 @@
   html {
     @apply font-sans;
   }
+
+  /* Pulido UX (24/oct/2026, skill pulido-ux): todo lo clicable de las plataformas (Pulse/Leads, Ritmo, app de
+     clientes LU, Bori y Portal AutoFlow) responde igual. Va en base y con :where() (especificidad 0) para que
+     cualquier clase del componente gane: solo rellena lo que el botón crudo no traía. */
+  :is(.pulse, .ritmo, .lu-app, .borinquen)
+    :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], summary, select, label:has(> input[type="checkbox"], > input[type="radio"])):not(:disabled, [aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  :is(.pulse, .ritmo, .lu-app, .borinquen) :where(button, [role="button"], select, input, textarea):is(:disabled, [aria-disabled="true"]) {
+    cursor: not-allowed;
+  }
+  /* Anillo de foco con el color de cada marca (--ring del tema) para teclado (ADA / WCAG 2.4.7). Los
+     componentes de components/ui traen su propio ring con outline-none, que gana sobre esto. */
+  :is(.pulse, .ritmo, .lu-app, .borinquen)
+    :where(a[href], button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  /* Presionado: los botones crudos bajan un poco (los de components/ui ya lo hacen con scale). */
+  :is(.pulse, .ritmo, .lu-app, .borinquen) :where(button:not([data-slot]):not(:disabled)) {
+    transition-property: color, background-color, border-color, box-shadow, opacity, scale;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+  :is(.pulse, .ritmo, .lu-app, .borinquen) :where(button:not([data-slot]):not(:disabled)):active {
+    scale: 0.98;
+  }
+}
+
+/* Sin movimiento para quien lo pide en su sistema: solo cambios de opacidad/color. */
+@media (prefers-reduced-motion: reduce) {
+  :is(.pulse, .ritmo, .lu-app, .borinquen) :where(button):active {
+    scale: none;
+  }
+  :is(.pulse, .ritmo, .lu-app, .borinquen) .entra-suave {
+    animation: none;
+  }
+}
+
+/* Animación de entrada del contenido al terminar de cargar (fade + 6 px, 200 ms). En listas, --i escalona
+   (máx. ~8 ítems × 30 ms). Uso: className="entra-suave" style={{ "--i": n }}. */
+@keyframes entra-suave {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.entra-suave {
+  animation: entra-suave 200ms ease-out both;
+  animation-delay: calc(min(var(--i, 0), 8) * 30ms);
+}
+/* Esqueletos de loading.tsx: invisibles los primeros 150 ms (si la pantalla llega antes, no parpadea). */
+@keyframes carga-tardia {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.carga-tardia {
+  animation: carga-tardia 120ms ease-out 150ms both;
 }
 
 /* ---------- Formularios propios (/f/<slug>, /onboarding/level-up) ----------
